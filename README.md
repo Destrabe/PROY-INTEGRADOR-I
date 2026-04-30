@@ -10,5 +10,5 @@
 - Huaccha Egoavil, Dajhana Jassira
 - Sarmiento Chacaliaza, Tom Andree
 - Saavedra Guadalupe, Yadhira Patricia
-
+- Acevedo Tarrillo, Abigail Sofia
 ---
