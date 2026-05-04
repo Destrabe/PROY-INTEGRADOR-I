@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import "./loginStyles.css";
 
@@ -22,10 +24,26 @@ export default function NexoraLogin() {
           Nexora<span className="brand-dot">.</span>
         </div>
         <ul className="navbar__links">
-          <li><a href="#" className="nav-link">Inicio</a></li>
-          <li><a href="#" className="nav-link">Explorar</a></li>
-          <li><a href="#" className="nav-link">Mensajes</a></li>
-          <li><a href="#" className="nav-link">Perfil</a></li>
+          <li>
+            <a href="#" className="nav-link">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="#" className="nav-link">
+              Explorar
+            </a>
+          </li>
+          <li>
+            <a href="#" className="nav-link">
+              Mensajes
+            </a>
+          </li>
+          <li>
+            <a href="#" className="nav-link">
+              Perfil
+            </a>
+          </li>
         </ul>
         <div className="navbar__actions">
           <button className="btn btn--ghost">Ingresar</button>
@@ -65,7 +83,9 @@ export default function NexoraLogin() {
                 onChange={(e) => setPassword(e.target.value)}
               />
               <div className="field__forgot">
-                <a href="#" className="link--accent">¿Olvidaste tu contraseña?</a>
+                <a href="#" className="link--accent">
+                  ¿Olvidaste tu contraseña?
+                </a>
               </div>
             </div>
 
@@ -78,7 +98,9 @@ export default function NexoraLogin() {
 
             <p className="card__register">
               ¿No tienes cuenta?{" "}
-              <a href="#" className="link--accent link--bold">Regístrate gratis</a>
+              <a href="#" className="link--accent link--bold">
+                Regístrate gratis
+              </a>
             </p>
           </div>
         </div>
