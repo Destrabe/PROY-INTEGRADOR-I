@@ -15,7 +15,7 @@ export default function Header() {
         <div className="options">
           <div className="menu">
             <div className="menu-option">Inicio</div>
-            <div className="menu-option">Explorar</div>
+            <Link href="/FeedTrabajos" className="menu-option">Explorar</Link>
             <div className="menu-option">Mensajes</div>
             <div className="menu-option">Perfil</div>
           </div>
