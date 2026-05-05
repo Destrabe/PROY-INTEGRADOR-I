@@ -1,5 +1,6 @@
 import "./header.css";
 import "@/app/register/register.css";
+import Link from "next/link";
 
 export default function Header() {
   return (
@@ -22,8 +23,12 @@ export default function Header() {
             <div className="separator"></div>
           </div>
           <div className="headerButtons">
-            <div className="boton-ingresar">Ingresar</div>
-            <div className="boton-registrarse">Registarse</div>
+            <Link href="/login" className="boton-ingresar">
+              Ingresar
+            </Link>
+            <Link href="register" className="boton-registrarse">
+              Registarse
+            </Link>
           </div>
         </div>
       </div>

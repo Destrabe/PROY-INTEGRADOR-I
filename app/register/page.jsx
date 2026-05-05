@@ -5,16 +5,26 @@ import { useState } from "react";
 import { registerUser } from "../authService";
 
 function RegisterPage() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    if (!firstName || !lastName) {
+      alert("Completa nombre y apellido");
+      return;
+    }
     console.log("Inventando registrar con: ", email, password);
-    const result = await registerUser(email, password);
-    if (!result.success) {
-      if (result.error.code === "auth/email-already-in-use") {
-        return alert("el correo ya esta registrado");
+    const result = await registerUser(email, password, firstName, lastName);
+    if (result.success) {
+      alert("Cuenta creada correctamente");
+    } else {
+      if (!result.success) {
+        if (result.error.code === "auth/email-already-in-use") {
+          return alert("el correo ya esta registrado");
+        }
       }
     }
   };
@@ -54,12 +64,22 @@ function RegisterPage() {
             <div className="row">
               <div className="input-group">
                 <label className="label-input">NOMBRE</label>
-                <input type="text" placeholder="Tu nombre" />
+                <input
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  type="text"
+                  placeholder="Tu nombre"
+                />
               </div>
 
               <div className="input-group">
                 <label className="label-input">APELLIDO</label>
-                <input type="text" placeholder="Tu apellido" />
+                <input
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  type="text"
+                  placeholder="Tu apellido"
+                />
               </div>
             </div>
 

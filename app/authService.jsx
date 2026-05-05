@@ -19,7 +19,7 @@ export const loginUser = async (email, password) => {
   }
 };
 
-export const registerUser = async (email, password) => {
+export const registerUser = async (email, password, firstName, lastName) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -27,10 +27,14 @@ export const registerUser = async (email, password) => {
       password,
     );
     const uid = userCredential.user.uid;
+
     await setDoc(doc(db, "users", uid), {
-      email,
       userId: uid,
+      email,
+      first_name: firstName,
+      last_name: lastName,
     });
+
     return { success: true };
   } catch (error) {
     return { success: false, error };
