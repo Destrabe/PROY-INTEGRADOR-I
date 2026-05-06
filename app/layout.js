@@ -1,6 +1,7 @@
 import "./globals.css";
 import { DM_Sans, Syne } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const dm_sans = DM_Sans({
   weight: ["400", "600", "700"],
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
       <body>
         {children}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
