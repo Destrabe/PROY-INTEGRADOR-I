@@ -20,7 +20,6 @@ export default function NexoraLogin() {
     <div className="nexora-root">
       <div className="bg-glow bg-glow--top" />
       <div className="bg-glow bg-glow--bottom" />
-      <div className="bg-grid" />
 
       <Header/>
 
