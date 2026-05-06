@@ -8,7 +8,7 @@ export default function Header() {
       <div className="headerContainer">
         <div className="headerContainer-logo">
           <div className="logo-header">
-            <div className="logo-header">Nexora</div>
+            <div className="logo-header-name">Nexora</div>
             <div className="logo-header-point">.</div>
           </div>
         </div>
