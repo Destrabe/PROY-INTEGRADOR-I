@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import "./loginStyles.css";
-import Header from "@/components/header/header";
 import Link from "next/link";
-
 
 export default function NexoraLogin() {
   const [email, setEmail] = useState("");
@@ -20,9 +18,6 @@ export default function NexoraLogin() {
     <div className="nexora-root">
       <div className="bg-glow bg-glow--top" />
       <div className="bg-glow bg-glow--bottom" />
-
-      <Header/>
-
       <main className="main">
         <div className="card">
           <div className="card__header">
@@ -80,4 +75,3 @@ export default function NexoraLogin() {
     </div>
   );
 }
-
