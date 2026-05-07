@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import "./loginStyles.css";
+import Header from "@/components/header/header";
+import Link from "next/link";
+
 
 export default function NexoraLogin() {
   const [email, setEmail] = useState("");
@@ -17,7 +20,8 @@ export default function NexoraLogin() {
     <div className="nexora-root">
       <div className="bg-glow bg-glow--top" />
       <div className="bg-glow bg-glow--bottom" />
-      <div className="bg-grid" />
+
+      <Header/>
 
       <main className="main">
         <div className="card">
@@ -51,9 +55,9 @@ export default function NexoraLogin() {
                 onChange={(e) => setPassword(e.target.value)}
               />
               <div className="field__forgot">
-                <a href="#" className="link--accent">
+                <Link href="/forgot-password" className="link--accent">
                   ¿Olvidaste tu contraseña?
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -66,9 +70,9 @@ export default function NexoraLogin() {
 
             <p className="card__register">
               ¿No tienes cuenta?{" "}
-              <a href="#" className="link--accent link--bold">
+              <Link href="/register" className="link--accent link--bold">
                 Regístrate gratis
-              </a>
+              </Link>
             </p>
           </div>
         </div>
@@ -76,3 +80,4 @@ export default function NexoraLogin() {
     </div>
   );
 }
+
