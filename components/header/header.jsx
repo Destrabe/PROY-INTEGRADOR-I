@@ -8,16 +8,18 @@ export default function Header() {
       <div className="headerContainer">
         <div className="headerContainer-logo">
           <div className="logo-header">
-            <div className="logo-header">Nexora</div>
+            <div className="logo-header-name">Nexora</div>
             <div className="logo-header-point">.</div>
           </div>
         </div>
         <div className="options">
           <div className="menu">
-            <div className="menu-option">Inicio</div>
+
+            <Link href="/" className="menu-option">Inicio</Link>
             <Link href="/FeedTrabajos" className="menu-option">Explorar</Link>
-            <div className="menu-option">Mensajes</div>
-            <div className="menu-option">Perfil</div>
+            <Link href="#" className="menu-option">Mensajes</Link>
+            <Link href="#" className="menu-option">Perfil</Link>
+
           </div>
           <div className="separator-container">
             <div className="separator"></div>
@@ -26,7 +28,7 @@ export default function Header() {
             <Link href="/login" className="boton-ingresar">
               Ingresar
             </Link>
-            <Link href="register" className="boton-registrarse">
+            <Link href="/register" className="boton-registrarse">
               Registarse
             </Link>
           </div>

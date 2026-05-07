@@ -19,38 +19,6 @@ export default function NexoraLogin() {
       <div className="bg-glow bg-glow--bottom" />
       <div className="bg-grid" />
 
-      <nav className="navbar">
-        <div className="navbar__brand">
-          Nexora<span className="brand-dot">.</span>
-        </div>
-        <ul className="navbar__links">
-          <li>
-            <a href="#" className="nav-link">
-              Inicio
-            </a>
-          </li>
-          <li>
-            <a href="#" className="nav-link">
-              Explorar
-            </a>
-          </li>
-          <li>
-            <a href="#" className="nav-link">
-              Mensajes
-            </a>
-          </li>
-          <li>
-            <a href="#" className="nav-link">
-              Perfil
-            </a>
-          </li>
-        </ul>
-        <div className="navbar__actions">
-          <button className="btn btn--ghost">Ingresar</button>
-          <button className="btn btn--primary">Registrarse</button>
-        </div>
-      </nav>
-
       <main className="main">
         <div className="card">
           <div className="card__header">

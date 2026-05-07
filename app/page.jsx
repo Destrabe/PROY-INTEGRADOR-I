@@ -1,7 +1,7 @@
-import Header from "@/components/header/header";
+import Hero from "@/components/hero/hero";
 
 function HomePage() {
-  return <Header />;
+  return <Hero />;
 }
 
 export default HomePage;
