@@ -1,11 +1,10 @@
-import Header from "@/components/header/header";
 import FeedTrabajos from "./FeedTrabajos";
 
-export default function Page() {
-  return (
-    <>
-      <Header />
-      <FeedTrabajos />
-    </>
-  );
+export const metadata = {
+  title: "Feed de trabajos · Nexora",
+  description: "Encuentra solicitudes de trabajo cerca de ti en Nexora.",
+};
+
+export default function FeedPage() {
+  return <FeedTrabajos />;
 }
