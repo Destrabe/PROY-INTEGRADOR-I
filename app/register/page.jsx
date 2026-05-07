@@ -3,30 +3,56 @@ import "./register.css";
 import "../globals.css";
 import { useState } from "react";
 import { registerUser } from "../authService";
+import { useRouter } from "next/navigation";
 
 function RegisterPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [sended, setSendend] = useState(false);
+  const [rol, setRol] = useState("");
+  const [district, setDistrict] = useState("default");
+
+  const router = useRouter();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (!firstName || !lastName) {
-      alert("Completa nombre y apellido");
+    setLoading(true);
+    setSendend(true);
+    if (!firstName || !lastName || !email || !password || !district) {
+      alert("Completar el formulario antes de enviar");
+      setLoading(false);
       return;
     }
     console.log("Inventando registrar con: ", email, password);
-    const result = await registerUser(email, password, firstName, lastName);
-    if (result.success) {
-      alert("Cuenta creada correctamente");
-    } else {
-      if (!result.success) {
-        if (result.error.code === "auth/email-already-in-use") {
-          return alert("el correo ya esta registrado");
+    try {
+      const result = await registerUser(
+        email,
+        password,
+        firstName,
+        lastName,
+        rol,
+        district,
+      );
+      if (result.success) {
+        alert("Cuenta creada correctamente");
+        router.push("/login");
+        setLoading(false);
+      } else {
+        if (!result.success) {
+          if (result.error.code === "auth/email-already-in-use") {
+            alert("el correo ya esta registrado");
+            setLoading(false);
+            return;
+          }
         }
       }
+    } catch (error) {
+      console.log(error);
     }
+    setLoading(false);
   };
 
   return (
@@ -49,12 +75,36 @@ function RegisterPage() {
             </div>
 
             <div className="roles-buttons">
-              <div className="rol-button">
+              <div
+                onClick={() => {
+                  setRol("cliente");
+                }}
+                className={`rol-button ${
+                  !rol
+                    ? ""
+                    : rol === "trabajador"
+                      ? "opacity-50"
+                      : "ring-2 ring-indigo-500"
+                }
+               `}
+              >
                 <img src="/svg/client-register.svg" alt="client-icon" />
                 <p className="rol-tile">Cliente</p>
                 <p className="rol-subtitle">Necesito un servicio</p>
               </div>
-              <div className="rol-button">
+              <div
+                onClick={() => {
+                  setRol("trabajador");
+                }}
+                className={`rol-button ${
+                  !rol
+                    ? ""
+                    : rol === "cliente"
+                      ? "opacity-50"
+                      : "ring-2 ring-indigo-500 "
+                }
+               `}
+              >
                 <img src="/svg/worker-register.svg" alt="worker-icon" />
                 <p className="rol-tile">Trabajador</p>
                 <p className="rol-subtitle">Ofrezco mis servicios</p>
@@ -68,6 +118,7 @@ function RegisterPage() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   type="text"
+                  required
                   placeholder="Tu nombre"
                 />
               </div>
@@ -78,6 +129,7 @@ function RegisterPage() {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   type="text"
+                  required
                   placeholder="Tu apellido"
                 />
               </div>
@@ -89,6 +141,7 @@ function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
+                required
                 placeholder="correo@ejemplo.com"
               />
             </div>
@@ -101,17 +154,37 @@ function RegisterPage() {
                 type="password"
                 placeholder="Mínimo 8 caracteres"
               />
+              {sended && password.length < 8 && (
+                <span className="text-red-500 text-sm">
+                  Completar contraseña por favor
+                </span>
+              )}
             </div>
 
             <div className="input-group">
               <label className="label-input">DISTRITO</label>
-              <select>
-                <option>San Juan de Lurigancho</option>
+
+              <select
+                value={district}
+                onChange={(e) => setDistrict(e.target.value)}
+              >
+                <option value="default" disabled>
+                  Seleccione un distrito
+                </option>
+                <option value="sjl">San Juan de Lurigancho</option>
               </select>
             </div>
           </div>
-          <button type="submit" className="button-register">
-            Crear cuenta gratis
+          <button
+            disabled={loading}
+            type="submit"
+            className={`button-register flex justify-center items-center ${loading && "opacity-50"}`}
+          >
+            {loading ? (
+              <div className="h-8 w-8 border-4 border-red-200 rounded-full border-t-indigo-500 animate-spin" />
+            ) : (
+              <span>Crear cuenta gratis</span>
+            )}
           </button>
         </form>
       </div>

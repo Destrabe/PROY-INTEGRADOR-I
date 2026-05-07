@@ -15,28 +15,30 @@
 }
 
 .headerContainer-logo {
-  font-family: var(--font-syne);
-  font-weight: 800;
-  color: #fff;
-  margin-bottom: 20px;
-  align-items: center;
+  height: 100%;
   display: flex;
-  margin-bottom: 0px !important;
+  align-items: center;
   user-select: none;
 }
 
 .logo-header {
   display: flex;
-}
+  align-items: flex-end;
 
-.logo-header {
-  font-size: 32px;
+  font-family: var(--font-syne);
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 1;
+  color: #fff;
 }
 
 .logo-header-point {
   font-size: 32px;
-  color: #500fe9;
+  color: #6c63ff;
+  position: relative;
+  top: 3px;
 }
+
 .options {
   display: flex;
   align-items: center;
