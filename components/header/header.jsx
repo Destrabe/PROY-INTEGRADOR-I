@@ -4,10 +4,10 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <div className="header">
+    <div className="font-sans w-ful ">
       <div className="headerContainer">
         <div className="headerContainer-logo">
-          <div className="logo-header">
+          <div className="font-syne">
             <div className="logo-header-name">Nexora</div>
             <div className="logo-header-point">.</div>
           </div>
