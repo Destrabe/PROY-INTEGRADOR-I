@@ -4,31 +4,37 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <div className="header">
-      <div className="headerContainer">
-        <div className="headerContainer-logo">
-          <div className="logo-header">
+    <div className="font-sans w-full h-[90px] color-white bg-black">
+      <div className="h-full flex items-center justify-between px-[60px] py-0">
+        <div className="h-full flex items-center select-none">
+          <div className="flex items-end font-syne font-extrabold text-2xl leading-none text-white">
             <div className="logo-header-name">Nexora</div>
-            <div className="logo-header-point">.</div>
-          </div>
+            <div className="text-[32px] text-[#6c63ff] relative top-[3px]">.</div>
+           </div>
         </div>
-        <div className="options">
-          <div className="menu">
-
-            <Link href="/" className="menu-option">Inicio</Link>
-            <Link href="/FeedTrabajos" className="menu-option">Explorar</Link>
-            <Link href="#" className="menu-option">Mensajes</Link>
-            <Link href="#" className="menu-option">Perfil</Link>
-
+        <div className=" flex items-center gap-[20px]">
+          <div className="flex gap-[30px] text-base">
+            <Link href="/" className="flex cursor-pointer justify-center items-center">
+              Inicio
+            </Link>
+            <Link href="#" className="flex cursor-pointer justify-center items-center">
+              Explorar
+            </Link>
+            <Link href="#" className="flex cursor-pointer justify-center items-center">
+              Mensajes
+            </Link>
+            <Link href="#" className="flex cursor-pointer justify-center items-center">
+              Perfil
+            </Link>
           </div>
-          <div className="separator-container">
-            <div className="separator"></div>
+          <div className="h-[30px] flex justify-center items-center">
+            <div className="w-[15px] flex justify-center items-center border-r-2 border-r-[gray] border-solid h-[16px]"></div>
           </div>
-          <div className="headerButtons">
-            <Link href="/login" className="boton-ingresar">
+          <div className="flex gap-[10px]">
+            <Link href="/login" className="no-underline text-white cursor-pointer px-2.5 py-[5px] rounded-[10px] border border-solid border-[gray]">
               Ingresar
             </Link>
-            <Link href="/register" className="boton-registrarse">
+            <Link href="/register" className="no-underline text-white cursor-pointer px-2.5 py-[5px] rounded-[10px] bg-[#6c63ff]">
               Registarse
             </Link>
           </div>
