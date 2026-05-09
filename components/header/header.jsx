@@ -14,18 +14,12 @@ export default function Header() {
         </div>
         <div className="options">
           <div className="menu">
-            <Link href="/" className="menu-option">
-              Inicio
-            </Link>
-            <Link href="#" className="menu-option">
-              Explorar
-            </Link>
-            <Link href="#" className="menu-option">
-              Mensajes
-            </Link>
-            <Link href="#" className="menu-option">
-              Perfil
-            </Link>
+
+            <Link href="/" className="menu-option">Inicio</Link>
+            <Link href="/FeedTrabajos" className="menu-option">Explorar</Link>
+            <Link href="#" className="menu-option">Mensajes</Link>
+            <Link href="#" className="menu-option">Perfil</Link>
+
           </div>
           <div className="separator-container">
             <div className="separator"></div>
