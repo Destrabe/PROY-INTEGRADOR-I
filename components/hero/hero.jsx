@@ -5,7 +5,7 @@ export default function Hero() {
     <main>
       {/* parte 1: HERO */}
       <section
-        className="w-full min-h-screen flex flex-col items-center justify-center text-center px-8 py-20 relative overflow-hidden"
+        className="w-full min-h-screen flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 py-20 relative overflow-hidden"
         style={{ background: "#0A0A0F" }}
       >
         <div
@@ -66,9 +66,9 @@ export default function Hero() {
             Rápido, seguro y transparente.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-3 mb-16">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 mb-16">
             <button
-              className="flex items-center gap-2 px-7 py-3 rounded-xl font-semibold text-sm transition-all"
+              className="flex items-center justify-center gap-2 px-7 py-3 rounded-xl font-semibold text-sm transition-all w-full sm:w-auto"
               style={{
                 background: "#6C63FF",
                 color: "#fff",
@@ -78,7 +78,7 @@ export default function Hero() {
               Necesito a alguien →
             </button>
             <button
-              className="flex items-center gap-2 px-7 py-3 rounded-xl font-semibold text-sm transition-all"
+              className="flex items-center justify-center gap-2 px-7 py-3 rounded-xl font-semibold text-sm transition-all w-full sm:w-auto"
               style={{
                 background: "transparent",
                 border: "1px solid #363648",
@@ -90,7 +90,7 @@ export default function Hero() {
             </button>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-10">
+          <div className=" grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-6 sm:gap-10">
             {[
               { n: "1.2K+", l: "Trabajadores activos" },
               { n: "3.8K+", l: "Trabajos completados" },
@@ -115,7 +115,7 @@ export default function Hero() {
 
       {/* parte 2 - cómo funciona */}
       <section
-        className="w-full px-8 py-20"
+        className="w-full px-4 sm:px-6 md:px-8 py-16 md:py-20"
         style={{ background: "#0A0A0F", borderTop: "1px solid #2A2A38" }}
       >
         <div className="max-w-5xl mx-auto">
@@ -135,7 +135,7 @@ export default function Hero() {
               Simple, rápido y seguro — en 3 pasos
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
             {[
               {
                 icon: <FileText size={22} color="#6C63FF" />,
@@ -203,15 +203,15 @@ export default function Hero() {
 
       {/* parte 3 - conectando talento */}
       <section
-        className="w-full px-8 py-20"
+        className="w-full px-4 sm:px-6 md:px-8 py-16 md:py-20"
         style={{ background: "#0A0A0F", borderTop: "1px solid #2A2A38" }}
       >
         <div className="max-w-5xl mx-auto">
           <h2
-            className="font-bold mb-2"
+            className="font-bold mb-1"
             style={{
               fontFamily: "Syne, sans-serif",
-              fontSize: "28px",
+              fontSize: "clamp(22px, 4vw, 28px)",
               color: "#F0F0F8",
               letterSpacing: "-0.5px",
             }}
@@ -219,17 +219,17 @@ export default function Hero() {
             Conectando talento
           </h2>
           <h2
-            className="font-bold mb-12"
+            className="font-bold mb-10 md:mb-12"
             style={{
               fontFamily: "Syne, sans-serif",
-              fontSize: "28px",
+              fontSize: "clamp(22px, 4vw, 28px)",
               color: "#6C63FF",
               letterSpacing: "-0.5px",
             }}
           >
             Construyendo confianza
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
             {[
               {
                 icon: <Shield size={22} color="#6C63FF" />,
@@ -278,18 +278,18 @@ export default function Hero() {
 
       {/* parte 4 - nuevo estándar */}
       <section
-        className="w-full px-8 py-20"
+        className="w-full px-4 sm:px-6 md:px-8 py-16 md:py-20"
         style={{ background: "#0A0A0F", borderTop: "1px solid #2A2A38" }}
       >
         <div
-          className="max-w-5xl mx-auto rounded-2xl p-10 flex flex-col md:flex-row gap-8 items-center"
+          className="max-w-5xl mx-auto rounded-2xl p-6 sm:p-8 md:p-10 flex flex-col md:flex-row gap-6 md:gap-8 items-center"
           style={{ background: "#6C63FF" }}
         >
           <img
-            src="images/persona-1.jpg"
+            src="images/persona-1.webp"
             alt="personas"
-            className="rounded-2xl object-cover shrink-0"
-            style={{ width: "280px", height: "200px" }}
+            className="rounded-2xl object-cover w-full md:w-72 shrink-0"
+            style={{ height: "200px" }}
           />
           <div>
             <h3
@@ -308,7 +308,7 @@ export default function Hero() {
               la vida del vecino.
             </p>
             <button
-              className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all"
+              className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all w-full sm:w-auto"
               style={{
                 background: "rgba(0,0,0,0.3)",
                 border: "1px solid rgba(255,255,255,0.2)",
@@ -322,15 +322,15 @@ export default function Hero() {
 
       {/* parte 5 - frase */}
       <section
-        className="w-full px-8 py-20"
+        className="w-full px-4 sm:px-6 md:px-8 py-16 md:py-20"
         style={{ background: "#0A0A0F", borderTop: "1px solid #2A2A38" }}
       >
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-12 items-center">
           <img
-            src="images/tecnologia-1.jpg"
+            src="images/tecnologia-1.webp"
             alt="Tecnología"
             className="w-full md:w-1/2 rounded-2xl object-cover shrink-0"
-            style={{ height: "280px" }}
+            style={{ height: "240px" }}
           />
           <div>
             <p
@@ -343,7 +343,7 @@ export default function Hero() {
               className="font-bold leading-snug mb-6"
               style={{
                 fontFamily: "Syne, sans-serif",
-                fontSize: "22px",
+                fontSize: "clamp(18px, 3vw, 22px)",
                 color: "#F0F0F8",
               }}
             >
