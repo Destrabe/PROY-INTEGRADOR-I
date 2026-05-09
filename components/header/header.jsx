@@ -20,7 +20,7 @@ export default function Header() {
             <Link href="#" className="menu-option">
               Explorar
             </Link>
-            <Link href="#" className="menu-option">
+            <Link href="/mensajes" className="menu-option">
               Mensajes
             </Link>
             <Link href="#" className="menu-option">
