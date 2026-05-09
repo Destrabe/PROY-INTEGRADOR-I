@@ -1,6 +1,5 @@
 "use client";
 import { useState, useRef } from "react";
-import Header from "@/components/header/header";
 
 export default function RequestPage() {
   const [category, setCategory] = useState("");
@@ -8,8 +7,14 @@ export default function RequestPage() {
   const inputRef = useRef();
 
   const categories = [
-    "Tecnología", "Hogar", "Diseño", "Educación",
-    "Legal", "Transporte", "Salud", "Otro",
+    "Tecnología",
+    "Hogar",
+    "Diseño",
+    "Educación",
+    "Legal",
+    "Transporte",
+    "Salud",
+    "Otro",
   ];
 
   const handleFiles = (files) => {
@@ -21,10 +26,8 @@ export default function RequestPage() {
 
   return (
     <>
-      <Header />
       <div className="min-h-screen bg-[#0f0f1a] text-white px-6 py-10">
         <div className="max-w-[620px] mx-auto">
-
           {/* Volver */}
           <button
             onClick={() => window.history.back()}
@@ -38,22 +41,32 @@ export default function RequestPage() {
 
           {/* Stepper */}
           <div className="flex items-center mb-8">
-            {["Categoría", "Descripción", "Detalles", "Publicar"].map((step, i) => (
-              <div key={step} className="flex items-center">
-                <div className={`flex items-center gap-2 text-sm ${i === 0 ? "text-white" : "text-gray-500"}`}>
-                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${i === 0 ? "bg-[#6c5ce7]" : "bg-[#2a2a3d]"}`}>
-                    {i + 1}
-                  </span>
-                  <span>{step}</span>
+            {["Categoría", "Descripción", "Detalles", "Publicar"].map(
+              (step, i) => (
+                <div key={step} className="flex items-center">
+                  <div
+                    className={`flex items-center gap-2 text-sm ${i === 0 ? "text-white" : "text-gray-500"}`}
+                  >
+                    <span
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${i === 0 ? "bg-[#6c5ce7]" : "bg-[#2a2a3d]"}`}
+                    >
+                      {i + 1}
+                    </span>
+                    <span>{step}</span>
+                  </div>
+                  {i < 3 && <div className="w-8 h-px bg-[#333] mx-2" />}
                 </div>
-                {i < 3 && <div className="w-8 h-px bg-[#333] mx-2" />}
-              </div>
-            ))}
+              ),
+            )}
           </div>
 
           {/* Categorías */}
-          <p className="text-base font-semibold mb-1">¿Qué tipo de servicio necesitas?</p>
-          <p className="text-sm text-gray-400 mb-4">Elige la categoría que mejor describe tu solicitud</p>
+          <p className="text-base font-semibold mb-1">
+            ¿Qué tipo de servicio necesitas?
+          </p>
+          <p className="text-sm text-gray-400 mb-4">
+            Elige la categoría que mejor describe tu solicitud
+          </p>
 
           <div className="grid grid-cols-4 gap-3 mb-6">
             {categories.map((cat) => (
@@ -61,9 +74,10 @@ export default function RequestPage() {
                 key={cat}
                 onClick={() => setCategory(cat)}
                 className={`bg-[#1c1c2b] text-center py-3 px-2 rounded-xl text-sm cursor-pointer border transition-all
-                  ${category === cat
-                    ? "border-[#6c5ce7] bg-[#2a2a3d]"
-                    : "border-transparent hover:bg-[#2a2a3d]"
+                  ${
+                    category === cat
+                      ? "border-[#6c5ce7] bg-[#2a2a3d]"
+                      : "border-transparent hover:bg-[#2a2a3d]"
                   }`}
               >
                 {cat}
@@ -73,7 +87,9 @@ export default function RequestPage() {
 
           {/* Formulario */}
           <div className="bg-[#1c1c2b] rounded-xl p-6 mb-5">
-            <h3 className="text-base font-semibold mb-4">Describe tu solicitud</h3>
+            <h3 className="text-base font-semibold mb-4">
+              Describe tu solicitud
+            </h3>
 
             <div className="mb-4">
               <label className="block text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
@@ -142,7 +158,10 @@ export default function RequestPage() {
           <div
             className="border-2 border-dashed border-[#333] rounded-xl p-10 text-center mb-6 text-gray-500 text-sm"
             onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); }}
+            onDrop={(e) => {
+              e.preventDefault();
+              handleFiles(e.dataTransfer.files);
+            }}
           >
             <input
               ref={inputRef}
@@ -164,7 +183,12 @@ export default function RequestPage() {
             {images.length > 0 && (
               <div className="flex gap-2 mt-4 justify-center flex-wrap">
                 {images.map((img, i) => (
-                  <img key={i} src={img.url} alt="" className="w-20 h-20 object-cover rounded-lg" />
+                  <img
+                    key={i}
+                    src={img.url}
+                    alt=""
+                    className="w-20 h-20 object-cover rounded-lg"
+                  />
                 ))}
               </div>
             )}
@@ -182,7 +206,6 @@ export default function RequestPage() {
               Publicar solicitud
             </button>
           </div>
-
         </div>
       </div>
     </>
