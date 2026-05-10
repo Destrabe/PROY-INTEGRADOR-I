@@ -2,7 +2,13 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  collection,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "@/firebase/db";
 import { auth } from "@/firebase/auth";
 
@@ -36,6 +42,20 @@ export const registerUser = async (email, password, firstName, lastName) => {
     });
 
     return { success: true };
+  } catch (error) {
+    return { success: false, error };
+  }
+};
+
+export const createRequest = async (requestData) => {
+  try {
+    const user = auth.currentUser;
+    const docRef = await addDoc(collection(db, "solicitudes"), {
+      userId: user?.uid || null,
+      ...requestData,
+      creadoEn: serverTimestamp(),
+    });
+    return { success: true, id: docRef.id };
   } catch (error) {
     return { success: false, error };
   }
