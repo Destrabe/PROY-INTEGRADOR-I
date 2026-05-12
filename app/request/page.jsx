@@ -31,8 +31,14 @@ export default function RequestPage() {
   const inputRef = useRef();
 
   const categories = [
-    "Tecnología", "Hogar", "Diseño", "Educación",
-    "Legal", "Transporte", "Salud", "Otro",
+    "Tecnología",
+    "Hogar",
+    "Diseño",
+    "Educación",
+    "Legal",
+    "Transporte",
+    "Salud",
+    "Otro",
   ];
 
   const handleCategoryChange = (cat) => {
@@ -241,7 +247,10 @@ export default function RequestPage() {
           <div
             className="border-2 border-dashed border-[#333] rounded-xl p-6 sm:p-10 text-center mb-6 text-gray-500 text-sm"
             onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); }}
+            onDrop={(e) => {
+              e.preventDefault();
+              handleFiles(e.dataTransfer.files);
+            }}
           >
             <input
               ref={inputRef}
@@ -299,7 +308,6 @@ export default function RequestPage() {
               {loading ? "Publicando..." : "Publicar solicitud"}
             </button>
           </div>
-
         </div>
       </div>
     </>

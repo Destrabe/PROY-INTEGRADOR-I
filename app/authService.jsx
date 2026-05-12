@@ -25,7 +25,14 @@ export const loginUser = async (email, password) => {
   }
 };
 
-export const registerUser = async (email, password, firstName, lastName) => {
+export const registerUser = async (
+  email,
+  password,
+  firstName,
+  lastName,
+  rol,
+  district,
+) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -39,6 +46,8 @@ export const registerUser = async (email, password, firstName, lastName) => {
       email,
       first_name: firstName,
       last_name: lastName,
+      rol: rol,
+      district: district,
     });
 
     return { success: true };
