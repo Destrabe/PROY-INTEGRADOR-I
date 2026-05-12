@@ -25,6 +25,7 @@
   margin: 0;
   padding: 0;
 }
+
 a {
   text-decoration: none;
 }
@@ -40,7 +41,7 @@ input {
 
 .nexora-root {
   min-height: 100vh;
-  background-color: var(--bg);
+  background: linear-gradient(to top, #0a0a0f, #111116);
   font-family: var(--font-body);
   color: var(--text-primary);
   display: flex;
@@ -55,42 +56,6 @@ input {
   filter: blur(120px);
   pointer-events: none;
   z-index: 0;
-}
-
-.bg-glow--top {
-  width: 600px;
-  height: 400px;
-  top: -150px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: radial-gradient(
-    ellipse,
-    rgba(99, 91, 255, 0.15) 0%,
-    transparent 70%
-  );
-}
-
-.bg-glow--bottom {
-  width: 500px;
-  height: 300px;
-  bottom: -100px;
-  right: 10%;
-  background: radial-gradient(
-    ellipse,
-    rgba(99, 91, 255, 0.08) 0%,
-    transparent 70%
-  );
-}
-
-.bg-grid {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 48px 48px;
-  pointer-events: none;
 }
 
 .navbar {
@@ -170,8 +135,9 @@ input {
 
 .btn--primary {
   color: #fff;
-  background: var(--accent);
-  box-shadow: 0 0 24px rgba(99, 91, 255, 0.35);
+  background: #6C63FF;
+  border: 2px solid #363648;
+  border-radius: 10px;
 }
 
 .btn--primary:hover {
@@ -186,13 +152,11 @@ input {
 
 .btn--full {
   width: 100%;
-  padding: 0.85rem;
+  height: 52px;
   font-size: 0.95rem;
-  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
 }
 
 .btn--loading {
@@ -227,11 +191,7 @@ input {
 
 .card {
   width: 100%;
-  max-width: 440px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
+  max-width: 584px;
   padding: 2.5rem 2.25rem;
   animation: cardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -248,15 +208,20 @@ input {
 }
 
 .card__header {
-  margin-bottom: 2rem;
-}
-
-.card__brand {
-  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.02em;
+  margin-bottom: 3.5rem;
+}
+
+.card__brand {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: 0em;
+  line-height: 100%;
   margin-bottom: 0.5rem;
 }
 
@@ -271,15 +236,21 @@ input {
 }
 
 .card__subtitle {
-  font-size: 0.875rem;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
   color: var(--text-secondary);
-  font-weight: 300;
+  line-height: 100%;
+  letter-spacing: 0em;
 }
 
 .card__body {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+}
+.card__body .btn--full {
+  margin-top: 20px;
 }
 
 .field {
@@ -289,18 +260,21 @@ input {
 }
 
 .field__label {
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  color: #9090A8;
+  line-height: 100%;
+  letter-spacing: 0em;
 }
 
 .field__input {
   width: 100%;
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 0.75rem 1rem;
+  height: 52px;
+  background: #22222C;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 8px;
   color: var(--text-primary);
   font-size: 0.9rem;
   font-weight: 300;
@@ -324,7 +298,7 @@ input {
 .field__forgot {
   display: flex;
   justify-content: flex-end;
-  margin-top: 0.25rem;
+  margin-top: 40px;
 }
 
 .link--accent {
@@ -333,19 +307,27 @@ input {
   transition: color var(--transition);
 }
 
+.field__forgot .link--accent {
+  font-size: 15px;
+  font-weight: 700;
+  color: #6C63FF;
+}
+
 .link--accent:hover {
   color: var(--accent-hover);
 }
 
-.link--bold {
-  font-weight: 500;
-}
-
 .card__register {
   text-align: center;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 15px;
   font-weight: 300;
+  color: var(--text-secondary);
+  line-height: 100%;
+}
+.card__register, .link--bold {
+  font-weight: 900; /* Black */
+  font-size: 15px;
 }
 
 @media (max-width: 480px) {

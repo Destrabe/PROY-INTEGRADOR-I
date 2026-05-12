@@ -10,3 +10,8 @@ body {
   max-width: 100dvw;
   overflow-x: hidden;
 }
+
+@theme {
+  --font-sans: var(--font-dm-sans);
+  --font-syne: var(--font-syne);
+}
