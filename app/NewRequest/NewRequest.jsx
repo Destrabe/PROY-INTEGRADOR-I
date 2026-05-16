@@ -366,6 +366,8 @@ export default function NuevaSolicitud() {
 
   const avanzar = () => { if (validarPaso()) setPaso((p) => Math.min(p + 1, 4)); };
 
+  
+  
   const publicar = async () => {
     if (!user) return;
     setEnviando(true);

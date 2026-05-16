@@ -1,7 +1,6 @@
 "use client";
 import { useState, useMemo } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/firebase/auth";
+import { useUserRole } from "@/app/Hooks/useUserRole";
 import { useSolicitudes } from "./Hooks/useSolicitudes";
 import { usePostulacion } from "./Hooks/usePostulacion";
 import { eliminarSolicitud } from "@/firebase/Solicitudes";
@@ -15,7 +14,6 @@ import Link from "next/link";
 const s = {
   layout: { display: "flex", backgroundColor: "#0a0a0f", minHeight: "calc(100vh - 90px)" },
   main: { flex: 1, padding: "30px 36px" },
-
   headerRow: {
     display: "flex",
     justifyContent: "space-between",
@@ -56,13 +54,12 @@ const s = {
     fontSize: "16px",
     lineHeight: 1,
   },
-  subtitle: { color: "#888", fontSize: "14px", marginBottom: "20px" },
-  count: { color: "#666", fontSize: "13px", marginBottom: "16px" },
+  subtitle:  { color: "#888", fontSize: "14px", marginBottom: "20px" },
+  count:     { color: "#666", fontSize: "13px", marginBottom: "16px" },
   countBold: { color: "#fff", fontWeight: 600 },
-
-  emptyState: { textAlign: "center", padding: "60px 20px" },
-  emptyIcon: { fontSize: "40px", marginBottom: "12px" },
-  emptyText: { fontSize: "16px", color: "#666", marginBottom: "6px" },
+  emptyState:   { textAlign: "center", padding: "60px 20px" },
+  emptyIcon:    { fontSize: "40px", marginBottom: "12px" },
+  emptyText:    { fontSize: "16px", color: "#666", marginBottom: "6px" },
   emptySubtext: { fontSize: "13px", color: "#444", marginBottom: "24px" },
   emptyBtn: {
     display: "inline-flex",
@@ -108,14 +105,25 @@ const s = {
     alignItems: "center",
     gap: "12px",
   },
-
+  roleBanner: {
+    backgroundColor: "#0f2d1a",
+    border: "1px solid #166534",
+    borderRadius: "10px",
+    padding: "12px 16px",
+    color: "#4ade80",
+    fontSize: "13px",
+    marginBottom: "16px",
+  },
 };
+
+const UMBRAL_ALTA_VALORACION = 4;
 
 function filtrar(solicitudes, filtroActivo, busqueda) {
   return solicitudes.filter((sol) => {
     const filtroOk =
       filtroActivo === "Todos" ||
-      filtroActivo === "Alta valoración" ||
+      (filtroActivo === "Alta valoración" &&
+        (sol.postulantes?.length ?? 0) >= UMBRAL_ALTA_VALORACION) ||
       (filtroActivo === "SJL" && sol.distrito === "San Juan de Lurigancho") ||
       sol.tags?.some((t) => t === filtroActivo);
 
@@ -131,13 +139,16 @@ function filtrar(solicitudes, filtroActivo, busqueda) {
 }
 
 export default function FeedTrabajos() {
-  const [user] = useAuthState(auth);
+  const { user, rol, perfil, loadingAuth, loadingRol } = useUserRole();
+  //const uidParaFeed = rol === "cliente" ? user?.uid : undefined;
+  const uidParaFeed = rol === "trabajador" ? undefined : user?.uid;
+  const { solicitudes, loading, error } = useSolicitudes(uidParaFeed);
 
-  const { solicitudes, loading, error } = useSolicitudes();
-  const { estaPostulado, togglePostulacion, loadingId } = usePostulacion(user?.uid);
+  const { estaPostulado, togglePostulacion, puedePostularse, loadingId } =
+    usePostulacion(user?.uid, rol);
 
-  const [filtroActivo, setFiltroActivo] = useState("Todos");
-  const [busqueda, setBusqueda] = useState("");
+  const [filtroActivo,   setFiltroActivo]   = useState("Todos");
+  const [busqueda,       setBusqueda]       = useState("");
   const [modalSolicitud, setModalSolicitud] = useState(null);
 
   const solicitudesFiltradas = useMemo(
@@ -145,28 +156,36 @@ export default function FeedTrabajos() {
     [solicitudes, filtroActivo, busqueda]
   );
 
-
   const handleCancelar = async (solicitudId) => {
-
     const sol = solicitudes.find((s) => s.id === solicitudId);
     if (sol?.imageUrls?.length > 0) {
       await eliminarImagenesSolicitud(sol.imageUrls);
     }
-
-    const result = await eliminarSolicitud(solicitudId);
+    await eliminarSolicitud(solicitudId);
   };
 
-  const handleToggle = async (solicitudId, postulantesActuales) => {
-    await togglePostulacion(solicitudId, postulantesActuales);
+  const handleToggle = async (solicitudId, postulantesActuales, propietarioId) => {
+    await togglePostulacion(solicitudId, postulantesActuales, propietarioId);
     if (modalSolicitud?.id === solicitudId) {
       const actualizado = solicitudes.find((s) => s.id === solicitudId);
       if (actualizado) setModalSolicitud(actualizado);
     }
   };
+
   const abrirModal = (solicitud) => {
     const actual = solicitudes.find((s) => s.id === solicitud.id) ?? solicitud;
     setModalSolicitud(actual);
   };
+
+  const solicitudModalActualizada = modalSolicitud
+    ? (solicitudes.find((s) => s.id === modalSolicitud.id) ?? modalSolicitud)
+    : null;
+
+  const currentUserNombre = perfil?.first_name
+    ? `${perfil.first_name} ${perfil.last_name}`.trim()
+    : user?.displayName || user?.email || "Usuario";
+
+  const mostrarPublicar = !user || rol === "cliente";
 
   return (
     <div style={s.layout}>
@@ -176,23 +195,38 @@ export default function FeedTrabajos() {
         <div style={s.headerRow}>
           <div>
             <h1 style={s.title}>Feed de trabajos</h1>
-            <p style={s.subtitle}>Encuentra solicitudes que coincidan con tus habilidades</p>
+            <p style={s.subtitle}>
+              {rol === "trabajador"
+                ? "Encuentra solicitudes que coincidan con tus habilidades"
+                : "Publica tu solicitud y recibe postulantes"}
+            </p>
           </div>
-          <Link
-            href={user ? "/NewRequest" : "/login"}
-            style={s.publishBtn}
-          >
-            <span style={s.publishBtnPlus}>+</span>
-            Publicar solicitud
-          </Link>
+          {mostrarPublicar && (
+            <Link
+              href={user ? "/NewRequest" : "/login"}
+              style={s.publishBtn}
+            >
+              <span style={s.publishBtnPlus}>+</span>
+              Publicar solicitud
+            </Link>
+          )}
         </div>
 
+        {/* Usuarios sin sesión */}
         {!user && (
           <div style={s.loginBanner}>
             <span>Inicia sesión para postularte o publicar trabajos</span>
             <a href="/login" style={{ color: "#a78bfa", fontWeight: 600 }}>
               Ingresar →
             </a>
+          </div>
+        )}
+
+        {/* Banner de rol para trabajadores */}
+        {user && rol === "trabajador" && (
+          <div style={s.roleBanner}>
+            ✓ Estás viendo el feed como <strong>trabajador</strong>. Puedes
+            postularte a las solicitudes que te interesen.
           </div>
         )}
 
@@ -214,47 +248,59 @@ export default function FeedTrabajos() {
         )}
 
         {loading && [1, 2, 3].map((i) => <div key={i} style={s.skeleton} />)}
+
         {!loading && solicitudesFiltradas.length === 0 && (
           <div style={s.emptyState}>
-            <div style={s.emptyIcon}>🔍</div>
-            <p style={s.emptyText}>No se encontraron solicitudes</p>
-            <p style={s.emptySubtext}>
-              {busqueda || filtroActivo !== "Todos"
-                ? "Intenta con otro filtro o término de búsqueda"
-                : "Sé el primero en publicar una solicitud en tu zona"}
-            </p>
-            {!busqueda && filtroActivo === "Todos" && (
-              <Link href={user ? "/NewRequest" : "/login"} style={s.emptyBtn}>
-                + Publicar la primera solicitud
+            <div style={s.emptyIcon}></div>
+            <p style={s.emptyText}>No hay solicitudes que coincidan</p>
+            <p style={s.emptySubtext}>Intenta cambiar los filtros o la búsqueda</p>
+            {mostrarPublicar && (
+              <Link
+                href={user ? "/NewRequest" : "/login"}
+                style={s.emptyBtn}
+              >
+                <span>+</span> Publicar solicitud
               </Link>
             )}
           </div>
         )}
 
-        {!loading &&
-          solicitudesFiltradas.map((sol) => (
+        {solicitudesFiltradas.map((sol) => {
+          const solicitudActual = solicitudes.find((s) => s.id === sol.id) ?? sol;
+          return (
             <SolicitudCard
               key={sol.id}
-              solicitud={sol}
+              solicitud={solicitudActual}
               currentUserId={user?.uid ?? null}
+              rolUsuario={rol}
               estaPostulado={estaPostulado}
+              puedePostularse={puedePostularse}
               onToggle={handleToggle}
               loading={loadingId === sol.id}
               onVerDetalle={abrirModal}
               onCancelar={handleCancelar}
             />
-          ))}
+          );
+        })}
       </main>
 
-      <SolicitudModal
-        solicitud={modalSolicitud}
-        onClose={() => setModalSolicitud(null)}
-        currentUserId={user?.uid ?? null}
-        estaPostulado={estaPostulado}
-        onToggle={handleToggle}
-        loading={loadingId === modalSolicitud?.id}
-        onCancelar={handleCancelar}
-      />
+      {solicitudModalActualizada && (
+        <SolicitudModal
+          solicitud={solicitudModalActualizada}
+          onClose={() => setModalSolicitud(null)}
+          currentUserId={user?.uid ?? null}
+          currentUserNombre={currentUserNombre}
+          rolUsuario={rol}
+          estaPostulado={estaPostulado}
+          puedePostularse={puedePostularse}
+          onToggle={handleToggle}
+          loading={loadingId === solicitudModalActualizada.id}
+          onCancelar={async (id) => {
+            await handleCancelar(id);
+            setModalSolicitud(null);
+          }}
+        />
+      )}
     </div>
   );
 }

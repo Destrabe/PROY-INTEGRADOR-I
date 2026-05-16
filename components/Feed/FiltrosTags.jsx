@@ -47,6 +47,28 @@ const s = {
     cursor: "pointer",
     fontFamily: "var(--font-dm-sans), sans-serif",
   },
+
+  tagAltaValoracion: {
+    padding: "5px 14px",
+    borderRadius: "20px",
+    fontSize: "13px",
+    border: "1px solid #b45309",
+    color: "#fbbf24",
+    background: "transparent",
+    cursor: "pointer",
+    fontFamily: "var(--font-dm-sans), sans-serif",
+    transition: "all 0.2s",
+  },
+  tagAltaValoracionActive: {
+    padding: "5px 14px",
+    borderRadius: "20px",
+    fontSize: "13px",
+    border: "1px solid #b45309",
+    color: "#fbbf24",
+    backgroundColor: "#2d1a00",
+    cursor: "pointer",
+    fontFamily: "var(--font-dm-sans), sans-serif",
+  },
 };
 
 export default function FiltrosTags({ busqueda, setBusqueda, filtroActivo, setFiltroActivo }) {
@@ -61,15 +83,28 @@ export default function FiltrosTags({ busqueda, setBusqueda, filtroActivo, setFi
         />
       </div>
       <div style={s.tagsRow}>
-        {FILTROS.map((f) => (
-          <button
-            key={f}
-            style={f === filtroActivo ? s.tagActive : s.tag}
-            onClick={() => setFiltroActivo(f)}
-          >
-            {f}
-          </button>
-        ))}
+        {FILTROS.map((f) => {
+          const isAltaValoracion = f === "Alta valoración";
+          const isActive = f === filtroActivo;
+
+          let style;
+          if (isAltaValoracion) {
+            style = isActive ? s.tagAltaValoracionActive : s.tagAltaValoracion;
+          } else {
+            style = isActive ? s.tagActive : s.tag;
+          }
+
+          return (
+            <button
+              key={f}
+              style={style}
+              onClick={() => setFiltroActivo(f)}
+              title={isAltaValoracion ? "Muestra solicitudes con 4 o más postulantes" : undefined}
+            >
+              {isAltaValoracion ? "⭐ " : ""}{f}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

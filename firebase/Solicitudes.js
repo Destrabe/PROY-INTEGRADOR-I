@@ -26,21 +26,26 @@ export const crearSolicitud = async (data, userId) => {
     if (!userId) throw new Error("Usuario no autenticado");
  
     const payload = {
-      titulo:      data.titulo?.trim()      ?? "",
-      descripcion: data.descripcion?.trim() ?? "",
-      tags:        Array.isArray(data.tags) ? data.tags : [],
-      precio:      data.precio?.trim()      ?? "A coordinar",
-      distrito:    data.distrito            ?? "",
-      urgente:     Boolean(data.urgente),
-      modalidad:   data.modalidad           ?? "Presencial",
-      urgencia:    data.urgencia            ?? "acordar",
-      nombre:      data.nombre?.trim()      ?? "Usuario",
-      iniciales:   data.iniciales?.trim()   ?? "U",
-      userId,
-      postulantes: [],
-      creadoEn:    serverTimestamp(),
-      updatedAt:   serverTimestamp(),
-    };
+  titulo:      data.titulo?.trim()      ?? "",
+  descripcion: data.descripcion?.trim() ?? "",
+  tags:        Array.isArray(data.tags) ? data.tags : [],
+  precio:      data.precio?.trim()      ?? "A coordinar",
+  distrito:    data.distrito            ?? "",
+  urgente:     Boolean(data.urgente),
+  modalidad:   data.modalidad           ?? "Presencial",
+  urgencia:    data.urgencia            ?? "acordar",
+  nombre:      data.nombre?.trim()      ?? "Usuario",
+  iniciales:   data.iniciales?.trim()   ?? "U",
+  imageUrls:   Array.isArray(data.imageUrls) ? data.imageUrls : [],
+  userId,
+  postulantes:            [],
+  //postulacionesBloqueadas: false,
+  trabajadorId:           null,
+  trabajadorNombre:       null,
+  estado: "activa",        
+  creadoEn:  serverTimestamp(),
+  updatedAt: serverTimestamp(),
+};
  
     const ref = await addDoc(solicitudesRef(), payload);
     return { success: true, id: ref.id };
@@ -196,6 +201,28 @@ export const eliminarSolicitud = async (solicitudId) => {
     return { success: true };
   } catch (error) {
     console.error("[eliminarSolicitud]", error);
+    return { success: false, error };
+  }
+};
+
+export const completarSolicitud = async (solicitudId, userId) => {
+  try {
+    const solicitudRef = doc(db, COL, solicitudId);
+    const solicitudSnap = await getDoc(solicitudRef);
+    if (!solicitudSnap.exists()) throw new Error("Solicitud no existe");
+    const data = solicitudSnap.data();
+    if (data.userId !== userId) throw new Error("Solo el cliente puede completar la solicitud");
+    if (data.estado !== "en_progreso") throw new Error("La solicitud no está en progreso");
+
+    await updateDoc(solicitudRef, {
+      estado: "completada",
+      completadoEn: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("[completarSolicitud]", error);
     return { success: false, error };
   }
 };
