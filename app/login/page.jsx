@@ -3,15 +3,52 @@
 import { useState } from "react";
 import "./loginStyles.css";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { loginUser } from "../authService";
+import { useAuth } from "@/components/AuthContext";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase/db";
 
 export default function NexoraLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = () => {
+  const { login } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async () => {
+    setError("");
     setLoading(true);
-    setTimeout(() => setLoading(false), 2000);
+
+    try {
+      const firebaseUser = await loginUser(email, password);
+
+      // Traer datos extra de Firestore (nombre, rol, etc.)
+      const snap = await getDoc(doc(db, "users", firebaseUser.uid));
+      const data = snap.exists() ? snap.data() : {};
+
+      login({
+        uid:        firebaseUser.uid,
+        email:      firebaseUser.email,
+        first_name: data.first_name || "",
+        last_name:  data.last_name  || "",
+        rol:        data.rol        || "cliente",
+      });
+
+      router.push("/");
+    } catch (err) {
+      if (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password") {
+        setError("Correo o contraseña incorrectos");
+      } else if (err.code === "auth/user-not-found") {
+        setError("No existe una cuenta con ese correo");
+      } else {
+        setError("Ocurrió un error, intenta de nuevo");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -48,6 +85,7 @@ export default function NexoraLogin() {
                 placeholder="Tu contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
               />
               <div className="field__forgot">
                 <Link href="/forgot-password" className="link--accent">
@@ -56,9 +94,14 @@ export default function NexoraLogin() {
               </div>
             </div>
 
+            {error && (
+              <p className="text-red-400 text-sm text-center">{error}</p>
+            )}
+
             <button
               className={`btn btn--primary btn--full ${loading ? "btn--loading" : ""}`}
               onClick={handleSubmit}
+              disabled={loading}
             >
               {loading ? <span className="spinner" /> : "Ingresar"}
             </button>

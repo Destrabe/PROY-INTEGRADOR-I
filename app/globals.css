@@ -11,7 +11,11 @@ body {
   overflow-x: hidden;
 }
 
-@theme {
+:root {
   --font-sans: var(--font-dm-sans);
   --font-syne: var(--font-syne);
+}
+
+main {
+  overflow-x: hidden;
 }
