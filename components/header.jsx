@@ -86,21 +86,48 @@ export default function Header() {
               href="/nosotros"
               className={`flex items-center gap-1.5 transition-colors ${pathname === "/nosotros" ? "text-[#6c63ff]" : "text-white hover:text-[#6c63ff]"}`}
             >
-                <img src="/svg/group-chat-svgrepo-com.svg" alt="" width={16} height={16} className="invert" />
+              <img
+                src="/svg/group-chat-svgrepo-com.svg"
+                alt=""
+                width={16}
+                height={16}
+                className="invert"
+              />
               Nosotros
             </Link>
             {user && (
               <>
                 <Link
                   href="/mensajes"
-                  className="flex items-center gap-1.5 hover:text-[#6c63ff] transition-colors"
+                  className={`flex items-center gap-1.5 transition-colors ${
+                    pathname === "/mensajes"
+                      ? "text-[#6c63ff]"
+                      : "text-white hover:text-[#6c63ff]"
+                  }`}
                 >
+                  <img
+                    src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M4 4h16v12H5.17L4 17.17V4zm2 2v7.17L6.83 12H18V6H6z"/></svg>'
+                    alt=""
+                    width={16}
+                    height={16}
+                  />
                   Mensajes
                 </Link>
+
                 <Link
                   href="/perfil"
-                  className="flex items-center gap-1.5 hover:text-[#6c63ff] transition-colors"
+                  className={`flex items-center gap-1.5 transition-colors ${
+                    pathname === "/perfil"
+                      ? "text-[#6c63ff]"
+                      : "text-white hover:text-[#6c63ff]"
+                  }`}
                 >
+                  <img
+                    src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5z"/></svg>'
+                    alt=""
+                    width={16}
+                    height={16}
+                  />
                   Perfil
                 </Link>
               </>

@@ -14,7 +14,6 @@ export default function RegisterPage() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rol, setRol] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -30,15 +29,13 @@ export default function RegisterPage() {
     console.log("email:", email);
     console.log("password:", password);
     console.log("confirmPassword:", confirmPassword);
-    console.log("rol:", rol);
 
     if (
       !firstName.trim() ||
       !lastName.trim() ||
       !email.trim() ||
       !password.trim() ||
-      !confirmPassword.trim() ||
-      !rol.trim()
+      !confirmPassword.trim()
     ) {
       alert("Completa todos los campos");
       return;
@@ -50,6 +47,7 @@ export default function RegisterPage() {
     }
 
     setLoading(true);
+    const rol = "cliente";
 
     try {
       const result = await registerUser(
@@ -68,7 +66,7 @@ export default function RegisterPage() {
           email: firebaseUser.email,
           first_name: firstName,
           last_name: lastName,
-          rol,
+          rol: "cliente",
         });
 
         router.push("/");
@@ -349,88 +347,6 @@ export default function RegisterPage() {
                   color: "#fff",
                 }}
               />
-            </div>
-          </div>
-
-          {/* TIPO */}
-          <div className="mb-6">
-            <label
-              className="block text-sm font-semibold mb-3"
-              style={{ color: "#F0F0F8" }}
-            >
-              Tipo de cuenta
-            </label>
-
-            <div className="grid grid-cols-2 gap-4">
-              {/* CLIENTE */}
-              <button
-                type="button"
-                onClick={() => {
-                  console.log("cliente");
-                  setRol("cliente");
-                }}
-                className="rounded-2xl p-5 border transition-all cursor-pointer hover:-translate-y-1"
-                style={{
-                  background: rol === "cliente" ? "#6C63FF22" : "#1A1A28",
-                  borderColor: rol === "cliente" ? "#6C63FF" : "#2A2A38",
-                  color: "#fff",
-                }}
-              >
-                <div className="flex justify-center mb-2">
-                  <svg
-                    width="24"
-                    height="24"
-                    fill="none"
-                    stroke="#A855F7"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
-                </div>
-
-                <div className="font-bold">Cliente</div>
-
-                <p className="text-xs mt-1 text-[#9090A8]">
-                  Necesito contratar servicios
-                </p>
-              </button>
-
-              {/* TRABAJADOR */}
-              <button
-                type="button"
-                onClick={() => {
-                  console.log("trabajador");
-                  setRol("trabajador");
-                }}
-                className="rounded-2xl p-5 border transition-all cursor-pointer hover:-translate-y-1"
-                style={{
-                  background: rol === "trabajador" ? "#6C63FF22" : "#1A1A28",
-                  borderColor: rol === "trabajador" ? "#6C63FF" : "#2A2A38",
-                  color: "#fff",
-                }}
-              >
-                <div className="flex justify-center mb-2">
-                  <svg
-                    width="24"
-                    height="24"
-                    fill="none"
-                    stroke="#60A5FA"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M16 20V4a2 2 0 0 0-2-2H10a2 2 0 0 0-2 2v16" />
-                    <rect x="2" y="9" width="20" height="11" rx="2" />
-                  </svg>
-                </div>
-
-                <div className="font-bold">Trabajador</div>
-
-                <p className="text-xs mt-1 text-[#9090A8]">
-                  Quiero ofrecer mis servicios
-                </p>
-              </button>
             </div>
           </div>
 
