@@ -1,9 +1,86 @@
-import { Shield, Globe, Gem, FileText, Users, CheckCircle } from "lucide-react";
+"use client";
+
+import Link from "next/link";
+
+const CATEGORIAS = [
+  "Desarrollo Web",
+  "Diseño UI/UX",
+  "Marketing Digital",
+  "Redacción",
+  "Video Edición",
+  "SEO",
+  "Desarrollo Móvil",
+  "Consultoría",
+];
+
+const CARDS = [
+  {
+    icon: (
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#fff"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+      </svg>
+    ),
+    title: "Respuestas Rápidas",
+    desc: "Obtén propuestas de profesionales en minutos, no días",
+  },
+  {
+    icon: (
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#fff"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      </svg>
+    ),
+    title: "Profesionales Verificados",
+    desc: "Todos los freelancers pasan por un proceso de verificación",
+  },
+  {
+    icon: (
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#fff"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+        <polyline points="16 7 22 7 22 13" />
+      </svg>
+    ),
+    title: "Calidad Premium",
+    desc: "Servicios de alta calidad con garantía de satisfacción",
+  },
+];
+
+const STATS = [
+  { n: "10,000+", l: "Proyectos Completados" },
+  { n: "5,000+", l: "Freelancers Activos" },
+  { n: "98%", l: "Satisfacción Cliente" },
+];
 
 export default function Hero() {
   return (
     <main>
-      {/* parte 1: HERO */}
+      {/* HERO */}
       <section
         className="w-full min-h-screen flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 py-20 relative overflow-hidden"
         style={{ background: "#0A0A0F" }}
@@ -14,7 +91,7 @@ export default function Hero() {
             background:
               "radial-gradient(ellipse 80% 60% at 50% 0%, #6C63FF14 0%, transparent 70%)",
           }}
-        ></div>
+        />
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -22,63 +99,72 @@ export default function Hero() {
               "radial-gradient(circle, #ffffff06 1px, transparent 1px)",
             backgroundSize: "32px 32px",
           }}
-        ></div>
+        />
 
-        <div className="relative max-w-2xl mx-auto">
+        <div className="relative max-w-4xl mx-auto w-full">
+          {/* Badge */}
           <div
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-7"
-            style={{
-              background: "#6C63FF22",
-              border: "1px solid #6C63FF33",
-              color: "#8B85FF",
-            }}
+            style={{ background: "#6C63FF", border: "none", color: "#fff" }}
           >
             <span
               className="w-1.5 h-1.5 rounded-full animate-pulse"
-              style={{ background: "#6C63FF" }}
-            ></span>
-            Marketplace local · San Juan de Lurigancho
+              style={{ background: "#fff" }}
+            />
+            Conecta con los mejores profesionales
           </div>
 
+          {/* Título */}
           <h1
             className="font-extrabold leading-tight mb-5"
             style={{
               fontFamily: "Syne, sans-serif",
-              fontSize: "clamp(42px, 6vw, 72px)",
+              fontSize: "clamp(36px, 5vw, 64px)",
               letterSpacing: "-2px",
-              color: "#F0F0F8",
             }}
           >
-            Encuentra microservicios
-            <br />
-            <span style={{ color: "#6C63FF" }}>rápidos y confiables</span>
+            <span style={{ color: "#FFFFFF" }}>Encuentra microservicios</span>{" "}
+            <span
+              style={{
+                background:
+                  "linear-gradient(135deg, #7c3aed, #6c63ff, #4f8ef7)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              rápidos, confiables y al instante
+            </span>
           </h1>
 
           <p
             className="text-lg mb-10 mx-auto max-w-lg leading-relaxed"
+            
             style={{
               color: "#9090A8",
               fontFamily: "DM Sans, sans-serif",
               fontWeight: 300,
             }}
           >
-            Conecta con los mejores trabajadores independientes de tu zona.
-            Rápido, seguro y transparente.
+            Conecta con profesionales verificados y obtén servicios digitales de
+            calidad premium en minutos
           </p>
-
+            <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 h-px bg-[#2A2A38] my-16"></div>
+          {/* Botones */}
           <div className="flex flex-col sm:flex-row justify-center gap-3 mb-16">
-            <button
-              className="flex items-center justify-center gap-2 px-7 py-3 rounded-xl font-semibold text-sm transition-all w-full sm:w-auto"
+            <Link
+              href="/FeedTrabajos"
+              className="flex items-center justify-center gap-2 px-7 py-3 rounded-xl font-semibold text-sm transition-all w-full sm:w-auto hover:opacity-90"
               style={{
                 background: "#6C63FF",
                 color: "#fff",
                 fontFamily: "DM Sans, sans-serif",
               }}
             >
-              Necesito a alguien →
-            </button>
-            <button
-              className="flex items-center justify-center gap-2 px-7 py-3 rounded-xl font-semibold text-sm transition-all w-full sm:w-auto"
+              Explorar Servicios →
+            </Link>
+            <Link
+              href="/register"
+              className="flex items-center justify-center gap-2 px-7 py-3 rounded-xl font-semibold text-sm transition-all w-full sm:w-auto hover:border-[#6C63FF] hover:text-white"
               style={{
                 background: "transparent",
                 border: "1px solid #363648",
@@ -86,278 +172,117 @@ export default function Hero() {
                 fontFamily: "DM Sans, sans-serif",
               }}
             >
-              Puedo ayudar a alguien
-            </button>
+              Publicar Proyecto
+            </Link>
           </div>
-
-          <div className=" grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-6 sm:gap-10">
-            {[
-              { n: "1.2K+", l: "Trabajadores activos" },
-              { n: "3.8K+", l: "Trabajos completados" },
-              { n: "4.9★", l: "Valoración promedio" },
-              { n: "15+", l: "Categorías" },
-            ].map((s) => (
-              <div key={s.l} className="text-center">
-                <div
-                  className="font-extrabold text-2xl"
-                  style={{ fontFamily: "Syne, sans-serif", color: "#F0F0F8" }}
-                >
-                  {s.n}
-                </div>
-                <div className="text-xs mt-1" style={{ color: "#606078" }}>
-                  {s.l}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* parte 2 - cómo funciona */}
-      <section
-        className="w-full px-4 sm:px-6 md:px-8 py-16 md:py-20"
-        style={{ background: "#0A0A0F", borderTop: "1px solid #2A2A38" }}
-      >
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2
-              className="font-bold mb-2"
-              style={{
-                fontFamily: "Syne, sans-serif",
-                fontSize: "28px",
-                color: "#F0F0F8",
-                letterSpacing: "-0.5px",
-              }}
-            >
-              ¿Cómo funciona Nexora?
-            </h2>
-            <p style={{ color: "#9090A8", fontSize: "14px" }}>
-              Simple, rápido y seguro — en 3 pasos
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
-            {[
-              {
-                icon: <FileText size={22} color="#6C63FF" />,
-                n: "01",
-                title: "Publica tu solicitud",
-                desc: "Describe el servicio que necesitas, tu presupuesto y dónde lo necesitas. Gratis y en menos de 2 minutos.",
-              },
-              {
-                icon: <Users size={22} color="#6C63FF" />,
-                n: "02",
-                title: "Recibe postulantes",
-                desc: "Los trabajadores independientes de tu zona ven tu solicitud y se postulan con su precio y experiencia.",
-              },
-              {
-                icon: <CheckCircle size={22} color="#6C63FF" />,
-                n: "03",
-                title: "Elige y coordina",
-                desc: "Revisa los perfiles, chatea con los candidatos y contrata al que mejor se adapte.",
-              },
-            ].map((item) => (
+              
+          {/* Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-16">
+            {CARDS.map((c) => (
               <div
-                key={item.title}
-                className="relative rounded-2xl p-7 overflow-hidden"
-                style={{ background: "#111118", border: "1px solid #2A2A38" }}
-              >
-                <div
-                  className="absolute top-0 right-4 font-extrabold leading-none select-none"
-                  style={{
-                    fontFamily: "Syne, sans-serif",
-                    fontSize: "80px",
-                    color: "#2A2A38",
-                  }}
-                >
-                  {item.n}
-                </div>
-                <div className="relative">
-                  <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-                    style={{ background: "#6C63FF22" }}
-                  >
-                    {item.icon}
-                  </div>
-                  <h3
-                    className="font-bold mb-2"
-                    style={{
-                      fontFamily: "Syne, sans-serif",
-                      fontSize: "16px",
-                      color: "#F0F0F8",
-                    }}
-                  >
-                    {item.title}
-                  </h3>
-                  <p
-                    className="text-sm leading-relaxed"
-                    style={{ color: "#9090A8" }}
-                  >
-                    {item.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* parte 3 - conectando talento */}
-      <section
-        className="w-full px-4 sm:px-6 md:px-8 py-16 md:py-20"
-        style={{ background: "#0A0A0F", borderTop: "1px solid #2A2A38" }}
-      >
-        <div className="max-w-5xl mx-auto">
-          <h2
-            className="font-bold mb-1"
-            style={{
-              fontFamily: "Syne, sans-serif",
-              fontSize: "clamp(22px, 4vw, 28px)",
-              color: "#F0F0F8",
-              letterSpacing: "-0.5px",
-            }}
-          >
-            Conectando talento
-          </h2>
-          <h2
-            className="font-bold mb-10 md:mb-12"
-            style={{
-              fontFamily: "Syne, sans-serif",
-              fontSize: "clamp(22px, 4vw, 28px)",
-              color: "#6C63FF",
-              letterSpacing: "-0.5px",
-            }}
-          >
-            Construyendo confianza
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
-            {[
-              {
-                icon: <Shield size={22} color="#6C63FF" />,
-                title: "Seguridad ante todo",
-                desc: "Cada especialista pasa por un proceso de verificación de antecedentes y habilidades. Tu hogar merece lo mejor.",
-              },
-              {
-                icon: <Globe size={22} color="#6C63FF" />,
-                title: "Impulso local",
-                desc: "Empoderamos a los trabajadores de San Juan de Lurigancho, brindándoles herramientas digitales para crecer.",
-              },
-              {
-                icon: <Gem size={22} color="#6C63FF" />,
-                title: "Transparencia total",
-                desc: "Sin sorpresas ni costos ocultos. Cotiza, compara y paga solo cuando el trabajo esté terminado.",
-              },
-            ].map((item) => (
-              <div
-                key={item.title}
-                className="rounded-2xl p-6"
+                key={c.title}
+                className="rounded-2xl p-6 text-left"
                 style={{ background: "#111118", border: "1px solid #2A2A38" }}
               >
                 <div
                   className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-                  style={{ background: "#6C63FF22" }}
+                  style={{
+                    background: "linear-gradient(135deg, #7c3aed, #6c63ff)",
+                  }}
                 >
-                  {item.icon}
+                  {c.icon}
                 </div>
                 <h3
-                  className="font-bold text-sm mb-2"
-                  style={{ fontFamily: "Syne, sans-serif", color: "#F0F0F8" }}
+                  className="font-bold mb-2 text-white"
+                  style={{ fontFamily: "Syne, sans-serif", fontSize: "15px" }}
                 >
-                  {item.title}
+                  {c.title}
                 </h3>
                 <p
                   className="text-sm leading-relaxed"
-                  style={{ color: "#9090A8" }}
+                  style={{
+                    color: "#9090A8",
+                    fontFamily: "DM Sans, sans-serif",
+                  }}
                 >
-                  {item.desc}
+                  {c.desc}
                 </p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* parte 4 - nuevo estándar */}
-      <section
-        className="w-full px-4 sm:px-6 md:px-8 py-16 md:py-20"
-        style={{ background: "#0A0A0F", borderTop: "1px solid #2A2A38" }}
-      >
-        <div
-          className="max-w-5xl mx-auto rounded-2xl p-6 sm:p-8 md:p-10 flex flex-col md:flex-row gap-6 md:gap-8 items-center"
-          style={{ background: "#6C63FF" }}
-        >
-          <img
-            src="images/persona-1.webp"
-            alt="personas"
-            className="rounded-2xl object-cover w-full md:w-72 shrink-0"
-            style={{ height: "200px" }}
-          />
-          <div>
-            <h3
-              className="font-bold text-lg mb-3 text-white"
-              style={{ fontFamily: "Syne, sans-serif" }}
-            >
-              Un nuevo estándar para SJL
-            </h3>
-            <p
-              className="text-sm leading-relaxed mb-5"
-              style={{ color: "rgba(255,255,255,0.85)" }}
-            >
-              Estamos dando los primeros pasos para profesionalizar los
-              microservicios en el distrito. Al centralizar la oferta de
-              gasfitería, pintura y electricidad en un solo lugar, facilitamos
-              la vida del vecino.
-            </p>
-            <button
-              className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all w-full sm:w-auto"
-              style={{
-                background: "rgba(0,0,0,0.3)",
-                border: "1px solid rgba(255,255,255,0.2)",
-              }}
-            >
-              Únete como experto
-            </button>
+            <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 h-px bg-[#2A2A38] my-16"></div>
+          {/* Categorías Populares */}
+          <h2
+            className="font-bold text-center mb-6"
+            style={{
+              fontFamily: "Syne, sans-serif",
+              fontSize: "22px",
+              color: "#F0F0F8",
+            }}
+          >
+            Categorías Populares
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-16">
+            {CATEGORIAS.map((cat) => (
+              <Link
+                key={cat}
+                href="/FeedTrabajos"
+                className="rounded-xl px-4 py-3 text-center text-sm font-medium transition-all duration-200"
+                style={{
+                  background: "#111118",
+                  border: "1px solid #2A2A38",
+                  color: "#9090A8",
+                  fontFamily: "DM Sans, sans-serif",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#6C63FF18";
+                  e.currentTarget.style.borderColor = "#6C63FF55";
+                  e.currentTarget.style.color = "#A8A3FF";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#111118";
+                  e.currentTarget.style.borderColor = "#2A2A38";
+                  e.currentTarget.style.color = "#9090A8";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                {cat}
+              </Link>
+            ))}
           </div>
-        </div>
-      </section>
-
-      {/* parte 5 - frase */}
-      <section
-        className="w-full px-4 sm:px-6 md:px-8 py-16 md:py-20"
-        style={{ background: "#0A0A0F", borderTop: "1px solid #2A2A38" }}
-      >
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-12 items-center">
-          <img
-            src="images/tecnologia-1.webp"
-            alt="Tecnología"
-            className="w-full md:w-1/2 rounded-2xl object-cover shrink-0"
-            style={{ height: "240px" }}
-          />
-          <div>
-            <p
-              className="text-5xl mb-4"
-              style={{ color: "#6C63FF", lineHeight: 1 }}
-            >
-              "
-            </p>
-            <p
-              className="font-bold leading-snug mb-6"
-              style={{
-                fontFamily: "Syne, sans-serif",
-                fontSize: "clamp(18px, 3vw, 22px)",
-                color: "#F0F0F8",
-              }}
-            >
-              Nuestra meta es digitalizar el talento de San Juan de Lurigancho,
-              brindando herramientas modernas a los trabajadores y tranquilidad
-              a las familias del distrito.
-            </p>
-            <p className="font-bold text-sm" style={{ color: "#F0F0F8" }}>
-              El equipo
-            </p>
-            <p className="text-sm mt-1" style={{ color: "#606078" }}>
-              Estudiantes de la facultad de ingeniería de la Universidad
-              Tecnológica del Perú
-            </p>
+            <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 h-px bg-[#2A2A38] my-16"></div>
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {STATS.map((s) => (
+              <div
+                key={s.l}
+                className="rounded-2xl p-6 text-center"
+                style={{ background: "#111118", border: "1px solid #2A2A38" }}
+              >
+                <div
+                  className="font-extrabold text-3xl mb-1"
+                  style={{
+                    fontFamily: "Syne, sans-serif",
+                    background:
+                      "linear-gradient(135deg, #7c3aed, #6c63ff, #4f8ef7)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
+                  {s.n}
+                </div>
+                <div
+                  className="text-sm"
+                  style={{
+                    color: "#9090A8",
+                    fontFamily: "DM Sans, sans-serif",
+                  }}
+                >
+                  {s.l}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
