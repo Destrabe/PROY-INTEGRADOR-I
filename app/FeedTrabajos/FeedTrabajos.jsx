@@ -13,7 +13,11 @@ import SolicitudModal from "@/components/Feed/SolicitudModal";
 import Link from "next/link";
 
 const s = {
-  layout: { display: "flex", backgroundColor: "#0a0a0f", minHeight: "calc(100vh - 90px)" },
+  layout: {
+    display: "flex",
+    backgroundColor: "#0a0a0f",
+    minHeight: "calc(100vh - 90px)",
+  },
   main: { flex: 1, padding: "30px 36px" },
 
   headerRow: {
@@ -108,7 +112,6 @@ const s = {
     alignItems: "center",
     gap: "12px",
   },
-
 };
 
 function filtrar(solicitudes, filtroActivo, busqueda) {
@@ -131,10 +134,13 @@ function filtrar(solicitudes, filtroActivo, busqueda) {
 }
 
 export default function FeedTrabajos() {
-  const [user] = useAuthState(auth);
+  const [user, authLoading] = useAuthState(auth);
+  console.log("USER:", user);
 
   const { solicitudes, loading, error } = useSolicitudes();
-  const { estaPostulado, togglePostulacion, loadingId } = usePostulacion(user?.uid);
+  const { estaPostulado, togglePostulacion, loadingId } = usePostulacion(
+    user?.uid,
+  );
 
   const [filtroActivo, setFiltroActivo] = useState("Todos");
   const [busqueda, setBusqueda] = useState("");
@@ -142,12 +148,10 @@ export default function FeedTrabajos() {
 
   const solicitudesFiltradas = useMemo(
     () => filtrar(solicitudes, filtroActivo, busqueda),
-    [solicitudes, filtroActivo, busqueda]
+    [solicitudes, filtroActivo, busqueda],
   );
 
-
   const handleCancelar = async (solicitudId) => {
-
     const sol = solicitudes.find((s) => s.id === solicitudId);
     if (sol?.imageUrls?.length > 0) {
       await eliminarImagenesSolicitud(sol.imageUrls);
@@ -176,18 +180,29 @@ export default function FeedTrabajos() {
         <div style={s.headerRow}>
           <div>
             <h1 style={s.title}>Feed de trabajos</h1>
-            <p style={s.subtitle}>Encuentra solicitudes que coincidan con tus habilidades</p>
+            <p style={s.subtitle}>
+              Encuentra solicitudes que coincidan con tus habilidades
+            </p>
           </div>
           <Link
-            href={user ? "/NewRequest" : "/login"}
+            href={!authLoading && user ? "/NewRequest" : "/login"}
             style={s.publishBtn}
           >
-            <span style={s.publishBtnPlus}>+</span>
-            Publicar solicitud
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M12 2L14.09 8.26L20.5 8.27L15.32 12.14L17.4 18.4L12 14.77L6.6 18.4L8.68 12.14L3.5 8.27L9.91 8.26L12 2Z" />
+            </svg>
+
+            <span style={{ fontWeight: 700 }}>Publicar solicitud</span>
           </Link>
         </div>
 
-        {!user && (
+        {!authLoading && !user && (
           <div style={s.loginBanner}>
             <span>Inicia sesión para postularte o publicar trabajos</span>
             <a href="/login" style={{ color: "#a78bfa", fontWeight: 600 }}>
@@ -205,7 +220,9 @@ export default function FeedTrabajos() {
 
         <p style={s.count}>
           Mostrando{" "}
-          <span style={s.countBold}>{solicitudesFiltradas.length} solicitudes</span>{" "}
+          <span style={s.countBold}>
+            {solicitudesFiltradas.length} solicitudes
+          </span>{" "}
           cerca de ti
         </p>
 
@@ -224,7 +241,10 @@ export default function FeedTrabajos() {
                 : "Sé el primero en publicar una solicitud en tu zona"}
             </p>
             {!busqueda && filtroActivo === "Todos" && (
-              <Link href={user ? "/NewRequest" : "/login"} style={s.emptyBtn}>
+              <Link
+                href={!authLoading && user ? "/NewRequest" : "/login"}
+                style={s.emptyBtn}
+              >
                 + Publicar la primera solicitud
               </Link>
             )}
@@ -236,7 +256,7 @@ export default function FeedTrabajos() {
             <SolicitudCard
               key={sol.id}
               solicitud={sol}
-              currentUserId={user?.uid ?? null}
+              currentUserId={!authLoading && user ? user.uid : null}
               estaPostulado={estaPostulado}
               onToggle={handleToggle}
               loading={loadingId === sol.id}
