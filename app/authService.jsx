@@ -1,9 +1,16 @@
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 
-import { doc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDoc,
+} from "firebase/firestore";
 
 import { db } from "@/firebase/db";
 import { auth } from "@/firebase/auth";
@@ -38,7 +45,6 @@ export const registerUser = async (
 
     const uid = userCredential.user.uid;
 
-    // GUARDAR EN FIRESTORE
     await setDoc(doc(db, "users", uid), {
       uid,
       first_name: firstName,
@@ -51,5 +57,62 @@ export const registerUser = async (
     return { success: true };
   } catch (error) {
     return { success: false, error };
+  }
+};
+
+const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
+
+export const loginWithGoogle = async () => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+
+    const user = result.user;
+
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      await setDoc(userRef, {
+        uid: user.uid,
+        first_name: user.displayName?.split(" ")[0] || "",
+        last_name:
+          user.displayName?.split(" ").slice(1).join(" ") || "",
+        email: user.email,
+        rol: "cliente",
+        createdAt: new Date(),
+      });
+    }
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const loginWithGithub = async () => {
+  try {
+    const result = await signInWithPopup(auth, githubProvider);
+
+    const user = result.user;
+
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      await setDoc(userRef, {
+        uid: user.uid,
+        first_name: user.displayName?.split(" ")[0] || "",
+        last_name:
+          user.displayName?.split(" ").slice(1).join(" ") || "",
+        email: user.email,
+        rol: "cliente",
+        createdAt: new Date(),
+      });
+    }
+
+    return user;
+  } catch (error) {
+    throw error;
   }
 };

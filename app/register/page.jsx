@@ -3,7 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { registerUser, loginUser } from "../authService";
+import {
+  registerUser,
+  loginUser,
+  loginWithGoogle,
+  loginWithGithub,
+} from "../authService";  
 import { useAuth } from "@/components/AuthContext";
 
 export default function RegisterPage() {
@@ -18,8 +23,53 @@ export default function RegisterPage() {
 
   const [loading, setLoading] = useState(false);
   const [sended, setSended] = useState(false);
+  const handleGoogleRegister = async () => {
+  try {
+
+    const user = await loginWithGoogle();
+
+    login({
+      uid: user.uid,
+      email: user.email,
+      first_name: user.displayName?.split(" ")[0] || "",
+      last_name:
+        user.displayName?.split(" ").slice(1).join(" ") || "",
+      rol: "cliente",
+    });
+
+    router.push("/FeedTrabajos");
+
+  } catch (error) {
+
+    console.log("GOOGLE REGISTER ERROR:", error);
+
+  }
+};
+
+const handleGithubRegister = async () => {
+  try {
+
+    const user = await loginWithGithub();
+
+    login({
+      uid: user.uid,
+      email: user.email,
+      first_name: user.displayName || "",
+      last_name: "",
+      rol: "cliente",
+    });
+
+    router.push("/FeedTrabajos");
+
+  } catch (error) {
+
+    console.log("GITHUB REGISTER ERROR:", error);
+
+  }
+};
 
   const handleRegister = async (e) => {
+
     e.preventDefault();
 
     setSended(true);
@@ -391,6 +441,7 @@ export default function RegisterPage() {
             {/* GOOGLE */}
             <button
               type="button"
+              onClick={handleGoogleRegister}
               className="flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer hover:-translate-y-1"
               style={{
                 background: "#1A1A28",
@@ -429,6 +480,7 @@ export default function RegisterPage() {
             {/* GITHUB */}
             <button
               type="button"
+              onClick={handleGithubRegister}
               className="flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer hover:-translate-y-1"
               style={{
                 background: "#1A1A28",

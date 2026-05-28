@@ -50,15 +50,14 @@ const s = {
     flexShrink: 0,
   },
   publishBtnPlus: {
-    width: "20px",
-    height: "20px",
+    width: "22px",
+    height: "22px",
     borderRadius: "50%",
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: "rgba(255,255,255,0.18)",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "16px",
-    lineHeight: 1,
+    flexShrink: 0,
   },
   subtitle: { color: "#888", fontSize: "14px", marginBottom: "20px" },
   count: { color: "#666", fontSize: "13px", marginBottom: "16px" },
@@ -188,17 +187,28 @@ export default function FeedTrabajos() {
             href={!authLoading && user ? "/NewRequest" : "/login"}
             style={s.publishBtn}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M12 2L14.09 8.26L20.5 8.27L15.32 12.14L17.4 18.4L12 14.77L6.6 18.4L8.68 12.14L3.5 8.27L9.91 8.26L12 2Z" />
-            </svg>
+            <span style={s.publishBtnPlus}>
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ color: "#fff" }}
+              >
+                <path d="M12 5V19" />
+                <path d="M5 12H19" />
+              </svg>
+            </span>
 
-            <span style={{ fontWeight: 700 }}>Publicar solicitud</span>
+            <span style={{ fontWeight: 700 }}>
+              {!authLoading && user
+                ? "Publicar solicitud"
+                : "¡Únete como Cliente!"}
+            </span>
           </Link>
         </div>
 
