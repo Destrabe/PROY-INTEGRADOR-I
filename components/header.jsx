@@ -97,6 +97,23 @@ export default function Header() {
             </Link>
             {user && (
               <>
+                {pathname.startsWith("/trabajador") && (
+                  <Link
+                    href="/trabajador/panel"
+                    className="flex items-center gap-1.5 text-[#6c63ff] transition-colors hover:text-[#8b7cff]"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="white"
+                    >
+                      <path d="M3 13h8V3H3v10zm10 8h8V11h-8v10zM3 21h8v-6H3v6zm10-18v6h8V3h-8z" />
+                    </svg>
+                    Talent Hub
+                  </Link>
+                )}
                 <Link
                   href="/mensajes"
                   className={`flex items-center gap-1.5 transition-colors ${

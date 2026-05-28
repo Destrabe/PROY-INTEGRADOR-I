@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/auth";
 const CATEGORIAS = [
   "Desarrollo Web",
   "Diseño UI/UX",
@@ -78,6 +79,8 @@ const STATS = [
 ];
 
 export default function Hero() {
+  const [user, loading] = useAuthState(auth);
+
   return (
     <main>
       {/* HERO */}
@@ -138,7 +141,6 @@ export default function Hero() {
 
           <p
             className="text-lg mb-10 mx-auto max-w-lg leading-relaxed"
-            
             style={{
               color: "#9090A8",
               fontFamily: "DM Sans, sans-serif",
@@ -148,7 +150,7 @@ export default function Hero() {
             Conecta con profesionales verificados y obtén servicios digitales de
             calidad premium en minutos
           </p>
-            <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 h-px bg-[#2A2A38] my-16"></div>
+          <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 h-px bg-[#2A2A38] my-16"></div>
           {/* Botones */}
           <div className="flex flex-col sm:flex-row justify-center gap-3 mb-16">
             <Link
@@ -163,7 +165,7 @@ export default function Hero() {
               Explorar Servicios →
             </Link>
             <Link
-              href="/register"
+              href={!loading && user ? "/NewRequest" : "/register"}
               className="flex items-center justify-center gap-2 px-7 py-3 rounded-xl font-semibold text-sm transition-all w-full sm:w-auto hover:border-[#6C63FF] hover:text-white"
               style={{
                 background: "transparent",
@@ -175,7 +177,7 @@ export default function Hero() {
               Publicar Proyecto
             </Link>
           </div>
-              
+
           {/* Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-16">
             {CARDS.map((c) => (
@@ -210,7 +212,7 @@ export default function Hero() {
               </div>
             ))}
           </div>
-            <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 h-px bg-[#2A2A38] my-16"></div>
+          <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 h-px bg-[#2A2A38] my-16"></div>
           {/* Categorías Populares */}
           <h2
             className="font-bold text-center mb-6"
@@ -251,7 +253,7 @@ export default function Hero() {
               </Link>
             ))}
           </div>
-            <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 h-px bg-[#2A2A38] my-16"></div>
+          <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 h-px bg-[#2A2A38] my-16"></div>
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {STATS.map((s) => (

@@ -3,7 +3,15 @@ import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
 function colorAvatar(iniciales = "") {
-  const colores = ["#2d1a5e", "#0f2d1a", "#2d1a0a", "#0a1a2d", "#2d0a1a", "#1a0a2d", "#0a2d2d"];
+  const colores = [
+    "#2d1a5e",
+    "#0f2d1a",
+    "#2d1a0a",
+    "#0a1a2d",
+    "#2d0a1a",
+    "#1a0a2d",
+    "#0a2d2d",
+  ];
   let hash = 0;
   for (const c of iniciales) hash = (hash * 31 + c.charCodeAt(0)) & 0xffffffff;
   return colores[Math.abs(hash) % colores.length];
@@ -53,7 +61,13 @@ const s = {
     marginBottom: "4px",
     marginLeft: "6px",
   },
-  price: { display: "block", color: "#a78bfa", fontSize: "14px", fontWeight: 600, marginTop: "2px" },
+  price: {
+    display: "block",
+    color: "#a78bfa",
+    fontSize: "14px",
+    fontWeight: 600,
+    marginTop: "2px",
+  },
   title: {
     color: "#f0f0ff",
     fontSize: "16px",
@@ -86,7 +100,12 @@ const s = {
     marginBottom: "12px",
     border: "1px solid #1e1e30",
   },
-  chips: { display: "flex", gap: "8px", marginBottom: "16px", flexWrap: "wrap" },
+  chips: {
+    display: "flex",
+    gap: "8px",
+    marginBottom: "16px",
+    flexWrap: "wrap",
+  },
   chip: {
     backgroundColor: "#1a1a2e",
     color: "#9a9ab0",
@@ -94,7 +113,11 @@ const s = {
     fontSize: "12px",
     padding: "4px 10px",
   },
-  bottom: { display: "flex", justifyContent: "space-between", alignItems: "center" },
+  bottom: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   stats: { display: "flex", gap: "16px", color: "#555", fontSize: "13px" },
 
   btnPostular: {
@@ -149,26 +172,31 @@ const s = {
 
 export default function SolicitudCard({
   solicitud,
-  currentUserId,   // UID del usuario autenticado (null si no hay sesión)
+  currentUserId, // UID del usuario autenticado (null si no hay sesión)
   estaPostulado,
   onToggle,
   loading,
   onVerDetalle,
-  onCancelar,      // callback para cancelar/eliminar la solicitud
+  onCancelar, // callback para cancelar/eliminar la solicitud
 }) {
+  console.log(currentUserId);
   const iniciales =
     solicitud.iniciales ??
     `${solicitud.nombre?.charAt(0) ?? ""}${solicitud.nombre?.split(" ")[1]?.charAt(0) ?? ""}`.toUpperCase();
 
   const tiempoRelativo = solicitud.creadoEn
-    ? formatDistanceToNow(new Date(solicitud.creadoEn), { addSuffix: true, locale: es })
+    ? formatDistanceToNow(new Date(solicitud.creadoEn), {
+        addSuffix: true,
+        locale: es,
+      })
     : "hace un momento";
 
-  const postulado     = estaPostulado(solicitud.postulantes ?? []);
+  const postulado = estaPostulado(solicitud.postulantes ?? []);
   const totalPostulantes = solicitud.postulantes?.length ?? 0;
   const esPropietario = currentUserId && currentUserId === solicitud.userId;
-  const descLarga     = (solicitud.descripcion ?? "").length > 120;
-  const primerImagen  = solicitud.imageUrls?.[0] ?? null;
+  const esTrabajador = false;
+  const descLarga = (solicitud.descripcion ?? "").length > 120;
+  const primerImagen = solicitud.imageUrls?.[0] ?? null;
 
   return (
     <div
@@ -177,8 +205,8 @@ export default function SolicitudCard({
         borderColor: postulado
           ? "#166534"
           : esPropietario
-          ? "#2e1a5e"
-          : "#1e1e30",
+            ? "#2e1a5e"
+            : "#1e1e30",
       }}
       onClick={() => onVerDetalle(solicitud)}
     >
@@ -211,12 +239,8 @@ export default function SolicitudCard({
         </div>
 
         <div style={s.cardRight}>
-          {solicitud.urgente && (
-            <span style={s.badgeUrgente}>Urgente</span>
-          )}
-          {esPropietario && (
-            <span style={s.badgeMio}>Mi solicitud</span>
-          )}
+          {solicitud.urgente && <span style={s.badgeUrgente}>Urgente</span>}
+          {esPropietario && <span style={s.badgeMio}>Mi solicitud</span>}
           <span style={s.price}>{solicitud.precio}</span>
         </div>
       </div>
@@ -233,13 +257,13 @@ export default function SolicitudCard({
       <h2 style={s.title}>{solicitud.titulo}</h2>
 
       <p style={s.desc}>{solicitud.descripcion}</p>
-      {descLarga && (
-        <span style={s.verMas}>Ver descripción completa →</span>
-      )}
+      {descLarga && <span style={s.verMas}>Ver descripción completa →</span>}
 
       <div style={s.chips}>
         {(solicitud.tags ?? []).map((t) => (
-          <span key={t} style={s.chip}>{t}</span>
+          <span key={t} style={s.chip}>
+            {t}
+          </span>
         ))}
       </div>
 
@@ -260,17 +284,113 @@ export default function SolicitudCard({
           >
             Cancelar solicitud
           </button>
-        ) : (
-          <button
-            style={loading ? s.btnLoading : postulado ? s.btnPostulado : s.btnPostular}
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle(solicitud.id, solicitud.postulantes ?? []);
+        ) : !currentUserId ? (
+          <a
+            href="/login"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: "#500fe9",
+              color: "#fff",
+              borderRadius: "8px",
+              padding: "8px 18px",
+              fontSize: "13px",
+              fontWeight: 500,
+              textDecoration: "none",
+              fontFamily: "var(--font-dm-sans), sans-serif",
+              whiteSpace: "nowrap",
+              display: "inline-block",
             }}
-            disabled={loading}
           >
-            {loading ? "..." : postulado ? "✓ Postulado — Cancelar" : "Postularme"}
-          </button>
+            Iniciar sesión
+          </a>
+        ) : esTrabajador ? (
+          <a
+            href="/trabajador"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: "#500fe9",
+              color: "#fff",
+              borderRadius: "8px",
+              padding: "8px 18px",
+              fontSize: "13px",
+              fontWeight: 700,
+              textDecoration: "none",
+              fontFamily: "var(--font-dm-sans), sans-serif",
+              whiteSpace: "nowrap",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <span
+              style={{
+                width: "18px",
+                height: "18px",
+                borderRadius: "50%",
+                backgroundColor: "rgba(255,255,255,0.2)",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ color: "#fff" }}
+              >
+                <path d="M12 5V19" />
+                <path d="M5 12H19" />
+              </svg>
+            </span>
+            ¡Únete como trabajador!
+          </a>
+        ) : (
+          <a
+            href="/trabajador"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: "#500fe9",
+              color: "#fff",
+              borderRadius: "8px",
+              padding: "8px 18px",
+              fontSize: "13px",
+              fontWeight: 700,
+              textDecoration: "none",
+              fontFamily: "var(--font-dm-sans), sans-serif",
+              whiteSpace: "nowrap",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <span
+              style={{
+                width: "18px",
+                height: "18px",
+                borderRadius: "50%",
+                backgroundColor: "rgba(255,255,255,0.2)",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 2L15 9L22 9L16.5 13.5L18.5 21L12 16.8L5.5 21L7.5 13.5L2 9L9 9L12 2Z" />
+              </svg>
+            </span>
+            ¡Únete como trabajador!
+          </a>
         )}
       </div>
     </div>

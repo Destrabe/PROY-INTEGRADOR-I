@@ -13,7 +13,11 @@ import SolicitudModal from "@/components/Feed/SolicitudModal";
 import Link from "next/link";
 
 const s = {
-  layout: { display: "flex", backgroundColor: "#0a0a0f", minHeight: "calc(100vh - 90px)" },
+  layout: {
+    display: "flex",
+    backgroundColor: "#0a0a0f",
+    minHeight: "calc(100vh - 90px)",
+  },
   main: { flex: 1, padding: "30px 36px" },
 
   headerRow: {
@@ -46,15 +50,14 @@ const s = {
     flexShrink: 0,
   },
   publishBtnPlus: {
-    width: "20px",
-    height: "20px",
+    width: "22px",
+    height: "22px",
     borderRadius: "50%",
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: "rgba(255,255,255,0.18)",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "16px",
-    lineHeight: 1,
+    flexShrink: 0,
   },
   subtitle: { color: "#888", fontSize: "14px", marginBottom: "20px" },
   count: { color: "#666", fontSize: "13px", marginBottom: "16px" },
@@ -108,7 +111,6 @@ const s = {
     alignItems: "center",
     gap: "12px",
   },
-
 };
 
 function filtrar(solicitudes, filtroActivo, busqueda) {
@@ -131,10 +133,13 @@ function filtrar(solicitudes, filtroActivo, busqueda) {
 }
 
 export default function FeedTrabajos() {
-  const [user] = useAuthState(auth);
+  const [user, authLoading] = useAuthState(auth);
+  console.log("USER:", user);
 
   const { solicitudes, loading, error } = useSolicitudes();
-  const { estaPostulado, togglePostulacion, loadingId } = usePostulacion(user?.uid);
+  const { estaPostulado, togglePostulacion, loadingId } = usePostulacion(
+    user?.uid,
+  );
 
   const [filtroActivo, setFiltroActivo] = useState("Todos");
   const [busqueda, setBusqueda] = useState("");
@@ -142,12 +147,10 @@ export default function FeedTrabajos() {
 
   const solicitudesFiltradas = useMemo(
     () => filtrar(solicitudes, filtroActivo, busqueda),
-    [solicitudes, filtroActivo, busqueda]
+    [solicitudes, filtroActivo, busqueda],
   );
 
-
   const handleCancelar = async (solicitudId) => {
-
     const sol = solicitudes.find((s) => s.id === solicitudId);
     if (sol?.imageUrls?.length > 0) {
       await eliminarImagenesSolicitud(sol.imageUrls);
@@ -176,18 +179,40 @@ export default function FeedTrabajos() {
         <div style={s.headerRow}>
           <div>
             <h1 style={s.title}>Feed de trabajos</h1>
-            <p style={s.subtitle}>Encuentra solicitudes que coincidan con tus habilidades</p>
+            <p style={s.subtitle}>
+              Encuentra solicitudes que coincidan con tus habilidades
+            </p>
           </div>
           <Link
-            href={user ? "/NewRequest" : "/login"}
+            href={!authLoading && user ? "/NewRequest" : "/login"}
             style={s.publishBtn}
           >
-            <span style={s.publishBtnPlus}>+</span>
-            Publicar solicitud
+            <span style={s.publishBtnPlus}>
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ color: "#fff" }}
+              >
+                <path d="M12 5V19" />
+                <path d="M5 12H19" />
+              </svg>
+            </span>
+
+            <span style={{ fontWeight: 700 }}>
+              {!authLoading && user
+                ? "Publicar solicitud"
+                : "¡Únete como Cliente!"}
+            </span>
           </Link>
         </div>
 
-        {!user && (
+        {!authLoading && !user && (
           <div style={s.loginBanner}>
             <span>Inicia sesión para postularte o publicar trabajos</span>
             <a href="/login" style={{ color: "#a78bfa", fontWeight: 600 }}>
@@ -205,7 +230,9 @@ export default function FeedTrabajos() {
 
         <p style={s.count}>
           Mostrando{" "}
-          <span style={s.countBold}>{solicitudesFiltradas.length} solicitudes</span>{" "}
+          <span style={s.countBold}>
+            {solicitudesFiltradas.length} solicitudes
+          </span>{" "}
           cerca de ti
         </p>
 
@@ -224,7 +251,10 @@ export default function FeedTrabajos() {
                 : "Sé el primero en publicar una solicitud en tu zona"}
             </p>
             {!busqueda && filtroActivo === "Todos" && (
-              <Link href={user ? "/NewRequest" : "/login"} style={s.emptyBtn}>
+              <Link
+                href={!authLoading && user ? "/NewRequest" : "/login"}
+                style={s.emptyBtn}
+              >
                 + Publicar la primera solicitud
               </Link>
             )}
@@ -236,7 +266,7 @@ export default function FeedTrabajos() {
             <SolicitudCard
               key={sol.id}
               solicitud={sol}
-              currentUserId={user?.uid ?? null}
+              currentUserId={!authLoading && user ? user.uid : null}
               estaPostulado={estaPostulado}
               onToggle={handleToggle}
               loading={loadingId === sol.id}

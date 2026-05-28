@@ -5,7 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/db";
-import { loginUser } from "../authService";
+import {
+  loginUser,
+  loginWithGoogle,
+  loginWithGithub,
+} from "../authService";
 import { useAuth } from "@/components/AuthContext";
 
 export default function LoginPage() {
@@ -18,8 +22,56 @@ export default function LoginPage() {
   const [recordar, setRecordar] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const handleGoogleLogin = async () => {
+  try {
+
+    setError("");
+
+    const user = await loginWithGoogle();
+
+    login({
+      uid: user.uid,
+      email: user.email,
+      first_name: user.displayName || "",
+      last_name: "",
+      rol: "cliente",
+    });
+
+    router.push("/FeedTrabajos");
+
+  } catch (error) {
+
+    console.log("GOOGLE ERROR:", error);
+
+  }
+};
+
+const handleGithubLogin = async () => {
+  try {
+
+    setError("");
+
+    const user = await loginWithGithub();
+
+    login({
+      uid: user.uid,
+      email: user.email,
+      first_name: user.displayName || "",
+      last_name: "",
+      rol: "cliente",
+    });
+
+    router.push("/FeedTrabajos");
+
+  } catch (error) {
+
+    console.log("GITHUB ERROR:", error);
+
+  }
+};
 
   const handleSubmit = async () => {
+
     if (!email || !password) {
       setError("Completa todos los campos.");
       return;
@@ -258,6 +310,7 @@ export default function LoginPage() {
           {/* Google / GitHub */}
           <div className="grid grid-cols-2 gap-3 mb-6">
             <button
+              onClick={handleGoogleLogin}
               className="flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer"
               style={{
                 background: "#1A1A28",
@@ -277,6 +330,7 @@ export default function LoginPage() {
               Google
             </button>
             <button
+              onClick={handleGithubLogin}
               className="flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer"
               style={{
                 background: "#1A1A28",
