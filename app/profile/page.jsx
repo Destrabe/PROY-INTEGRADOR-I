@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useAuth } from "@/components/AuthContext";
 import { useEffect, useState } from "react";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function PerfilPage() {
   const { user } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const [preview, setPreview] = useState(null);
 
@@ -38,9 +40,20 @@ export default function PerfilPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white p-6 md:p-10">
-      <div className="max-w-2xl mx-auto bg-[#111118] border border-[#2A2A38] rounded-3xl p-8">
-
+    <div
+      className="min-h-screen p-6 md:p-10 transition-all"
+      style={{
+        background: "var(--bg-main)",
+        color: "var(--text-main)",
+      }}
+    >
+      <div
+        className="max-w-2xl mx-auto rounded-3xl p-8 border transition-all"
+        style={{
+          background: "var(--bg-card)",
+          borderColor: "var(--border-color)",
+        }}
+      >
         <h1
           className="text-3xl font-extrabold mb-8"
           style={{ fontFamily: "Syne, sans-serif" }}
@@ -50,9 +63,13 @@ export default function PerfilPage() {
 
         {/* FOTO */}
         <div className="flex flex-col items-center mb-10">
-
-          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#6c63ff] bg-[#1A1A26]">
-
+          <div
+            className="w-32 h-32 rounded-full overflow-hidden border-4"
+            style={{
+              borderColor: "#6c63ff",
+              background: "var(--bg-main)",
+            }}
+          >
             {preview ? (
               <img
                 src={preview}
@@ -90,6 +107,7 @@ export default function PerfilPage() {
               cursor-pointer
               text-sm
               font-semibold
+              text-white
             "
           >
             Cambiar foto
@@ -105,9 +123,13 @@ export default function PerfilPage() {
 
         {/* INFO */}
         <div className="space-y-5">
-            
           <div>
-            <p className="text-[#9090A8] text-sm mb-1">
+            <p
+              className="text-sm mb-1"
+              style={{
+                color: "var(--text-secondary)",
+              }}
+            >
               Nombre
             </p>
 
@@ -117,7 +139,12 @@ export default function PerfilPage() {
           </div>
 
           <div>
-            <p className="text-[#9090A8] text-sm mb-1">
+            <p
+              className="text-sm mb-1"
+              style={{
+                color: "var(--text-secondary)",
+              }}
+            >
               Correo
             </p>
 
@@ -127,38 +154,45 @@ export default function PerfilPage() {
           </div>
 
           <div>
-            <p className="text-[#9090A8] text-sm mb-1">
+            <p
+              className="text-sm mb-1"
+              style={{
+                color: "var(--text-secondary)",
+              }}
+            >
               Rol
             </p>
 
             <h2 className="text-lg capitalize">
               {user?.rol || "cliente"}
             </h2>
-            {user?.rol !== "trabajador" && (
-  <div className="mt-8 flex justify-center">
-    <Link
-      href="/worker"
-      className="
-        inline-flex
-        items-center
-        justify-center
-        px-6 py-3
-        rounded-xl
-        font-bold
-        text-white
-        transition-all
-        hover:scale-[1.02]
-      "
-      style={{
-        background:
-          "linear-gradient(135deg, #A855F7, #6366F1)",
-      }}
-    >
-      ¡Únete como Trabajador!
-    </Link>
-  </div>
-)}
           </div>
+
+          {/* WORKER */}
+          {user?.rol !== "trabajador" && (
+            <div className="mt-8 flex justify-center">
+              <Link
+                href="/worker"
+                className="
+                  inline-flex
+                  items-center
+                  justify-center
+                  px-6 py-3
+                  rounded-xl
+                  font-bold
+                  text-white
+                  transition-all
+                  hover:scale-[1.02]
+                "
+                style={{
+                  background:
+                    "linear-gradient(135deg, #A855F7, #6366F1)",
+                }}
+              >
+                ¡Únete como Trabajador!
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -5,6 +5,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { AuthProvider } from "@/components/AuthContext";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 const dm_sans = DM_Sans({
   weight: ["400", "600", "700"],
@@ -40,17 +42,22 @@ export default function RootLayout({ children }) {
     ${dm_sans.variable}
     ${syne.variable}
     overflow-x-hidden
-    bg-black
-    text-white
   `}
       >
-        <AuthProvider>
-          <Header />
-          {children}
-          <Footer />
-          <Analytics />
-          <SpeedInsights />
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <Header />
+
+            {children}
+
+            <Footer />
+
+            <ThemeSwitcher />
+
+            <Analytics />
+            <SpeedInsights />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
