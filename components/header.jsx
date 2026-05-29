@@ -83,17 +83,29 @@ export default function Header() {
               Explorar
             </Link>
             <Link
-              href="/nosotros"
-              className={`flex items-center gap-1.5 transition-colors ${pathname === "/nosotros" ? "text-[#6c63ff]" : "text-white hover:text-[#6c63ff]"}`}
+              href="/faq"
+              className={`flex items-center gap-1.5 transition-colors ${
+                pathname === "/faq"
+                  ? "text-[#6c63ff]"
+                  : "text-white hover:text-[#6c63ff]"
+              }`}
             >
-              <img
-                src="/svg/group-chat-svgrepo-com.svg"
-                alt=""
-                width={16}
-                height={16}
-                className="invert max-w-full h-auto"
-              />
-              Nosotros
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              FAQ
             </Link>
             {user && (
               <>
@@ -115,38 +127,42 @@ export default function Header() {
                   </Link>
                 )}
                 <Link
-                  href="/mensajes"
+                  href="/messages"
                   className={`flex items-center gap-1.5 transition-colors ${
-                    pathname === "/mensajes"
+                    pathname === "/messages"
                       ? "text-[#6c63ff]"
                       : "text-white hover:text-[#6c63ff]"
                   }`}
                 >
-                  <img
-                    src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M4 4h16v12H5.17L4 17.17V4zm2 2v7.17L6.83 12H18V6H6z"/></svg>'
-                    alt=""
-                    width={16}
-                    height={16}
-                    className="invert max-w-full h-auto"
-                  />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M4 4h16v12H5.17L4 17.17V4zm2 2v7.17L6.83 12H18V6H6z" />
+                  </svg>
                   Mensajes
                 </Link>
 
                 <Link
-                  href="/perfil"
+                  href="/profile"
                   className={`flex items-center gap-1.5 transition-colors ${
-                    pathname === "/perfil"
+                    pathname === "/profile"
                       ? "text-[#6c63ff]"
                       : "text-white hover:text-[#6c63ff]"
                   }`}
                 >
-                  <img
-                    src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5z"/></svg>'
-                    alt=""
-                    width={16}
-                    height={16}
-                    className="invert max-w-full h-auto"
-                  />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="white"
+                  >
+                    <path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5z" />
+                  </svg>
                   Perfil
                 </Link>
               </>

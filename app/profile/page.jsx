@@ -42,7 +42,7 @@ export default function PerfilPage() {
 
         <div className="mt-8">
           <Link
-            href="/trabajador"
+            href="/worker"
             className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-bold text-white transition-all hover:scale-[1.02]"
             style={{
               background: "linear-gradient(135deg, #A855F7, #6366F1)",

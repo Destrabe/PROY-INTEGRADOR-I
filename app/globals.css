@@ -48,3 +48,24 @@ main {
   overflow-x: hidden;
   width: 100%;
 }
+
+* {
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+body {
+  overflow-x: hidden;
+}

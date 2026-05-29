@@ -47,7 +47,7 @@ export default function FeedSidebar() {
         Nexora<span style={s.dot}>.</span>
       </Link>
       <p style={s.section}>Explorar</p>
-      <Link href="/FeedTrabajos" style={s.item}>Feed de trabajos</Link>
+      <div style={s.item}>Feed de trabajos</div>
     </aside>
   );
 }
