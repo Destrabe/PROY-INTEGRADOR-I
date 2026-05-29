@@ -3,10 +3,50 @@
 import Link from "next/link";
 import { useAuth } from "./AuthContext";
 import { usePathname } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { updateProfile } from "firebase/auth";
+import { auth } from "@/firebase/auth";
 
 export default function Header() {
   const { user, logout, loading } = useAuth();
+  const [profilePhoto, setProfilePhoto] = useState(null);
+  const [openMenu, setOpenMenu] = useState(false);
+  const fileInputRef = useRef(null);
   const pathname = usePathname();
+  useEffect(() => {
+    const loadPhoto = () => {
+      const savedPhoto = localStorage.getItem("profilePhoto");
+
+      if (savedPhoto) {
+        setProfilePhoto(savedPhoto);
+      }
+    };
+
+    loadPhoto();
+
+    window.addEventListener("profile-photo-updated", loadPhoto);
+
+    return () => {
+      window.removeEventListener("profile-photo-updated", loadPhoto);
+    };
+  }, []);
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const imageUrl = URL.createObjectURL(file);
+
+    try {
+      await updateProfile(auth.currentUser, {
+        photoURL: imageUrl,
+      });
+
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   if (loading) {
     return (
       <div className="font-sans w-full lg:h-[90px] text-white bg-black py-3 lg:py-0">
@@ -176,19 +216,127 @@ export default function Header() {
 
           {/* Auth */}
           {user ? (
-            <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
-              <span className="text-sm text-gray-300">
-                Hola,{" "}
-                <span className="text-white font-semibold">
-                  {user.name || user.email}
-                </span>
-              </span>
+            <div className="relative group">
               <button
-                onClick={logout}
-                className="text-white px-2.5 py-[5px] rounded-lg border border-[gray] hover:border-red-400 hover:text-red-400 transition-colors cursor-pointer"
+                className="
+        flex items-center gap-2
+        px-3 py-2
+        rounded-xl
+        border border-[#2A2A38]
+        bg-[#111118]
+        hover:border-[#6c63ff]
+        transition-all
+      "
               >
-                Cerrar sesión
+                {/* Foto perfil default */}
+                <div
+                  className="
+    w-8 h-8
+    rounded-full
+    overflow-hidden
+    border border-[#2A2A38]
+    bg-[#1A1A26]
+    flex items-center justify-center
+    shrink-0
+  "
+                >
+                  {profilePhoto ? (
+                    <img
+                      src={profilePhoto}
+                      alt="Foto perfil"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#A78BFA"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20 21a8 8 0 0 0-16 0" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  )}
+                </div>
+
+                <span className="text-sm text-gray-300">
+                  Hola,{" "}
+                  <span className="text-white font-semibold">
+                    {user.name || user.email}
+                  </span>
+                </span>
+
+                {/* Flecha */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#9090A8"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="transition-transform group-hover:rotate-180"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
               </button>
+
+              {/* Dropdown */}
+              <div
+                className="
+        absolute right-0 mt-2
+        w-44
+        rounded-xl
+        border border-[#2A2A38]
+        bg-[#111118]
+        shadow-2xl
+        opacity-0 invisible
+        group-hover:opacity-100
+        group-hover:visible
+        transition-all
+        z-50
+        overflow-hidden
+      "
+              >
+                <button
+                  onClick={logout}
+                  className="
+          w-full
+          flex items-center gap-2
+          px-4 py-3
+          text-sm
+          text-white
+          hover:bg-[#1A1A26]
+          hover:text-red-400
+          transition-colors
+        "
+                >
+                  {/* SVG logout */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                  Cerrar sesión
+                </button>
+              </div>
             </div>
           ) : (
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">

@@ -173,6 +173,7 @@ const s = {
 export default function SolicitudCard({
   solicitud,
   currentUserId, // UID del usuario autenticado (null si no hay sesión)
+  currentUserRole,
   estaPostulado,
   onToggle,
   loading,
@@ -194,7 +195,7 @@ export default function SolicitudCard({
   const postulado = estaPostulado(solicitud.postulantes ?? []);
   const totalPostulantes = solicitud.postulantes?.length ?? 0;
   const esPropietario = currentUserId && currentUserId === solicitud.userId;
-  const esTrabajador = false;
+  const esTrabajador = currentUserRole === "trabajador";
   const descLarga = (solicitud.descripcion ?? "").length > 120;
   const primerImagen = solicitud.imageUrls?.[0] ?? null;
 
@@ -302,6 +303,25 @@ export default function SolicitudCard({
             }}
           >
             Iniciar sesión
+          </a>
+        ) : !esTrabajador ? (
+          <a
+            href="/worker"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: "#500fe9",
+              color: "#fff",
+              borderRadius: "8px",
+              padding: "8px 18px",
+              fontSize: "13px",
+              fontWeight: 500,
+              textDecoration: "none",
+              fontFamily: "var(--font-dm-sans), sans-serif",
+              whiteSpace: "nowrap",
+              display: "inline-block",
+            }}
+          >
+            Únete como trabajador
           </a>
         ) : (
           <button

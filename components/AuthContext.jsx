@@ -8,15 +8,20 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
+        const savedRole =
+          localStorage.getItem(`role_${firebaseUser.uid}`) || "cliente";
+
         setUser({
           uid: firebaseUser.uid,
           name: firebaseUser.displayName || firebaseUser.email,
           email: firebaseUser.email,
+          rol: savedRole,
         });
       } else {
         setUser(null);
@@ -29,19 +34,26 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = (userData) => {
+    const role = userData.rol || "cliente";
+
+    localStorage.setItem(`role_${userData.uid}`, role);
+
     const newUser = {
       uid: userData.uid,
       name: `${userData.first_name} ${userData.last_name}`,
       email: userData.email,
-      rol: userData.rol || "cliente",
+      rol: role,
     };
+
     setUser(newUser);
   };
 
   const logout = async () => {
     await signOut(auth);
+
     setUser(null);
   };
+
   return (
     <AuthContext.Provider
       value={{
@@ -60,6 +72,7 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
+
   if (context === null) {
     return {
       user: null,
@@ -70,5 +83,6 @@ export function useAuth() {
       isAdmin: false,
     };
   }
+
   return context;
 }
