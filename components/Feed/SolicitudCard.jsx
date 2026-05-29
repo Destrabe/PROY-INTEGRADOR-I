@@ -303,94 +303,27 @@ export default function SolicitudCard({
           >
             Iniciar sesión
           </a>
-        ) : esTrabajador ? (
-          <a
-            href="/trabajador"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              backgroundColor: "#500fe9",
-              color: "#fff",
-              borderRadius: "8px",
-              padding: "8px 18px",
-              fontSize: "13px",
-              fontWeight: 700,
-              textDecoration: "none",
-              fontFamily: "var(--font-dm-sans), sans-serif",
-              whiteSpace: "nowrap",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            <span
-              style={{
-                width: "18px",
-                height: "18px",
-                borderRadius: "50%",
-                backgroundColor: "rgba(255,255,255,0.2)",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ color: "#fff" }}
-              >
-                <path d="M12 5V19" />
-                <path d="M5 12H19" />
-              </svg>
-            </span>
-            ¡Únete como trabajador!
-          </a>
         ) : (
-          <a
-            href="/trabajador"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              backgroundColor: "#500fe9",
-              color: "#fff",
-              borderRadius: "8px",
-              padding: "8px 18px",
-              fontSize: "13px",
-              fontWeight: 700,
-              textDecoration: "none",
-              fontFamily: "var(--font-dm-sans), sans-serif",
-              whiteSpace: "nowrap",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
+          <button
+            style={
+              loading
+                ? s.btnLoading
+                : postulado
+                  ? s.btnPostulado
+                  : s.btnPostular
+            }
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggle(solicitud.id, solicitud.postulantes ?? []);
             }}
+            disabled={loading}
           >
-            <span
-              style={{
-                width: "18px",
-                height: "18px",
-                borderRadius: "50%",
-                backgroundColor: "rgba(255,255,255,0.2)",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path d="M12 2L15 9L22 9L16.5 13.5L18.5 21L12 16.8L5.5 21L7.5 13.5L2 9L9 9L12 2Z" />
-              </svg>
-            </span>
-            ¡Únete como trabajador!
-          </a>
+            {loading
+              ? "..."
+              : postulado
+                ? "✓ Postulado — Cancelar"
+                : "Postularme"}
+          </button>
         )}
       </div>
     </div>
