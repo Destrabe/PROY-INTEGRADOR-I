@@ -27,10 +27,23 @@ export const metadata = {
   keywords: ["Nexora", "microservicios", "next.js"],
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
-      <body className={`${dm_sans.variable} ${syne.variable}`}>
+      <body
+        className={`
+    ${dm_sans.variable}
+    ${syne.variable}
+    overflow-x-hidden
+    bg-black
+    text-white
+  `}
+      >
         <AuthProvider>
           <Header />
           {children}

@@ -9,8 +9,8 @@ export default function Header() {
   const pathname = usePathname();
   if (loading) {
     return (
-      <div className="font-sans w-full h-[90px] text-white bg-black">
-        <div className="h-full flex items-center px-[60px]">
+      <div className="font-sans w-full lg:h-[90px] text-white bg-black py-3 lg:py-0">
+        <div className="h-full flex items-center px-4 sm:px-6 lg:px-[60px]">
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-xl bg-[#6c63ff] flex items-center justify-center text-white font-extrabold text-base">
               N
@@ -25,8 +25,8 @@ export default function Header() {
   }
 
   return (
-    <div className="font-sans w-full h-[90px] text-white bg-black">
-      <div className="h-full flex items-center justify-between px-[60px] py-0">
+    <div className="font-sans w-full lg:h-[90px] text-white bg-black py-3 lg:py-0">
+      <div className="h-full flex flex-col lg:flex-row items-center justify-between px-4 sm:px-6 lg:px-[60px] py-4 gap-4">
         {/* Logo */}
         <div className="h-full flex items-center select-none">
           <Link href="/" className="flex items-center gap-2 text-white">
@@ -53,9 +53,9 @@ export default function Header() {
           </Link>
         </div>
 
-        <div className="flex items-center gap-[20px]">
+        <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-[20px] w-full lg:w-auto">
           {/* Nav links */}
-          <div className="flex gap-[30px] text-base">
+          <div className="flex flex-wrap justify-center lg:justify-start gap-4 lg:gap-[30px] text-sm sm:text-base">
             <Link
               href="/"
               className={`flex items-center gap-1.5 transition-colors ${pathname === "/" ? "text-[#6c63ff]" : "text-white hover:text-[#6c63ff]"}`}
@@ -65,7 +65,7 @@ export default function Header() {
                 alt=""
                 width={16}
                 height={16}
-                className="invert"
+                className="invert max-w-full h-auto"
               />
               Inicio
             </Link>
@@ -78,7 +78,7 @@ export default function Header() {
                 alt=""
                 width={16}
                 height={16}
-                className="invert"
+                className="invert max-w-full h-auto"
               />
               Explorar
             </Link>
@@ -91,7 +91,7 @@ export default function Header() {
                 alt=""
                 width={16}
                 height={16}
-                className="invert"
+                className="invert max-w-full h-auto"
               />
               Nosotros
             </Link>
@@ -127,6 +127,7 @@ export default function Header() {
                     alt=""
                     width={16}
                     height={16}
+                    className="invert max-w-full h-auto"
                   />
                   Mensajes
                 </Link>
@@ -144,6 +145,7 @@ export default function Header() {
                     alt=""
                     width={16}
                     height={16}
+                    className="invert max-w-full h-auto"
                   />
                   Perfil
                 </Link>
@@ -152,13 +154,13 @@ export default function Header() {
           </div>
 
           {/* Divider */}
-          <div className="h-[30px] flex justify-center items-center">
-            <div className="w-[15px] flex justify-center items-center border-r-2 border-r-[gray] border-solid h-[16px]"></div>
+          <div className="hidden lg:flex h-[30px] justify-center items-center">
+            <div className="w-[15px] border-r-2 border-r-[gray] h-[16px]"></div>
           </div>
 
           {/* Auth */}
           {user ? (
-            <div className="flex items-center gap-[10px]">
+            <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
               <span className="text-sm text-gray-300">
                 Hola,{" "}
                 <span className="text-white font-semibold">
@@ -173,16 +175,16 @@ export default function Header() {
               </button>
             </div>
           ) : (
-            <div className="flex gap-[10px]">
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Link
                 href="/login"
-                className="text-white px-2.5 py-[5px] transition-colors hover:text-[#6c63ff]"
+                className="text-white px-4 py-2 text-center transition-colors hover:text-[#6c63ff]"
               >
                 Iniciar Sesión
               </Link>
               <Link
                 href="/register"
-                className="text-white px-2.5 py-[5px] rounded-[10px] bg-[#6c63ff] hover:bg-[#5a52d5] transition-colors"
+                className="text-white px-4 py-2 text-center rounded-[10px] bg-[#6c63ff] hover:bg-[#5a52d5] transition-colors"
               >
                 Registrarse
               </Link>
