@@ -87,7 +87,7 @@ export default function Hero() {
       {/* HERO */}
       <section
         className="w-full min-h-screen flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 py-20 relative overflow-hidden"
-        style={{ background: "#0A0A0F" }}
+        style={{ background: "var(--bg-main)" }}
       >
         <div
           className="absolute inset-0 pointer-events-none"
@@ -143,7 +143,7 @@ export default function Hero() {
           <p
             className="text-lg mb-10 mx-auto max-w-lg leading-relaxed"
             style={{
-              color: "#9090A8",
+              color: "var(--text-secondary)",
               fontFamily: "DM Sans, sans-serif",
               fontWeight: 300,
             }}
@@ -171,7 +171,7 @@ export default function Hero() {
               style={{
                 background: "transparent",
                 border: "1px solid #363648",
-                color: "#9090A8",
+                color: "var(--text-secondary)",
                 fontFamily: "DM Sans, sans-serif",
               }}
             >
@@ -204,7 +204,7 @@ export default function Hero() {
                 <p
                   className="text-sm leading-relaxed"
                   style={{
-                    color: "#9090A8",
+                    color: "var(--text-secondary)",
                     fontFamily: "DM Sans, sans-serif",
                   }}
                 >
@@ -220,7 +220,7 @@ export default function Hero() {
             style={{
               fontFamily: "Syne, sans-serif",
               fontSize: "22px",
-              color: "#F0F0F8",
+              color: "var(--text-main)",
             }}
           >
             Categorías Populares
@@ -232,9 +232,9 @@ export default function Hero() {
                 key={cat}
                 className="rounded-xl px-4 py-3 text-center text-sm font-medium transition-all duration-200"
                 style={{
-                  background: "#111118",
-                  border: "1px solid #2A2A38",
-                  color: "#9090A8",
+                  background: "var(--bg-card)",
+                  border: "1px solid var(--border-color)",
+                  color: "var(--text-secondary)",
                   fontFamily: "DM Sans, sans-serif",
                   cursor: "default",
                 }}
@@ -280,7 +280,7 @@ export default function Hero() {
                 <div
                   className="text-sm"
                   style={{
-                    color: "#9090A8",
+                    color: "var(--text-secondary)",
                     fontFamily: "DM Sans, sans-serif",
                   }}
                 >
@@ -302,13 +302,13 @@ export default function Hero() {
                 style={{
                   fontFamily: "Syne, sans-serif",
                   fontSize: "28px",
-                  color: "#F0F0F8",
+                  color: "var(--text-main)",
                   letterSpacing: "-0.5px",
                 }}
               >
                 ¿Cómo funciona Nexora?
               </h2>
-              <p style={{ color: "#9090A8", fontSize: "14px" }}>
+              <p style={{ color: "var(--text-secondary)", fontSize: "14px" }}>
                 Simple, rápido y seguro — en 3 pasos
               </p>
             </div>
@@ -404,14 +404,14 @@ export default function Hero() {
                       style={{
                         fontFamily: "Syne, sans-serif",
                         fontSize: "16px",
-                        color: "#F0F0F8",
+                        color: "var(--text-main)",
                       }}
                     >
                       {item.title}
                     </h3>
                     <p
                       className="text-sm leading-relaxed"
-                      style={{ color: "#9090A8" }}
+                      style={{ color: "var(--text-secondary)" }}
                     >
                       {item.desc}
                     </p>
@@ -433,7 +433,7 @@ export default function Hero() {
               style={{
                 fontFamily: "Syne, sans-serif",
                 fontSize: "clamp(22px, 4vw, 28px)",
-                color: "#F0F0F8",
+                color: "var(--text-main)",
                 letterSpacing: "-0.5px",
               }}
             >
@@ -522,13 +522,13 @@ export default function Hero() {
                   </div>
                   <h3
                     className="font-bold text-sm mb-2"
-                    style={{ fontFamily: "Syne, sans-serif", color: "#F0F0F8" }}
+                    style={{ fontFamily: "Syne, sans-serif", color: "var(--text-main)" }}
                   >
                     {item.title}
                   </h3>
                   <p
                     className="text-sm leading-relaxed"
-                    style={{ color: "#9090A8" }}
+                    style={{ color: "var(--text-secondary)" }}
                   >
                     {item.desc}
                   </p>
@@ -607,14 +607,14 @@ export default function Hero() {
                 style={{
                   fontFamily: "Syne, sans-serif",
                   fontSize: "clamp(18px, 3vw, 22px)",
-                  color: "#F0F0F8",
+                  color: "var(--text-main)",
                 }}
               >
                 Nuestra meta es digitalizar el talento de San Juan de
                 Lurigancho, brindando herramientas modernas a los trabajadores y
                 tranquilidad a las familias del distrito.
               </p>
-              <p className="font-bold text-sm" style={{ color: "#F0F0F8" }}>
+              <p className="font-bold text-sm" style={{ color: "var(--text-main)" }}>
                 El equipo
               </p>
               <p className="text-sm mt-1" style={{ color: "#606078" }}>

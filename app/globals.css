@@ -96,3 +96,26 @@ body {
     background 0.3s ease,
     color 0.3s ease;
 }
+
+:root[data-theme="dark"] {
+  --bg-main: #0A0A0F;
+  --bg-card: #111118;
+  --border-color: #2A2A38;
+
+  --text-main: #F0F0F8;
+  --text-secondary: #9090A8;
+
+  --accent: #6C63FF;
+}
+
+:root[data-theme="light"] {
+  --bg-main: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --border-color: #E2E8F0;
+
+  --text-main: #0F172A;
+  --text-secondary: #475569;
+
+  --accent: #6C63FF;
+}
+
