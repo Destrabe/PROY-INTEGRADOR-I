@@ -7,8 +7,8 @@ import {
   registerUser,
   loginUser,
   loginWithGoogle,
-  loginWithGithub,
-} from "../authService";  
+  loginWithFacebook,
+} from "../authService";
 import { useAuth } from "@/components/AuthContext";
 
 export default function RegisterPage() {
@@ -24,52 +24,42 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [sended, setSended] = useState(false);
   const handleGoogleRegister = async () => {
-  try {
+    try {
+      const user = await loginWithGoogle();
 
-    const user = await loginWithGoogle();
+      login({
+        uid: user.uid,
+        email: user.email,
+        first_name: user.displayName?.split(" ")[0] || "",
+        last_name: user.displayName?.split(" ").slice(1).join(" ") || "",
+        rol: "cliente",
+      });
 
-    login({
-      uid: user.uid,
-      email: user.email,
-      first_name: user.displayName?.split(" ")[0] || "",
-      last_name:
-        user.displayName?.split(" ").slice(1).join(" ") || "",
-      rol: "cliente",
-    });
+      router.push("/FeedTrabajos");
+    } catch (error) {
+      console.log("GOOGLE REGISTER ERROR:", error);
+    }
+  };
 
-    router.push("/FeedTrabajos");
+  const handleFacebookRegister = async () => {
+    try {
+      const user = await loginWithFacebook();
 
-  } catch (error) {
+      login({
+        uid: user.uid,
+        email: user.email,
+        first_name: user.displayName || "",
+        last_name: "",
+        rol: "cliente",
+      });
 
-    console.log("GOOGLE REGISTER ERROR:", error);
-
-  }
-};
-
-const handleGithubRegister = async () => {
-  try {
-
-    const user = await loginWithGithub();
-
-    login({
-      uid: user.uid,
-      email: user.email,
-      first_name: user.displayName || "",
-      last_name: "",
-      rol: "cliente",
-    });
-
-    router.push("/FeedTrabajos");
-
-  } catch (error) {
-
-    console.log("GITHUB REGISTER ERROR:", error);
-
-  }
-};
+      router.push("/FeedTrabajos");
+    } catch (error) {
+      console.log("FACEBOOK REGISTER ERROR:", error);
+    }
+  };
 
   const handleRegister = async (e) => {
-
     e.preventDefault();
 
     setSended(true);
@@ -402,13 +392,30 @@ const handleGithubRegister = async () => {
 
           {/* CHECK */}
           <div className="flex items-start gap-2 mb-6">
-            <input type="checkbox" className="mt-1" />
+            <input
+              type="checkbox"
+              className="mt-1 accent-[#A855F7]"
+            />
 
             <p className="text-sm" style={{ color: "#9090A8" }}>
               Acepto los{" "}
-              <span style={{ color: "#A855F7" }}>términos y condiciones</span> y
-              la{" "}
-              <span style={{ color: "#A855F7" }}>política de privacidad</span>
+              <Link
+                href="/terms"
+                target="_blank"
+                className="font-medium hover:underline"
+                style={{ color: "#A855F7" }}
+              >
+                términos y condiciones
+              </Link>{" "}
+              y la{" "}
+              <Link
+                href="/privacy"
+                target="_blank"
+                className="font-medium hover:underline"
+                style={{ color: "#A855F7" }}
+              >
+                política de privacidad
+              </Link>
             </p>
           </div>
 
@@ -480,7 +487,7 @@ const handleGithubRegister = async () => {
             {/* GITHUB */}
             <button
               type="button"
-              onClick={handleGithubRegister}
+              onClick={handleFacebookRegister}
               className="flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer hover:-translate-y-1"
               style={{
                 background: "#1A1A28",
@@ -495,10 +502,10 @@ const handleGithubRegister = async () => {
                 (e.currentTarget.style.borderColor = "#2A2A38")
               }
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="#F0F0F8">
-                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877F2">
+                <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073c0 6.019 4.388 11.009 10.125 11.927v-8.437H7.078v-3.49h3.047V9.413c0-3.007 1.792-4.669 4.533-4.669 1.313 0 2.686.235 2.686.235v2.953h-1.514c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.082 24 18.092 24 12.073z" />
               </svg>
-              GitHub
+              Facebook
             </button>
           </div>
 

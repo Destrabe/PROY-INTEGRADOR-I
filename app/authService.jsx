@@ -2,7 +2,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
-  GithubAuthProvider,
+  FacebookAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
 
@@ -61,7 +61,7 @@ export const registerUser = async (
 };
 
 const googleProvider = new GoogleAuthProvider();
-const githubProvider = new GithubAuthProvider();
+const facebookProvider  = new FacebookAuthProvider();
 
 export const loginWithGoogle = async () => {
   try {
@@ -90,29 +90,24 @@ export const loginWithGoogle = async () => {
   }
 };
 
-export const loginWithGithub = async () => {
-  try {
-    const result = await signInWithPopup(auth, githubProvider);
+export const loginWithFacebook = async () => {
+  const result = await signInWithPopup(auth, facebookProvider);
 
-    const user = result.user;
+  const user = result.user;
 
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
 
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        uid: user.uid,
-        first_name: user.displayName?.split(" ")[0] || "",
-        last_name:
-          user.displayName?.split(" ").slice(1).join(" ") || "",
-        email: user.email,
-        rol: "cliente",
-        createdAt: new Date(),
-      });
-    }
-
-    return user;
-  } catch (error) {
-    throw error;
+  if (!userSnap.exists()) {
+    await setDoc(userRef, {
+      uid: user.uid,
+      first_name: user.displayName?.split(" ")[0] || "",
+      last_name: user.displayName?.split(" ").slice(1).join(" ") || "",
+      email: user.email,
+      rol: "cliente",
+      createdAt: new Date(),
+    });
   }
+
+  return user;
 };
