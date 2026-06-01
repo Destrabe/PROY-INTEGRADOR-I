@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useAuth } from "./AuthContext";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function Header() {
   const { user, logout, loading } = useAuth();
@@ -120,10 +121,7 @@ export default function Header() {
               href="/"
               className="flex items-center gap-1.5 transition-all hover:text-[#6c63ff]"
               style={{
-                color:
-                  pathname === "/"
-                    ? "#6c63ff"
-                    : "var(--text-main)",
+                color: pathname === "/" ? "#6c63ff" : "var(--text-main)",
               }}
             >
               <svg
@@ -135,7 +133,6 @@ export default function Header() {
               >
                 <path d="M12 3l9 8h-3v9h-5v-6H11v6H6v-9H3z" />
               </svg>
-
               Inicio
             </Link>
 
@@ -145,9 +142,7 @@ export default function Header() {
               className="flex items-center gap-1.5 transition-all hover:text-[#6c63ff]"
               style={{
                 color:
-                  pathname === "/FeedTrabajos"
-                    ? "#6c63ff"
-                    : "var(--text-main)",
+                  pathname === "/FeedTrabajos" ? "#6c63ff" : "var(--text-main)",
               }}
             >
               <svg
@@ -159,7 +154,6 @@ export default function Header() {
               >
                 <path d="M10 2a8 8 0 105.293 14.293l4.707 4.707 1.414-1.414-4.707-4.707A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z" />
               </svg>
-
               Explorar
             </Link>
 
@@ -168,10 +162,7 @@ export default function Header() {
               href="/faq"
               className="flex items-center gap-1.5 transition-all hover:text-[#6c63ff]"
               style={{
-                color:
-                  pathname === "/faq"
-                    ? "#6c63ff"
-                    : "var(--text-main)",
+                color: pathname === "/faq" ? "#6c63ff" : "var(--text-main)",
               }}
             >
               <svg
@@ -187,7 +178,6 @@ export default function Header() {
                 <path d="M9.09 9a3 3 0 015.82 1c0 2-3 3-3 3" />
                 <line x1="12" y1="17" x2="12.01" y2="17" />
               </svg>
-
               FAQ
             </Link>
 
@@ -199,9 +189,7 @@ export default function Header() {
                   className="flex items-center gap-1.5 transition-all hover:text-[#6c63ff]"
                   style={{
                     color:
-                      pathname === "/messages"
-                        ? "#6c63ff"
-                        : "var(--text-main)",
+                      pathname === "/messages" ? "#6c63ff" : "var(--text-main)",
                   }}
                 >
                   <svg
@@ -213,32 +201,31 @@ export default function Header() {
                   >
                     <path d="M4 4h16v12H5.17L4 17.17V4zm2 2v7.17L6.83 12H18V6H6z" />
                   </svg>
-
                   Mensajes
                 </Link>
 
-                {/* PERFIL */}
+                {/* CONFIGURACIÓN */}
                 <Link
-                  href="/profile"
+                  href="/configuration"
                   className="flex items-center gap-1.5 transition-all hover:text-[#6c63ff]"
                   style={{
                     color:
-                      pathname === "/profile"
-                        ? "#6c63ff"
-                        : "var(--text-main)",
+                      pathname === "/configuration" ? "#6c63ff" : "var(--text-main)",
                   }}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
                     height="16"
-                    fill="currentColor"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
                     viewBox="0 0 24 24"
                   >
-                    <path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5z" />
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c0 .67.39 1.28 1 1.51H21a2 2 0 1 1 0 4h-.09c-.67 0-1.28.39-1.51 1z" />
                   </svg>
-
-                  Perfil
+                  Configuración
                 </Link>
               </>
             )}
@@ -358,7 +345,6 @@ export default function Header() {
                     <polyline points="16 17 21 12 16 7" />
                     <line x1="21" y1="12" x2="9" y2="12" />
                   </svg>
-
                   Cerrar sesión
                 </button>
               </div>

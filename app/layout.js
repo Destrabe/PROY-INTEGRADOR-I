@@ -6,7 +6,6 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { AuthProvider } from "@/components/AuthContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 const dm_sans = DM_Sans({
   weight: ["400", "600", "700"],
@@ -51,8 +50,6 @@ export default function RootLayout({ children }) {
             {children}
 
             <Footer />
-
-            <ThemeSwitcher />
 
             <Analytics />
             <SpeedInsights />
