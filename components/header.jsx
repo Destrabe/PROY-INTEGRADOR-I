@@ -5,9 +5,17 @@ import { useAuth } from "./AuthContext";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useTheme } from "@/components/ThemeProvider";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const { user, logout, loading } = useAuth();
+
+  const router = useRouter();
+
+  const handleLogout = async () => {
+  await logout();
+  router.push("/");
+};
 
   const [profilePhoto, setProfilePhoto] = useState(null);
 
@@ -332,7 +340,7 @@ export default function Header() {
                 }}
               >
                 <button
-                  onClick={logout}
+                  onClick={handleLogout}
                   className="w-full flex items-center gap-2 px-4 py-3 text-sm transition-all hover:text-red-400"
                   style={{
                     color: "var(--text-main)",
