@@ -49,7 +49,6 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    localStorage.clear();
     await signOut(auth);
     setUser(null);
   };

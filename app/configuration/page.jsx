@@ -13,12 +13,14 @@ export default function ConfigurationPage() {
   const [preview, setPreview] = useState(null);
 
   useEffect(() => {
-    const savedPhoto = localStorage.getItem("profilePhoto");
+    if (!user?.uid) return;
+
+    const savedPhoto = localStorage.getItem(`profilePhoto_${user.uid}`);
 
     if (savedPhoto) {
       setPreview(savedPhoto);
     }
-  }, []);
+  }, [user]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -30,7 +32,7 @@ export default function ConfigurationPage() {
     reader.onloadend = () => {
       const imageBase64 = reader.result;
 
-      localStorage.setItem("profilePhoto", imageBase64);
+      localStorage.setItem(`profilePhoto_${user.uid}`, imageBase64);
 
       setPreview(imageBase64);
 
@@ -67,10 +69,8 @@ export default function ConfigurationPage() {
             onClick={() => setTab("perfil")}
             className="px-4 py-2 rounded-xl transition-all"
             style={{
-              background:
-                tab === "perfil" ? "#6c63ff" : "var(--bg-main)",
-              color:
-                tab === "perfil" ? "#fff" : "var(--text-main)",
+              background: tab === "perfil" ? "#6c63ff" : "var(--bg-main)",
+              color: tab === "perfil" ? "#fff" : "var(--text-main)",
               border: "1px solid var(--border-color)",
             }}
           >
@@ -81,14 +81,8 @@ export default function ConfigurationPage() {
             onClick={() => setTab("apariencia")}
             className="px-4 py-2 rounded-xl transition-all"
             style={{
-              background:
-                tab === "apariencia"
-                  ? "#6c63ff"
-                  : "var(--bg-main)",
-              color:
-                tab === "apariencia"
-                  ? "#fff"
-                  : "var(--text-main)",
+              background: tab === "apariencia" ? "#6c63ff" : "var(--bg-main)",
+              color: tab === "apariencia" ? "#fff" : "var(--text-main)",
               border: "1px solid var(--border-color)",
             }}
           >
@@ -132,7 +126,6 @@ export default function ConfigurationPage() {
 
               <label className="mt-5 px-5 py-2.5 rounded-xl bg-[#6c63ff] hover:bg-[#5a52d5] cursor-pointer text-white">
                 Cambiar foto
-
                 <input
                   type="file"
                   accept="image/png,image/jpeg,image/webp"
@@ -153,9 +146,7 @@ export default function ConfigurationPage() {
                   Nombre
                 </p>
 
-                <h2 className="text-xl font-bold">
-                  {user?.name || "Usuario"}
-                </h2>
+                <h2 className="text-xl font-bold">{user?.name || "Usuario"}</h2>
               </div>
 
               <div>
@@ -168,9 +159,7 @@ export default function ConfigurationPage() {
                   Correo
                 </p>
 
-                <h2 className="text-lg">
-                  {user?.email || "Sin correo"}
-                </h2>
+                <h2 className="text-lg">{user?.email || "Sin correo"}</h2>
               </div>
 
               <div>
@@ -183,9 +172,7 @@ export default function ConfigurationPage() {
                   Rol
                 </p>
 
-                <h2 className="text-lg capitalize">
-                  {user?.rol || "cliente"}
-                </h2>
+                <h2 className="text-lg capitalize">{user?.rol || "cliente"}</h2>
               </div>
 
               {user?.rol !== "trabajador" && (
@@ -194,8 +181,7 @@ export default function ConfigurationPage() {
                     href="/worker"
                     className="px-6 py-3 rounded-xl font-bold text-white"
                     style={{
-                      background:
-                        "linear-gradient(135deg,#A855F7,#6366F1)",
+                      background: "linear-gradient(135deg,#A855F7,#6366F1)",
                     }}
                   >
                     ¡Únete como Trabajador!
@@ -208,23 +194,15 @@ export default function ConfigurationPage() {
 
         {tab === "apariencia" && (
           <div>
-            <h2 className="text-xl font-bold mb-5">
-              Apariencia
-            </h2>
+            <h2 className="text-xl font-bold mb-5">Apariencia</h2>
 
             <div className="flex gap-3">
               <button
                 onClick={() => setTheme("light")}
                 className="px-5 py-3 rounded-xl"
                 style={{
-                  background:
-                    theme === "light"
-                      ? "#6c63ff"
-                      : "var(--bg-main)",
-                  color:
-                    theme === "light"
-                      ? "#fff"
-                      : "var(--text-main)",
+                  background: theme === "light" ? "#6c63ff" : "var(--bg-main)",
+                  color: theme === "light" ? "#fff" : "var(--text-main)",
                   border: "1px solid var(--border-color)",
                 }}
               >
@@ -235,14 +213,8 @@ export default function ConfigurationPage() {
                 onClick={() => setTheme("dark")}
                 className="px-5 py-3 rounded-xl"
                 style={{
-                  background:
-                    theme === "dark"
-                      ? "#6c63ff"
-                      : "var(--bg-main)",
-                  color:
-                    theme === "dark"
-                      ? "#fff"
-                      : "var(--text-main)",
+                  background: theme === "dark" ? "#6c63ff" : "var(--bg-main)",
+                  color: theme === "dark" ? "#fff" : "var(--text-main)",
                   border: "1px solid var(--border-color)",
                 }}
               >

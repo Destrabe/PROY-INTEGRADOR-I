@@ -14,11 +14,15 @@ export default function Header() {
   const pathname = usePathname();
 
   useEffect(() => {
+    if (!user?.uid) return;
+
     const loadPhoto = () => {
-      const savedPhoto = localStorage.getItem("profilePhoto");
+      const savedPhoto = localStorage.getItem(`profilePhoto_${user.uid}`);
 
       if (savedPhoto) {
         setProfilePhoto(savedPhoto);
+      } else {
+        setProfilePhoto(null);
       }
     };
 
@@ -29,7 +33,7 @@ export default function Header() {
     return () => {
       window.removeEventListener("profile-photo-updated", loadPhoto);
     };
-  }, []);
+  }, [user]);
 
   if (loading) {
     return (
@@ -210,7 +214,9 @@ export default function Header() {
                   className="flex items-center gap-1.5 transition-all hover:text-[#6c63ff]"
                   style={{
                     color:
-                      pathname === "/configuration" ? "#6c63ff" : "var(--text-main)",
+                      pathname === "/configuration"
+                        ? "#6c63ff"
+                        : "var(--text-main)",
                   }}
                 >
                   <svg
