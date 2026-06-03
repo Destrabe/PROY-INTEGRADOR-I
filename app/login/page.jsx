@@ -31,16 +31,17 @@ export default function LoginPage() {
         last_name: "",
         rol: "cliente",
       });
-      router.push("/FeedTrabajos");
+      router.push("/");
     } catch (error) {
       console.log("GOOGLE ERROR:", error);
+      setError("Error al iniciar sesión con Google.");
     }
   };
 
-  const handleGithubLogin = async () => {
+  const handleFacebookLogin = async () => {
     try {
       setError("");
-      const user = await loginWithGithub();
+      const user = await loginWithFacebook();
       login({
         uid: user.uid,
         email: user.email,
@@ -48,9 +49,17 @@ export default function LoginPage() {
         last_name: "",
         rol: "cliente",
       });
-      router.push("/FeedTrabajos");
+
+      router.push("/");
     } catch (error) {
-      console.log("GITHUB ERROR:", error);
+      console.log("FACEBOOK ERROR:", error);
+      if (error.code === "auth/account-exists-with-different-credential") {
+        setError(
+          "Ya existe una cuenta con este correo asociada a otro proveedor.",
+        );
+      } else {
+        setError("Error al iniciar sesión con Facebook.");
+      }
     }
   };
 
@@ -71,7 +80,7 @@ export default function LoginPage() {
       const esAdmin = rolReal === "admin";
 
       if (tipo === "admin" && !esAdmin) {
-        setError("No tienes permisos de administrador.");
+        setError("No tienes permisos");
         setLoading(false);
         return;
       }
@@ -239,21 +248,21 @@ export default function LoginPage() {
                 src="/svg/google.svg"
                 alt="Google"
                 className="object-contain"
-                width={16} 
+                width={16}
                 height={16}
               />
               Google
             </button>
             <button
               type="button"
-              onClick={handleGithubLogin}
+              onClick={handleFacebookLogin}
               className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all duration-200 bg-[#1A1A28] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6C63FF] cursor-pointer font-body"
             >
               <Image
                 src="/svg/facebook.svg"
                 alt="facebook"
                 className="object-contain"
-                width={16} 
+                width={16}
                 height={16}
               />
               Facebook
