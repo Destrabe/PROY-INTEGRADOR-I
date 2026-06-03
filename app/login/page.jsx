@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/db";
-import { loginUser, loginWithGoogle, loginWithFacebook } from "../authService";
+import { loginUser, loginWithGoogle, loginWithFacebook } from "@/firebase/auth";
 import { useAuth } from "@/components/AuthContext";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,12 +19,11 @@ export default function LoginPage() {
   const [recordar, setRecordar] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const handleGoogleLogin = async () => {
     try {
       setError("");
-
       const user = await loginWithGoogle();
-
       login({
         uid: user.uid,
         email: user.email,
@@ -31,19 +31,17 @@ export default function LoginPage() {
         last_name: "",
         rol: "cliente",
       });
-
-      router.push("/FeedTrabajos");
+      router.push("/");
     } catch (error) {
       console.log("GOOGLE ERROR:", error);
+      setError("Error al iniciar sesión con Google.");
     }
   };
 
   const handleFacebookLogin = async () => {
     try {
       setError("");
-
-      const user = await handleFacebookLogin();
-
+      const user = await loginWithFacebook();
       login({
         uid: user.uid,
         email: user.email,
@@ -52,9 +50,16 @@ export default function LoginPage() {
         rol: "cliente",
       });
 
-      router.push("/FeedTrabajos");
+      router.push("/");
     } catch (error) {
-      console.log("GITHUB ERROR:", error);
+      console.log("FACEBOOK ERROR:", error);
+      if (error.code === "auth/account-exists-with-different-credential") {
+        setError(
+          "Ya existe una cuenta con este correo asociada a otro proveedor.",
+        );
+      } else {
+        setError("Error al iniciar sesión con Facebook.");
+      }
     }
   };
 
@@ -75,7 +80,7 @@ export default function LoginPage() {
       const esAdmin = rolReal === "admin";
 
       if (tipo === "admin" && !esAdmin) {
-        setError("No tienes permisos de administrador.");
+        setError("No tienes permisos");
         setLoading(false);
         return;
       }
@@ -103,120 +108,28 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4 py-12"
-      style={{ background: "#0A0A0F" }}
-    >
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="flex flex-col items-center mb-8">
-          <div
-            className="w-12 h-12 rounded-xl flex items-center justify-center mb-3 font-extrabold text-white text-lg"
-            style={{
-              background: "linear-gradient(135deg, #6C63FF, #9B59B6)",
-              fontFamily: "Syne, sans-serif",
-            }}
-          >
-            N
-          </div>
-          <span
-            className="font-extrabold text-xl"
-            style={{ fontFamily: "Syne, sans-serif", color: "#6C63FF" }}
-          >
-            Nexora
-          </span>
-        </div>
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-[#0A0A0F] font-body text-[#f0f0f5] relative overflow-hidden selection:bg-[#635bff]/30">
+      {/* Luces de fondo (Efecto Glow) */}
+      <div className="absolute top-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full bg-[#635bff]/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] rounded-full bg-[#9b59b6]/10 blur-[120px] pointer-events-none" />
 
-        {/* Card */}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmit();
-          }}
-          className="rounded-2xl p-8"
-          style={{ background: "#111118", border: "1px solid #2A2A38" }}
-        >
-          <h1
-            className="font-extrabold text-2xl mb-1 text-center"
-            style={{ fontFamily: "Syne, sans-serif", color: "#F0F0F8" }}
-          >
+      <div className="w-full max-w-[480px] animate-[cardIn_0.5s_cubic-bezier(0.22,1,0.36,1)_both] z-10">
+        {/* Card Principal */}
+        <div className="rounded-2xl p-6 sm:p-8 bg-[#111118] border border-[#2A2A38] shadow-[0_24px_64px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.05)]">
+          <h1 className="font-extrabold text-2xl sm:text-3xl mb-1 text-center font-display text-[#F0F0F8] tracking-tight">
             Bienvenido de nuevo
           </h1>
-          <p className="text-sm text-center mb-6" style={{ color: "#9090A8" }}>
+          <p className="text-sm text-center mb-6 text-[#9090A8]">
             Inicia sesión en tu cuenta
           </p>
 
-          {/* Tipo de cuenta */}
-          <div className="mb-5">
-            <label
-              className="text-xs font-semibold mb-2 block"
-              style={{ color: "#9090A8" }}
-            >
-              Tipo de cuenta
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => setTipo("usuario")}
-                className="flex flex-col items-center gap-2 py-4 rounded-xl border transition-all cursor-pointer"
-                style={{
-                  background: tipo === "usuario" ? "#6C63FF22" : "#1A1A28",
-                  borderColor: tipo === "usuario" ? "#6C63FF" : "#2A2A38",
-                  color: tipo === "usuario" ? "#fff" : "#9090A8",
-                }}
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-                <span className="text-sm font-bold">Usuario</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setTipo("admin")}
-                className="flex flex-col items-center gap-2 py-4 rounded-xl border transition-all cursor-pointer"
-                style={{
-                  background: tipo === "admin" ? "#6C63FF22" : "#1A1A28",
-                  borderColor: tipo === "admin" ? "#6C63FF" : "#2A2A38",
-                  color: tipo === "admin" ? "#fff" : "#9090A8",
-                }}
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-                <span className="text-sm font-bold">Administrador</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Email */}
-          <div className="mb-4">
-            <label
-              className="text-xs font-semibold mb-2 block"
-              style={{ color: "#9090A8" }}
-            >
+          {/* Campo Email */}
+          <div className="mb-4 flex flex-col gap-2">
+            <label className="text-sm font-bold text-[#9090A8] font-body">
               Correo electrónico
             </label>
             <div className="relative">
-              <span
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "#606078" }}
-              >
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#606078]">
                 <svg
                   width="16"
                   height="16"
@@ -235,32 +148,18 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                className="w-full pl-9 pr-4 py-3 rounded-xl text-sm outline-none transition-all"
-                style={{
-                  background: "#1A1A28",
-                  border: "1px solid #2A2A38",
-                  color: "#F0F0F8",
-                  fontFamily: "DM Sans, sans-serif",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "#6C63FF")}
-                onBlur={(e) => (e.target.style.borderColor = "#2A2A38")}
+                className="w-full h-[52px] pl-9 pr-4 py-3 bg-[#22222C] border-2 border-white/10 rounded-xl text-sm font-light text-[#F0F0F8] outline-none placeholder:text-[#5a5a6a] transition-all duration-200 focus:border-[#635bff]/60 focus:bg-[#1a1a22] focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body"
               />
             </div>
           </div>
 
-          {/* Contraseña */}
-          <div className="mb-4">
-            <label
-              className="text-xs font-semibold mb-2 block"
-              style={{ color: "#9090A8" }}
-            >
+          {/* Campo Contraseña */}
+          <div className="mb-4 flex flex-col gap-2">
+            <label className="text-sm font-bold text-[#9090A8] font-body">
               Contraseña
             </label>
             <div className="relative">
-              <span
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "#606078" }}
-              >
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#606078]">
                 <svg
                   width="16"
                   height="16"
@@ -279,150 +178,108 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                className="w-full pl-9 pr-4 py-3 rounded-xl text-sm outline-none transition-all"
-                style={{
-                  background: "#1A1A28",
-                  border: "1px solid #2A2A38",
-                  color: "#F0F0F8",
-                  fontFamily: "DM Sans, sans-serif",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "#6C63FF")}
-                onBlur={(e) => (e.target.style.borderColor = "#2A2A38")}
+                className="w-full h-[52px] pl-9 pr-4 py-3 bg-[#22222C] border-2 border-white/10 rounded-xl text-sm font-light text-[#F0F0F8] outline-none placeholder:text-[#5a5a6a] transition-all duration-200 focus:border-[#635bff]/60 focus:bg-[#1a1a22] focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body"
               />
             </div>
           </div>
 
-          {/* Recordarme + olvidé */}
-          <div className="flex items-center justify-between mb-5">
-            <label className="flex items-center gap-2 cursor-pointer">
+          {/* Opciones extras (Recordarme / Recuperar) */}
+          <div className="flex items-center justify-between mb-6 mt-4">
+            <label className="flex items-center gap-2 cursor-pointer group">
               <input
                 type="checkbox"
                 checked={recordar}
                 onChange={(e) => setRecordar(e.target.checked)}
-                className="w-4 h-4 rounded accent-[#6C63FF]"
+                className="w-4 h-4 rounded accent-[#6C63FF] bg-[#1A1A28] border-[#2A2A38]"
               />
-              <span className="text-sm" style={{ color: "#9090A8" }}>
+              <span className="text-sm text-[#9090A8] group-hover:text-[#F0F0F8] transition-colors font-body">
                 Recordarme
               </span>
             </label>
             <Link
               href="/forgot-password"
-              className="text-sm"
-              style={{ color: "#6C63FF" }}
+              className="text-sm font-bold text-[#6C63FF] hover:text-[#7b75ff] transition-colors font-body"
             >
               ¿Olvidaste tu contraseña?
             </Link>
           </div>
 
-          {/* Error */}
+          {/* Alerta de Error */}
           {error && (
-            <p className="text-red-400 text-sm text-center mb-4">{error}</p>
+            <p className="text-red-400 text-sm text-center mb-4 bg-red-500/10 py-2.5 px-4 rounded-xl border border-red-500/20">
+              {error}
+            </p>
           )}
 
-          {/* Botón */}
+          {/* Botón Iniciar Sesión */}
           <button
-            type="submit"
+            type="button"
+            onClick={handleSubmit}
             disabled={loading}
-            className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all mb-4 cursor-pointer"
-            style={{
-              background: "linear-gradient(135deg, #6C63FF, #9B59B6)",
-              fontFamily: "DM Sans, sans-serif",
-              opacity: loading ? 0.7 : 1,
-            }}
+            className="w-full h-[52px] rounded-xl text-sm font-bold text-white transition-all duration-200 bg-gradient-to-br from-[#6C63FF] to-[#9B59B6] hover:shadow-[0_0_32px_rgba(99,91,255,0.4)] hover:-translate-y-[1px] active:translate-y-0 disabled:pointer-events-none disabled:opacity-70 flex items-center justify-center gap-2 cursor-pointer font-body"
           >
             {loading ? (
-              <div className="flex items-center justify-center gap-2">
+              <>
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 Iniciando sesión...
-              </div>
+              </>
             ) : (
               "Iniciar Sesión"
             )}
           </button>
 
           {/* Divisor */}
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex-1 h-px" style={{ background: "#2A2A38" }} />
-            <span className="text-xs" style={{ color: "#606078" }}>
+          <div className="flex items-center gap-3 my-5">
+            <div className="flex-1 h-px bg-[#2A2A38]" />
+            <span className="text-xs text-[#606078] uppercase tracking-wider font-semibold">
               O continúa con
             </span>
-            <div className="flex-1 h-px" style={{ background: "#2A2A38" }} />
+            <div className="flex-1 h-px bg-[#2A2A38]" />
           </div>
 
-          {/* Google / GitHub */}
+          {/* Botones de Proveedores (Oauth) */}
           <div className="grid grid-cols-2 gap-3 mb-6">
             <button
               type="button"
               onClick={handleGoogleLogin}
-              className="flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer"
-              style={{
-                background: "#1A1A28",
-                border: "1px solid #2A2A38",
-                color: "#F0F0F8",
-                fontFamily: "DM Sans, sans-serif",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.borderColor = "#6C63FF")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.borderColor = "#2A2A38")
-              }
+              className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all duration-200 bg-[#1A1A28] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6C63FF] cursor-pointer font-body"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24">
-                <path
-                  fill="#4285F4"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                />
-                <path
-                  fill="#EA4335"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                />
-              </svg>
+              <Image
+                src="/svg/google.svg"
+                alt="Google"
+                className="object-contain"
+                width={16}
+                height={16}
+              />
               Google
             </button>
             <button
               type="button"
               onClick={handleFacebookLogin}
-              className="flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer"
-              style={{
-                background: "#1A1A28",
-                border: "1px solid #2A2A38",
-                color: "#F0F0F8",
-                fontFamily: "DM Sans, sans-serif",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.borderColor = "#6C63FF")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.borderColor = "#2A2A38")
-              }
+              className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all duration-200 bg-[#1A1A28] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6C63FF] cursor-pointer font-body"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877F2">
-                <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073c0 6.019 4.388 11.009 10.125 11.927v-8.437H7.078v-3.49h3.047V9.413c0-3.007 1.792-4.669 4.533-4.669 1.313 0 2.686.235 2.686.235v2.953h-1.514c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.082 24 18.092 24 12.073z" />
-              </svg>
+              <Image
+                src="/svg/facebook.svg"
+                alt="facebook"
+                className="object-contain"
+                width={16}
+                height={16}
+              />
               Facebook
             </button>
           </div>
 
-          {/* Registro */}
-          <p className="text-sm text-center" style={{ color: "#9090A8" }}>
+          {/* Enlace de Registro */}
+          <p className="text-sm text-center text-[#9090A8] font-body font-black">
             ¿No tienes una cuenta?{" "}
             <Link
               href="/register"
-              style={{ color: "#6C63FF", fontWeight: 600 }}
+              className="text-[#6C63FF] hover:text-[#7b75ff] transition-colors font-black"
             >
               Regístrate aquí
             </Link>
           </p>
-        </form>
+        </div>
       </div>
     </div>
   );
