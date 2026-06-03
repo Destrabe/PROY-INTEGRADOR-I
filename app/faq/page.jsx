@@ -47,7 +47,7 @@ export default function FAQPage() {
   return (
     <main
       className="min-h-screen w-full px-4 sm:px-6 md:px-8 py-20"
-      style={{ background: "var(--bg-main)" }}
+      style={{ background: "#0A0A0F" }}
     >
       <div className="max-w-5xl mx-auto">
         {/* Header */}
@@ -56,7 +56,7 @@ export default function FAQPage() {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-6"
             style={{
               background: "#6C63FF",
-              color: "var(--text-main)",
+              color: "#FFFFFF",
             }}
           >
             Centro de Ayuda
@@ -68,7 +68,7 @@ export default function FAQPage() {
               fontFamily: "Syne, sans-serif",
               fontSize: "clamp(38px, 5vw, 64px)",
               letterSpacing: "-2px",
-              color: "var(--text-main)",
+              color: "#FFFFFF",
             }}
           >
             Preguntas{" "}
@@ -87,7 +87,7 @@ export default function FAQPage() {
           <p
             className="max-w-2xl mx-auto leading-relaxed"
             style={{
-              color: "var(--text-secondary)",
+              color: "#9090A8",
               fontSize: "17px",
               fontFamily: "DM Sans, sans-serif",
             }}
@@ -104,8 +104,8 @@ export default function FAQPage() {
               key={index}
               className="rounded-2xl p-6 transition-all duration-300 hover:translate-y-[-2px]"
               style={{
-                background: "var(--bg-card)",
-                border: "1px solid var(--border-color)",
+                background: "#151520",
+                border: "1px solid #2A2A38",
               }}
             >
               <div className="flex items-start gap-4">
@@ -134,7 +134,7 @@ export default function FAQPage() {
                     className="font-bold mb-2"
                     style={{
                       fontFamily: "Syne, sans-serif",
-                      color: "var(--text-main)",
+                      color: "#FFFFFF",
                       fontSize: "18px",
                     }}
                   >
@@ -144,7 +144,7 @@ export default function FAQPage() {
                   <p
                     className="leading-relaxed"
                     style={{
-                      color: "var(--text-secondary)",
+                      color: "#9090A8",
                       fontFamily: "DM Sans, sans-serif",
                       fontSize: "15px",
                     }}

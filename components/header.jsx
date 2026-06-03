@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useAuth } from "./AuthContext";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { useTheme } from "@/components/ThemeProvider";
 import { useRouter } from "next/navigation";
 
 const Logo = () => (
@@ -20,7 +19,7 @@ export default function Header() {
   const router = useRouter();
 
   const handleLogout = async () => {
-  await logout();
+  await logout();s
   router.push("/");
 };
 

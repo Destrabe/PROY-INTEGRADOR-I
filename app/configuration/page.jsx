@@ -3,11 +3,9 @@
 import Link from "next/link";
 import { useAuth } from "@/components/AuthContext";
 import { useEffect, useState } from "react";
-import { useTheme } from "@/components/ThemeProvider";
 
 export default function ConfigurationPage() {
   const { user } = useAuth();
-  const { theme, setTheme } = useTheme();
 
   const [tab, setTab] = useState("perfil");
   const [preview, setPreview] = useState(null);
