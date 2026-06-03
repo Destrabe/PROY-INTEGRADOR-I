@@ -3,7 +3,6 @@ import { DM_Sans, Syne } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Header from "@/components/header";
-import Footer from "@/components/footer";
 import { AuthProvider } from "@/components/AuthContext";
 
 const dm_sans = DM_Sans({
@@ -34,7 +33,6 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <Header />
           {children}
-          <Footer />
           <Analytics />
           <SpeedInsights />
         </AuthProvider>
