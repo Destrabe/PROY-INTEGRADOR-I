@@ -11,6 +11,7 @@ import FiltrosTags from "@/components/Feed/FiltrosTags";
 import SolicitudCard from "@/components/Feed/SolicitudCard";
 import SolicitudModal from "@/components/Feed/SolicitudModal";
 import Link from "next/link";
+import { useAuth } from "@/components/AuthContext";
 
 const s = {
   layout: {
@@ -134,6 +135,7 @@ function filtrar(solicitudes, filtroActivo, busqueda) {
 
 export default function FeedTrabajos() {
   const [user, authLoading] = useAuthState(auth);
+  const { user: appUser } = useAuth();
   console.log("USER:", user);
 
   const { solicitudes, loading, error } = useSolicitudes();

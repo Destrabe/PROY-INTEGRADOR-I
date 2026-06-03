@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Header from "@/components/header";
 import { AuthProvider } from "@/components/AuthContext";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const dm_sans = DM_Sans({
   weight: ["400", "600", "700"],
@@ -26,16 +27,29 @@ export const metadata = {
   keywords: ["Nexora", "microservicios", "next.js"],
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
-      <body className={`${dm_sans.variable} ${syne.variable}`}>
-        <AuthProvider>
-          <Header />
-          {children}
-          <Analytics />
-          <SpeedInsights />
-        </AuthProvider>
+      <body
+        className={`
+    ${dm_sans.variable}
+    ${syne.variable}
+    overflow-x-hidden
+  `}
+      >
+        <ThemeProvider>
+          <AuthProvider>
+            <Header />
+            {children}
+            <Analytics />
+            <SpeedInsights />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,38 +1,56 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
+import { auth } from "@/firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("nexora_user");
-      if (saved) setUser(JSON.parse(saved));
-    } catch {
-      localStorage.removeItem("nexora_user");
-    } finally {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        const savedRole =
+          localStorage.getItem(`role_${firebaseUser.uid}`) || "cliente";
+
+        setUser({
+          uid: firebaseUser.uid,
+          name: firebaseUser.displayName || firebaseUser.email,
+          email: firebaseUser.email,
+          rol: savedRole,
+        });
+      } else {
+        setUser(null);
+      }
+
       setLoading(false);
-    }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const login = (userData) => {
+    const role = userData.rol || "cliente";
+
+    localStorage.setItem(`role_${userData.uid}`, role);
+
     const newUser = {
-      uid:   userData.uid,
-      name:  `${userData.first_name} ${userData.last_name}`,
+      uid: userData.uid,
+      name: `${userData.first_name} ${userData.last_name}`,
       email: userData.email,
-      rol:   userData.rol || "cliente",
+      rol: role,
     };
+
     setUser(newUser);
-    localStorage.setItem("nexora_user", JSON.stringify(newUser));
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await signOut(auth);
     setUser(null);
-    localStorage.removeItem("nexora_user");
   };
 
   return (
@@ -53,6 +71,7 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
+
   if (context === null) {
     return {
       user: null,
@@ -63,5 +82,6 @@ export function useAuth() {
       isAdmin: false,
     };
   }
+
   return context;
 }
