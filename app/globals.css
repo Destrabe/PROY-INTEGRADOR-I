@@ -81,40 +81,13 @@ body {
   --border-color: #2a2a38;
 }
 
-[data-theme="light"] {
-  --bg-main: #f5f5f7;
-  --bg-card: #ffffff;
-  --text-main: #111111;
-  --text-secondary: #555;
-  --border-color: #d4d4d8;
-}
-
-body {
-  background: var(--bg-main);
-  color: var(--text-main);
-  transition:
-    background 0.3s ease,
-    color 0.3s ease;
-}
-
-:root[data-theme="dark"] {
+:root {
   --bg-main: #0A0A0F;
   --bg-card: #111118;
   --border-color: #2A2A38;
 
   --text-main: #F0F0F8;
   --text-secondary: #9090A8;
-
-  --accent: #6C63FF;
-}
-
-:root[data-theme="light"] {
-  --bg-main: #F8FAFC;
-  --bg-card: #FFFFFF;
-  --border-color: #E2E8F0;
-
-  --text-main: #0F172A;
-  --text-secondary: #475569;
 
   --accent: #6C63FF;
 }

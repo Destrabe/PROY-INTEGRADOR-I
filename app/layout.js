@@ -5,7 +5,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { AuthProvider } from "@/components/AuthContext";
-import { ThemeProvider } from "@/components/ThemeProvider";
 
 const dm_sans = DM_Sans({
   weight: ["400", "600", "700"],
@@ -43,7 +42,6 @@ export default function RootLayout({ children }) {
     overflow-x-hidden
   `}
       >
-        <ThemeProvider>
           <AuthProvider>
             <Header />
 
@@ -54,7 +52,6 @@ export default function RootLayout({ children }) {
             <Analytics />
             <SpeedInsights />
           </AuthProvider>
-        </ThemeProvider>
       </body>
     </html>
   );
