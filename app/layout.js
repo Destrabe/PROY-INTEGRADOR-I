@@ -45,11 +45,7 @@ export default function RootLayout({ children }) {
         <ThemeProvider>
           <AuthProvider>
             <Header />
-
             {children}
-
-            <Footer />
-
             <Analytics />
             <SpeedInsights />
           </AuthProvider>
