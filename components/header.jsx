@@ -6,6 +6,13 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+const Logo = () => (
+  <div className="flex items-end font-extrabold text-2xl leading-none text-white font-syne">
+    <div className="logo-header-name">Nexora</div>
+    <div className="text-[32px] text-[#6c63ff] relative top-[3px]">.</div>
+  </div>
+);
+
 export default function Header() {
   const { user, logout, loading } = useAuth();
 
@@ -20,62 +27,11 @@ export default function Header() {
 
   const pathname = usePathname();
 
-  useEffect(() => {
-    if (!user?.uid) return;
-
-    const loadPhoto = () => {
-      const savedPhoto = localStorage.getItem(`profilePhoto_${user.uid}`);
-
-      if (savedPhoto) {
-        setProfilePhoto(savedPhoto);
-      } else {
-        setProfilePhoto(null);
-      }
-    };
-
-    loadPhoto();
-
-    window.addEventListener("profile-photo-updated", loadPhoto);
-
-    return () => {
-      window.removeEventListener("profile-photo-updated", loadPhoto);
-    };
-  }, [user]);
-
   if (loading) {
     return (
-      <div
-        className="font-sans w-full lg:h-[90px] py-3 lg:py-0"
-        style={{
-          background: "var(--bg-main)",
-          color: "var(--text-main)",
-          borderBottom: "1px solid var(--border-color)",
-        }}
-      >
-        <div className="h-full flex items-center px-4 sm:px-6 lg:px-[60px]">
-          <div className="flex items-center gap-2">
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-extrabold text-base"
-              style={{
-                background:
-                  "linear-gradient(135deg, #7c3aed, #6c63ff, #4f8ef7)",
-              }}
-            >
-              N
-            </div>
-
-            <span
-              className="font-syne font-extrabold text-xl tracking-tight"
-              style={{
-                background:
-                  "linear-gradient(135deg, #7c3aed, #6c63ff, #4f8ef7)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              Nexora
-            </span>
-          </div>
+      <div className="font-sans w-full h-[90px] text-white bg-black">
+        <div className="h-full flex items-center px-[60px]">
+          <Logo />
         </div>
       </div>
     );
@@ -93,34 +49,8 @@ export default function Header() {
       <div className="h-full flex flex-col lg:flex-row items-center justify-between px-4 sm:px-6 lg:px-[60px] py-4 gap-4">
         {/* LOGO */}
         <div className="h-full flex items-center select-none">
-          <Link
-            href="/"
-            className="flex items-center gap-2"
-            style={{
-              color: "var(--text-main)",
-            }}
-          >
-            <div
-              className="w-8 h-8 rounded-xl flex items-center justify-center text-white font-extrabold text-sm"
-              style={{
-                background:
-                  "linear-gradient(135deg, #7c3aed, #6c63ff, #4f8ef7)",
-              }}
-            >
-              N
-            </div>
-
-            <span
-              className="font-syne font-extrabold text-xl tracking-tight"
-              style={{
-                background:
-                  "linear-gradient(135deg, #7c3aed, #6c63ff, #4f8ef7)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              Nexora
-            </span>
+          <Link href="/" className="flex items-center gap-2 text-white">
+            <Logo />
           </Link>
         </div>
 
@@ -130,115 +60,70 @@ export default function Header() {
             {/* INICIO */}
             <Link
               href="/"
-              className="flex items-center gap-1.5 transition-all hover:text-[#6c63ff]"
-              style={{
-                color: pathname === "/" ? "#6c63ff" : "var(--text-main)",
-              }}
+              className={`flex items-center transition-colors ${
+                pathname === "/"
+                  ? "text-[#6c63ff]"
+                  : "text-white hover:text-[#6c63ff]"
+              }`}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 3l9 8h-3v9h-5v-6H11v6H6v-9H3z" />
-              </svg>
               Inicio
             </Link>
 
             {/* EXPLORAR */}
             <Link
               href="/FeedTrabajos"
-              className="flex items-center gap-1.5 transition-all hover:text-[#6c63ff]"
-              style={{
-                color:
-                  pathname === "/FeedTrabajos" ? "#6c63ff" : "var(--text-main)",
-              }}
+              className={`flex items-center transition-colors ${
+                pathname === "/FeedTrabajos"
+                  ? "text-[#6c63ff]"
+                  : "text-white hover:text-[#6c63ff]"
+              }`}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M10 2a8 8 0 105.293 14.293l4.707 4.707 1.414-1.414-4.707-4.707A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z" />
-              </svg>
               Explorar
             </Link>
 
             {/* FAQ */}
             <Link
-              href="/faq"
-              className="flex items-center gap-1.5 transition-all hover:text-[#6c63ff]"
-              style={{
-                color: pathname === "/faq" ? "#6c63ff" : "var(--text-main)",
-              }}
+              href="/nosotros"
+              className={`flex items-center transition-colors ${
+                pathname === "/nosotros"
+                  ? "text-[#6c63ff]"
+                  : "text-white hover:text-[#6c63ff]"
+              }`}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M9.09 9a3 3 0 015.82 1c0 2-3 3-3 3" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-              FAQ
+              Nosotros
             </Link>
 
             {user && (
               <>
-                {/* MENSAJES */}
-                <Link
-                  href="/messages"
-                  className="flex items-center gap-1.5 transition-all hover:text-[#6c63ff]"
-                  style={{
-                    color:
-                      pathname === "/messages" ? "#6c63ff" : "var(--text-main)",
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
+                {pathname.startsWith("/trabajador") && (
+                  <Link
+                    href="/trabajador/panel"
+                    className="flex items-center text-[#6c63ff] transition-colors hover:text-[#8b7cff]"
                   >
-                    <path d="M4 4h16v12H5.17L4 17.17V4zm2 2v7.17L6.83 12H18V6H6z" />
-                  </svg>
+                    Talent Hub
+                  </Link>
+                )}
+                <Link
+                  href="/mensajes"
+                  className={`flex items-center transition-colors ${
+                    pathname === "/mensajes"
+                      ? "text-[#6c63ff]"
+                      : "text-white hover:text-[#6c63ff]"
+                  }`}
+                >
                   Mensajes
                 </Link>
 
                 {/* CONFIGURACIÓN */}
                 <Link
-                  href="/configuration"
-                  className="flex items-center gap-1.5 transition-all hover:text-[#6c63ff]"
-                  style={{
-                    color:
-                      pathname === "/configuration"
-                        ? "#6c63ff"
-                        : "var(--text-main)",
-                  }}
+                  href="/perfil"
+                  className={`flex items-center transition-colors ${
+                    pathname === "/perfil"
+                      ? "text-[#6c63ff]"
+                      : "text-white hover:text-[#6c63ff]"
+                  }`}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle cx="12" cy="12" r="3" />
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c0 .67.39 1.28 1 1.51H21a2 2 0 1 1 0 4h-.09c-.67 0-1.28.39-1.51 1z" />
-                  </svg>
-                  Configuración
+                  Perfil
                 </Link>
               </>
             )}
