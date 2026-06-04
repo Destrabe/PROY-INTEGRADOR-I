@@ -12,8 +12,6 @@ import Image from "next/image";
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-
-  const [tipo, setTipo] = useState("usuario");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [recordar, setRecordar] = useState(false);
