@@ -14,19 +14,18 @@ import { useAuth } from "@/components/AuthContext";
 export default function RegisterPage() {
   const router = useRouter();
   const { login } = useAuth();
-
+  const [rol, setRol] = useState("cliente");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [sended, setSended] = useState(false);
+
   const handleGoogleRegister = async () => {
     try {
       const user = await loginWithGoogle();
-
       login({
         uid: user.uid,
         email: user.email,
@@ -34,7 +33,6 @@ export default function RegisterPage() {
         last_name: user.displayName?.split(" ").slice(1).join(" ") || "",
         rol: "cliente",
       });
-
       router.push("/FeedTrabajos");
     } catch (error) {
       console.log("GOOGLE REGISTER ERROR:", error);
@@ -44,7 +42,6 @@ export default function RegisterPage() {
   const handleFacebookRegister = async () => {
     try {
       const user = await loginWithFacebook();
-
       login({
         uid: user.uid,
         email: user.email,
@@ -52,7 +49,6 @@ export default function RegisterPage() {
         last_name: "",
         rol: "cliente",
       });
-
       router.push("/FeedTrabajos");
     } catch (error) {
       console.log("FACEBOOK REGISTER ERROR:", error);
@@ -61,14 +57,7 @@ export default function RegisterPage() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
     setSended(true);
-
-    console.log("firstName:", firstName);
-    console.log("lastName:", lastName);
-    console.log("email:", email);
-    console.log("password:", password);
-    console.log("confirmPassword:", confirmPassword);
 
     if (
       !firstName.trim() ||
@@ -87,7 +76,6 @@ export default function RegisterPage() {
     }
 
     setLoading(true);
-    const rol = "cliente";
 
     try {
       const result = await registerUser(
@@ -100,7 +88,6 @@ export default function RegisterPage() {
 
       if (result.success) {
         const firebaseUser = await loginUser(email, password);
-
         login({
           uid: firebaseUser.uid,
           email: firebaseUser.email,
@@ -108,7 +95,6 @@ export default function RegisterPage() {
           last_name: lastName,
           rol: "cliente",
         });
-
         router.push("/");
       } else {
         if (result.error?.code === "auth/email-already-in-use") {
@@ -126,342 +112,211 @@ export default function RegisterPage() {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4 py-12"
-      style={{ background: "#0A0A0F" }}
-    >
-      <div className="w-full max-w-md">
+    <div className="flex font-sans justify-center items-center bg-[#0a0a0f] min-h-screen px-4">
+      <div className="w-full max-w-[552px] ">
         {/* LOGO */}
-        <div className="flex flex-col items-center mb-8">
-          <div
-            className="w-12 h-12 rounded-xl flex items-center justify-center mb-3 font-extrabold text-white text-lg"
-            style={{
-              background: "linear-gradient(135deg, #6C63FF, #9B59B6)",
-              fontFamily: "Syne, sans-serif",
-            }}
-          >
-            N
+        <div className="font-syne font-extrabold text-white mb-3">
+          <div className="flex text-[36px] leading-none mb-1">
+            Nexora<span className="text-[#6c63ff]">.</span>
           </div>
-
-          <span
-            className="font-extrabold text-xl"
-            style={{
-              fontFamily: "Syne, sans-serif",
-              color: "#6C63FF",
-            }}
-          >
-            Nexora
-          </span>
+          <div className="text-[36px] leading-tight">Crea tu cuenta</div>
         </div>
 
         {/* CARD */}
-        <form
-          onSubmit={handleRegister}
-          className="rounded-2xl p-8"
-          style={{
-            background: "#111118",
-            border: "1px solid #2A2A38",
-          }}
-        >
-          <h1
-            className="font-extrabold text-3xl mb-2 text-center text-white"
-            style={{ fontFamily: "Syne, sans-serif" }}
-          >
-            Crear cuenta
-          </h1>
-
-          <p className="text-center mb-7" style={{ color: "#9090A8" }}>
-            Únete a nuestra comunidad
-          </p>
-
-          {/* NOMBRES */}
-          <div className="mb-4">
-            <label
-              className="block text-sm font-semibold mb-2"
-              style={{ color: "#F0F0F8" }}
-            >
-              Nombres
-            </label>
-
-            <div className="relative">
-              <span
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "#606078" }}
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-              </span>
-
-              <input
-                type="text"
-                placeholder="Juan"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl outline-none"
-                style={{
-                  background: "#1A1A28",
-                  border: "1px solid #2A2A38",
-                  color: "#fff",
-                }}
-              />
+        <form onSubmit={handleRegister}>
+          <div className="font-sans text-[#9090a8] flex flex-col gap-4">
+            <div className="flex flex-col mb-1">
+              <div className="font-normal text-[15px] mb-4">
+                Únete a miles de personas que ya usan Nexora
+              </div>
+              <div className="font-bold text-[13px] uppercase tracking-wider text-[#9090A8] mb-2">
+                Soy un ...
+              </div>
             </div>
-          </div>
 
-          {/* APELLIDOS */}
-          <div className="mb-4">
-            <label
-              className="block text-sm font-semibold mb-2"
-              style={{ color: "#F0F0F8" }}
-            >
-              Apellidos
-            </label>
-
-            <div className="relative">
-              <span
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "#606078" }}
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-              </span>
-
-              <input
-                type="text"
-                placeholder="Pérez"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl outline-none"
-                style={{
-                  background: "#1A1A28",
-                  border: "1px solid #2A2A38",
-                  color: "#fff",
+            {/* ROL */}
+            <div className="flex gap-[15px] mb-[10px]">
+              {/* Tarjeta Cliente */}
+              <div
+                onClick={() => {
+                  setRol("cliente");
                 }}
-              />
-            </div>
-          </div>
-
-          {/* CORREO */}
-          <div className="mb-4">
-            <label
-              className="block text-sm font-semibold mb-2"
-              style={{ color: "#F0F0F8" }}
-            >
-              Correo electrónico
-            </label>
-
-            <div className="relative">
-              <span
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "#606078" }}
+                className={`w-[268px] h-[125px] rounded-[20px] border border-[#313141] flex flex-col justify-center items-center bg-[#22222c] cursor-pointer transition-all duration-200 ease-in-out hover:-translate-y-1 hover:border-[rgba(124,92,255,0.6)] hover:shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)] ${
+                  !rol
+                    ? ""
+                    : rol === "trabajador"
+                      ? "opacity-50"
+                      : "border-[rgba(124,92,255,0.6)] shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)] ring-2 ring-indigo-500"
+                }`}
               >
-                <svg
-                  width="18"
-                  height="18"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                  <polyline points="22,6 12,13 2,6" />
-                </svg>
-              </span>
+                <img
+                  className="w-[36px] h-[36px]"
+                  src="/svg/client-register.svg"
+                  alt="client-icon"
+                />
+                <p className="m-1 font-bold text-white text-[15px]">Cliente</p>
+                <p className="m-0 font-normal text-[#9090a8] text-[15px]">
+                  Necesito un servicio
+                </p>
+              </div>
 
+              {/* Tarjeta Trabajador */}
+              <div
+                onClick={() => {
+                  setRol("trabajador");
+                }}
+                className={`w-[268px] h-[125px] rounded-[20px] border border-[#313141] flex flex-col justify-center items-center bg-[#22222c] cursor-pointer transition-all duration-200 ease-in-out hover:-translate-y-1 hover:border-[rgba(124,92,255,0.6)] hover:shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)] ${
+                  !rol
+                    ? ""
+                    : rol === "cliente"
+                      ? "opacity-50"
+                      : "border-[rgba(124,92,255,0.6)] shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)] ring-2 ring-indigo-500"
+                }`}
+              >
+                <img
+                  className="w-[36px] h-[36px]"
+                  src="/svg/worker-register.svg"
+                  alt="worker-icon"
+                />
+                <p className="m-1 font-bold text-white text-[15px]">
+                  Trabajador
+                </p>
+                <p className="m-0 font-normal text-[#9090a8] text-[15px]">
+                  Ofrezco mis servicios
+                </p>
+              </div>
+            </div>
+
+            {/* NOMBRES Y APELLIDOS */}
+            <div className="flex gap-[16px]">
+              <div className="w-1/2">
+                <label className="block text-[11px] font-bold text-[#9090A8] tracking-wider mb-1.5 uppercase">
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  placeholder="Tu nombre"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="w-full px-4 h-[46px] rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
+                />
+              </div>
+              <div className="w-1/2">
+                <label className="block text-[11px] font-bold text-[#9090A8] tracking-wider mb-1.5 uppercase">
+                  Apellido
+                </label>
+                <input
+                  type="text"
+                  placeholder="Tu apellido"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="w-full px-4 h-[46px] rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
+                />
+              </div>
+            </div>
+
+            {/* CORREO */}
+            <div>
+              <label className="block text-[11px] font-bold text-[#9090A8] tracking-wider mb-1.5 uppercase">
+                Correo electrónico
+              </label>
               <input
                 type="email"
-                placeholder="tu@email.com"
+                placeholder="correo@ejemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl outline-none"
-                style={{
-                  background: "#1A1A28",
-                  border: "1px solid #2A2A38",
-                  color: "#fff",
-                }}
+                className="w-full px-4 h-[46px] rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
               />
             </div>
-          </div>
 
-          {/* CONTRASEÑA */}
-          <div className="mb-4">
-            <label
-              className="block text-sm font-semibold mb-2"
-              style={{ color: "#F0F0F8" }}
-            >
-              Contraseña
-            </label>
-
-            <div className="relative">
-              <span
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "#606078" }}
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <rect x="3" y="11" width="18" height="11" rx="2" />
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </svg>
-              </span>
-
+            {/* CONTRASEÑA */}
+            <div>
+              <label className="block text-[11px] font-bold text-[#9090A8] tracking-wider mb-1.5 uppercase">
+                Contraseña
+              </label>
               <input
                 type="password"
-                placeholder="••••••••"
+                placeholder="Mínimo 8 caracteres"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl outline-none"
-                style={{
-                  background: "#1A1A28",
-                  border: "1px solid #2A2A38",
-                  color: "#fff",
-                }}
+                className="w-full px-4 h-[46px] rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
               />
+              {sended && password.length < 8 && (
+                <p className="text-red-400 text-xs mt-1.5">
+                  La contraseña debe tener mínimo 8 caracteres
+                </p>
+              )}
             </div>
 
-            {sended && password.length < 8 && (
-              <p className="text-red-400 text-sm mt-2">
-                La contraseña debe tener mínimo 8 caracteres
-              </p>
-            )}
-          </div>
-
-          {/* CONFIRMAR CONTRASEÑA */}
-          <div className="mb-5">
-            <label
-              className="block text-sm font-semibold mb-2"
-              style={{ color: "#F0F0F8" }}
-            >
-              Confirmar contraseña
-            </label>
-
-            <div className="relative">
-              <span
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "#606078" }}
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <rect x="3" y="11" width="18" height="11" rx="2" />
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </svg>
-              </span>
-
+            {/* CONFIRMAR CONTRASEÑA */}
+            <div className="mb-2">
+              <label className="block text-[11px] font-bold text-[#9090A8] tracking-wider mb-1.5 uppercase">
+                Confirmar contraseña
+              </label>
               <input
                 type="password"
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl outline-none"
-                style={{
-                  background: "#1A1A28",
-                  border: "1px solid #2A2A38",
-                  color: "#fff",
-                }}
+                className="w-full px-4 h-[46px] rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
               />
             </div>
-          </div>
 
-          {/* CHECK */}
-          <div className="flex items-start gap-2 mb-6">
-            <input
-              type="checkbox"
-              className="mt-1 accent-[#A855F7]"
-            />
-
-            <p className="text-sm" style={{ color: "#9090A8" }}>
-              Acepto los{" "}
-              <Link
-                href="/terms"
-                target="_blank"
-                className="font-medium hover:underline"
-                style={{ color: "#A855F7" }}
-              >
-                términos y condiciones
-              </Link>{" "}
-              y la{" "}
-              <Link
-                href="/privacy"
-                target="_blank"
-                className="font-medium hover:underline"
-                style={{ color: "#A855F7" }}
-              >
-                política de privacidad
-              </Link>
-            </p>
+            {/* CHECK */}
+            <div className="flex items-center gap-2 mb-2">
+              <input
+                type="checkbox"
+                className="accent-[#6c63ff] w-[14px] h-[14px] rounded border-[#2A2A38] bg-[#1a1a24]"
+              />
+              <p className="text-[12px] text-[#9090A8] m-0">
+                Acepto los{" "}
+                <Link
+                  href="/terms"
+                  target="_blank"
+                  className="font-medium hover:underline text-[#6c63ff]"
+                >
+                  términos y condiciones
+                </Link>{" "}
+                y la{" "}
+                <Link
+                  href="/privacy"
+                  target="_blank"
+                  className="font-medium hover:underline text-[#6c63ff]"
+                >
+                  política de privacidad
+                </Link>
+              </p>
+            </div>
           </div>
 
           {/* BOTÓN */}
           <button
-            type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl font-bold text-white transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:scale-[1.02]"
-            style={{
-              background: "linear-gradient(135deg, #A855F7, #6366F1)",
-              opacity: loading ? 0.7 : 1,
-            }}
+            type="submit"
+            className={`font-bold text-[15px] mt-4 h-[48px] w-full rounded-[10px] bg-[#6c63ff] text-white cursor-pointer flex justify-center items-center transition-all hover:opacity-90 ${
+              loading ? "opacity-50" : ""
+            }`}
           >
-            {loading ? "Creando cuenta..." : "Crear Cuenta"}
+            {loading ? (
+              <div className="h-6 w-6 border-4 border-white/20 rounded-full border-t-white animate-spin" />
+            ) : (
+              <span>Crear cuenta gratis</span>
+            )}
           </button>
 
           {/* DIVISOR */}
           <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px" style={{ background: "#2A2A38" }} />
-
-            <span className="text-xs" style={{ color: "#606078" }}>
-              O continúa con
-            </span>
-
-            <div className="flex-1 h-px" style={{ background: "#2A2A38" }} />
+            <div className="flex-1 h-px bg-[#2A2A38]" />
+            <span className="text-[11px] text-[#606078]">O continúa con</span>
+            <div className="flex-1 h-px bg-[#2A2A38]" />
           </div>
 
-          {/* GOOGLE Y GITHUB */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            {/* GOOGLE */}
+          {/* GOOGLE Y FACEBOOK */}
+          <div className="grid grid-cols-2 gap-[16px] mb-6">
             <button
               type="button"
               onClick={handleGoogleRegister}
-              className="flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer hover:-translate-y-1"
-              style={{
-                background: "#1A1A28",
-                border: "1px solid #2A2A38",
-                color: "#F0F0F8",
-                fontFamily: "DM Sans, sans-serif",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.borderColor = "#6C63FF")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.borderColor = "#2A2A38")
-              }
+              className="flex items-center justify-center gap-2 h-[46px] rounded-[10px] text-[13px] font-semibold transition-all duration-300 cursor-pointer hover:-translate-y-1 bg-[#1a1a24] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6c63ff]"
             >
               <svg width="16" height="16" viewBox="0 0 24 24">
                 <path
@@ -483,24 +338,10 @@ export default function RegisterPage() {
               </svg>
               Google
             </button>
-
-            {/* GITHUB */}
             <button
               type="button"
               onClick={handleFacebookRegister}
-              className="flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer hover:-translate-y-1"
-              style={{
-                background: "#1A1A28",
-                border: "1px solid #2A2A38",
-                color: "#F0F0F8",
-                fontFamily: "DM Sans, sans-serif",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.borderColor = "#6C63FF")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.borderColor = "#2A2A38")
-              }
+              className="flex items-center justify-center gap-2 h-[46px] rounded-[10px] text-[13px] font-semibold transition-all duration-300 cursor-pointer hover:-translate-y-1 bg-[#1a1a24] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6c63ff]"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877F2">
                 <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073c0 6.019 4.388 11.009 10.125 11.927v-8.437H7.078v-3.49h3.047V9.413c0-3.007 1.792-4.669 4.533-4.669 1.313 0 2.686.235 2.686.235v2.953h-1.514c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.082 24 18.092 24 12.073z" />
@@ -510,14 +351,11 @@ export default function RegisterPage() {
           </div>
 
           {/* LOGIN */}
-          <p className="text-center text-sm mt-6" style={{ color: "#9090A8" }}>
+          <p className="text-center text-[13px] mt-2 text-[#9090A8]">
             ¿Ya tienes cuenta?{" "}
             <Link
               href="/login"
-              style={{
-                color: "#A855F7",
-                fontWeight: "bold",
-              }}
+              className="text-[#6c63ff] font-bold hover:underline"
             >
               Inicia sesión
             </Link>
