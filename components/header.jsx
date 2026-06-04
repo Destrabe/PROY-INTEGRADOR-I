@@ -15,21 +15,18 @@ const Logo = () => (
 
 export default function Header() {
   const { user, logout, loading } = useAuth();
-
   const router = useRouter();
-
-  const handleLogout = async () => {
-  await logout();s
-  router.push("/");
-};
-
+  const pathname = usePathname();
   const [profilePhoto, setProfilePhoto] = useState(null);
 
-  const pathname = usePathname();
+  const handleLogout = async () => {
+    await logout();
+    router.push("/");
+  };
 
   if (loading) {
     return (
-      <div className="font-sans w-full h-[90px] text-white bg-black">
+      <div className="font-sans w-full h-[90px] text-white bg-[#0a0a0a]">
         <div className="h-full flex items-center px-[60px]">
           <Logo />
         </div>
@@ -38,15 +35,9 @@ export default function Header() {
   }
 
   return (
-    <div
-      className="font-sans w-full lg:h-[90px] py-3 lg:py-0 transition-all"
-      style={{
-        background: "var(--bg-main)",
-        color: "var(--text-main)",
-        borderBottom: "1px solid var(--border-color)",
-      }}
-    >
+    <div className="font-sans w-full lg:h-[90px] py-3 lg:py-0 transition-all bg-[#0a0a0a] text-white border-b border-zinc-800">
       <div className="h-full flex flex-col lg:flex-row items-center justify-between px-4 sm:px-6 lg:px-[60px] py-4 gap-4">
+        
         {/* LOGO */}
         <div className="h-full flex items-center select-none">
           <Link href="/" className="flex items-center gap-2 text-white">
@@ -63,7 +54,7 @@ export default function Header() {
               className={`flex items-center transition-colors ${
                 pathname === "/"
                   ? "text-[#6c63ff]"
-                  : "text-white hover:text-[#6c63ff]"
+                  : "text-zinc-400 hover:text-[#6c63ff]"
               }`}
             >
               Inicio
@@ -75,19 +66,19 @@ export default function Header() {
               className={`flex items-center transition-colors ${
                 pathname === "/FeedTrabajos"
                   ? "text-[#6c63ff]"
-                  : "text-white hover:text-[#6c63ff]"
+                  : "text-zinc-400 hover:text-[#6c63ff]"
               }`}
             >
               Explorar
             </Link>
 
-            {/* FAQ */}
+            {/* NOSOTROS */}
             <Link
               href="/nosotros"
               className={`flex items-center transition-colors ${
                 pathname === "/nosotros"
                   ? "text-[#6c63ff]"
-                  : "text-white hover:text-[#6c63ff]"
+                  : "text-zinc-400 hover:text-[#6c63ff]"
               }`}
             >
               Nosotros
@@ -108,19 +99,19 @@ export default function Header() {
                   className={`flex items-center transition-colors ${
                     pathname === "/mensajes"
                       ? "text-[#6c63ff]"
-                      : "text-white hover:text-[#6c63ff]"
+                      : "text-zinc-400 hover:text-[#6c63ff]"
                   }`}
                 >
                   Mensajes
                 </Link>
 
-                {/* CONFIGURACIÓN */}
+                {/* PERFIL */}
                 <Link
                   href="/perfil"
                   className={`flex items-center transition-colors ${
                     pathname === "/perfil"
                       ? "text-[#6c63ff]"
-                      : "text-white hover:text-[#6c63ff]"
+                      : "text-zinc-400 hover:text-[#6c63ff]"
                   }`}
                 >
                   Perfil
@@ -131,33 +122,15 @@ export default function Header() {
 
           {/* DIVIDER */}
           <div className="hidden lg:flex h-[30px] justify-center items-center">
-            <div
-              className="w-[15px] h-[16px] border-r-2"
-              style={{
-                borderColor: "var(--border-color)",
-              }}
-            />
+            <div className="w-[15px] h-[16px] border-r border-zinc-800" />
           </div>
 
           {/* AUTH */}
           {user ? (
             <div className="relative group">
-              <button
-                className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all"
-                style={{
-                  background: "var(--bg-card)",
-                  border: "1px solid var(--border-color)",
-                  color: "var(--text-main)",
-                }}
-              >
+              <button className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all bg-[#121212] border border-zinc-800 text-white">
                 {/* FOTO */}
-                <div
-                  className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center"
-                  style={{
-                    background: "var(--bg-main)",
-                    border: "1px solid var(--border-color)",
-                  }}
-                >
+                <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-[#0a0a0a] border border-zinc-800">
                   {profilePhoto ? (
                     <img
                       src={profilePhoto}
@@ -180,19 +153,9 @@ export default function Header() {
                   )}
                 </div>
 
-                <span
-                  className="text-sm"
-                  style={{
-                    color: "var(--text-secondary)",
-                  }}
-                >
+                <span className="text-sm text-zinc-400">
                   Hola,{" "}
-                  <span
-                    style={{
-                      color: "var(--text-main)",
-                      fontWeight: "600",
-                    }}
-                  >
+                  <span className="text-white font-semibold">
                     {user.name || user.email}
                   </span>
                 </span>
@@ -206,29 +169,17 @@ export default function Header() {
                   stroke="currentColor"
                   strokeWidth="2"
                   viewBox="0 0 24 24"
-                  className="transition-transform group-hover:rotate-180"
-                  style={{
-                    color: "var(--text-secondary)",
-                  }}
+                  className="transition-transform group-hover:rotate-180 text-zinc-400"
                 >
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
               </button>
 
               {/* DROPDOWN */}
-              <div
-                className="absolute right-0 mt-2 w-44 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden"
-                style={{
-                  background: "var(--bg-card)",
-                  border: "1px solid var(--border-color)",
-                }}
-              >
+              <div className="absolute right-0 mt-2 w-44 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden bg-[#121212] border border-zinc-800">
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-2 px-4 py-3 text-sm transition-all hover:text-red-400"
-                  style={{
-                    color: "var(--text-main)",
-                  }}
+                  className="w-full flex items-center gap-2 px-4 py-3 text-sm transition-all text-white hover:text-red-400"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -251,20 +202,14 @@ export default function Header() {
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Link
                 href="/login"
-                className="px-4 py-2 text-center transition-all hover:text-[#6c63ff]"
-                style={{
-                  color: "var(--text-main)",
-                }}
+                className="px-4 py-2 text-center transition-all text-white hover:text-[#6c63ff]"
               >
                 Iniciar Sesión
               </Link>
 
               <Link
                 href="/register"
-                className="px-4 py-2 text-center rounded-[10px] text-white transition-all"
-                style={{
-                  background: "#6c63ff",
-                }}
+                className="px-4 py-2 text-center rounded-[10px] text-white transition-all bg-[#6c63ff] hover:bg-[#5b52e5]"
               >
                 Registrarse
               </Link>
