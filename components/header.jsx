@@ -95,9 +95,9 @@ export default function Header() {
                   </Link>
                 )}
                 <Link
-                  href="/mensajes"
+                  href="/messages"
                   className={`flex items-center transition-colors ${
-                    pathname === "/mensajes"
+                    pathname === "/messages"
                       ? "text-[#6c63ff]"
                       : "text-zinc-400 hover:text-[#6c63ff]"
                   }`}
@@ -107,9 +107,9 @@ export default function Header() {
 
                 {/* PERFIL */}
                 <Link
-                  href="/perfil"
+                  href="/profile"
                   className={`flex items-center transition-colors ${
-                    pathname === "/perfil"
+                    pathname === "/profile"
                       ? "text-[#6c63ff]"
                       : "text-zinc-400 hover:text-[#6c63ff]"
                   }`}
