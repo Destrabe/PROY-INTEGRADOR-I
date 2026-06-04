@@ -1,275 +1,170 @@
 "use client";
+
 import { useState } from "react";
-import { registerUser } from "../authService";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { registerUser, loginWithGoogle, loginWithFacebook, loginUser} from "@/firebase/auth";
+import { useAuth } from "@/components/AuthContext";
 
-function RegisterPage() {
-  const [firstName, setFirstName]   = useState("");
-  const [lastName, setLastName]     = useState("");
-  const [email, setEmail]           = useState("");
-  const [password, setPassword]     = useState("");
-  const [loading, setLoading]       = useState(false);
-  const [rol, setRol]               = useState("");
-  const [district, setDistrict]     = useState("default");
-  const [errors, setErrors]         = useState({});
-
+export default function RegisterPage() {
   const router = useRouter();
-  const validar = () => {
-    const e = {};
-    if (!rol)
-      e.rol = "Selecciona si eres Cliente o Trabajador.";
-    if (!firstName.trim())
-      e.firstName = "Ingresa tu nombre.";
-    if (!lastName.trim())
-      e.lastName = "Ingresa tu apellido.";
-    if (!email.trim())
-      e.email = "Ingresa tu correo electrónico.";
-    if (password.length < 8)
-      e.password = "La contraseña debe tener al menos 8 caracteres.";
-    if (!district || district === "default")
-      e.district = "Selecciona un distrito.";
-    return e;
-  };
+  const { login } = useAuth();
+  const [rol, setRol] = useState("cliente");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
-    const validationErrors = validar();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    if (!firstName.trim() || !lastName.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+      setError("Completa todos los campos");
       return;
     }
-
-    setErrors({});
+    if (password !== confirmPassword) {
+      setError("Las contraseñas no coinciden");
+      return;
+    }
+    if (password.length < 8) {
+      setError("La contraseña debe tener al menos 8 caracteres");
+      return;
+    }
     setLoading(true);
-
+    setError("");
     try {
-      const result = await registerUser(
-        email.trim(),
-        password,
-        firstName.trim(),
-        lastName.trim(),
-        rol,
-        district
-      );
-
+      const result = await registerUser(email, password, firstName, lastName, rol);
       if (result.success) {
+        // Auto-login después de registro
+        const loginResult = await loginUser(email, password);
+        login({
+          uid: loginResult.uid,
+          email,
+          first_name: firstName,
+          last_name: lastName,
+          rol,
+        });
         router.push("/FeedTrabajos");
       } else {
-        const code = result.error?.code;
-        if (code === "auth/email-already-in-use") {
-          setErrors({ email: "Este correo ya está registrado." });
-        } else if (code === "auth/weak-password") {
-          setErrors({ password: "La contraseña es demasiado débil." });
+        if (result.error?.code === "auth/email-already-in-use") {
+          setError("El correo ya está registrado");
         } else {
-          setErrors({ general: "Error al crear la cuenta. Intenta nuevamente." });
+          setError("Error al crear la cuenta");
         }
       }
-    } catch (error) {
-      console.error("[RegisterPage]", error);
-      setErrors({ general: "Error inesperado. Intenta nuevamente." });
+    } catch (err) {
+      setError("Error inesperado");
     } finally {
       setLoading(false);
     }
   };
 
-  const inputCls =
-    "h-12 px-[14px] rounded-xl border border-[#313141] bg-[#22222c] text-white text-[15px] outline-none transition-all duration-200 ease-in-out focus:border-[#7c5cff] focus:shadow-[0_0_10px_rgba(124,92,255,0.3)]";
-  const errorCls = "text-red-400 text-sm mt-1";
+  const handleGoogleRegister = async () => {
+    try {
+      const user = await loginWithGoogle();
+      login({
+        uid: user.uid,
+        email: user.email,
+        first_name: user.displayName?.split(" ")[0] || "",
+        last_name: user.displayName?.split(" ").slice(1).join(" ") || "",
+        rol: "cliente",
+      });
+      router.push("/FeedTrabajos");
+    } catch (error) {
+      setError("Error al registrarse con Google");
+    }
+  };
+
+  const handleFacebookRegister = async () => {
+    try {
+      const user = await loginWithFacebook();
+      login({
+        uid: user.uid,
+        email: user.email,
+        first_name: user.displayName || "",
+        last_name: "",
+        rol: "cliente",
+      });
+      router.push("/FeedTrabajos");
+    } catch (error) {
+      setError("Error al registrarse con Facebook");
+    }
+  };
 
   return (
-    <div className="flex font-sans justify-center bg-gradient-to-t from-[#0a0a0f] to-[#111116] min-h-screen py-5">
-      <div>
+    <div className="flex justify-center items-center bg-[#0a0a0f] min-h-screen py-10 px-4">
+      <div className="w-full max-w-[552px]">
+        <div className="font-syne font-extrabold text-white mb-6">
+          <div className="flex text-[36px] leading-none mb-1">Nexora<span className="text-[#6c63ff]">.</span></div>
+          <div className="text-[36px] leading-tight">Crea tu cuenta</div>
+        </div>
+
         <form onSubmit={handleRegister}>
-          <div className="font-syne font-extrabold text-white mb-5">
-            <div className="flex">
-              <div className="text-[32px]">Nexora</div>
-              <div className="text-[32px] text-[#500fe9]">.</div>
+          <div className="font-sans text-[#9090a8] flex flex-col gap-4">
+            <div className="flex flex-col mb-1">
+              <div className="font-normal text-[15px] mb-4">Únete a miles de personas que ya usan Nexora</div>
+              <div className="font-bold text-[13px] uppercase tracking-wider mb-2">Soy un ...</div>
+              <div className="flex gap-4 mb-4">
+                <div onClick={() => setRol("cliente")} className={`w-full p-4 rounded-xl border cursor-pointer transition-all ${rol === "cliente" ? "border-[#6c63ff] bg-[#6c63ff10] ring-1 ring-[#6c63ff]" : "border-[#2A2A38] bg-[#1A1A28]"}`}>
+                  <div className="text-center font-bold text-white">Cliente</div>
+                  <div className="text-xs text-center">Necesito un servicio</div>
+                </div>
+                <div onClick={() => setRol("trabajador")} className={`w-full p-4 rounded-xl border cursor-pointer transition-all ${rol === "trabajador" ? "border-[#6c63ff] bg-[#6c63ff10] ring-1 ring-[#6c63ff]" : "border-[#2A2A38] bg-[#1A1A28]"}`}>
+                  <div className="text-center font-bold text-white">Trabajador</div>
+                  <div className="text-xs text-center">Ofrezco mis servicios</div>
+                </div>
+              </div>
             </div>
-            <div className="text-[40px]">Crea tu cuenta</div>
+
+            <div className="flex gap-4">
+              <div className="w-1/2">
+                <label className="block text-[11px] font-bold uppercase mb-1.5">Nombre</label>
+                <input type="text" placeholder="Tu nombre" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full px-4 h-[46px] rounded-xl bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff]" />
+              </div>
+              <div className="w-1/2">
+                <label className="block text-[11px] font-bold uppercase mb-1.5">Apellido</label>
+                <input type="text" placeholder="Tu apellido" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full px-4 h-[46px] rounded-xl bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff]" />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold uppercase mb-1.5">Correo electrónico</label>
+              <input type="email" placeholder="correo@ejemplo.com" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 h-[46px] rounded-xl bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff]" />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold uppercase mb-1.5">Contraseña</label>
+              <input type="password" placeholder="Mínimo 8 caracteres" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 h-[46px] rounded-xl bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff]" />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold uppercase mb-1.5">Confirmar contraseña</label>
+              <input type="password" placeholder="●●●●●●●●" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-4 h-[46px] rounded-xl bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff]" />
+            </div>
+
+            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+
+            <button disabled={loading} type="submit" className="font-bold h-[48px] w-full rounded-xl bg-[#6c63ff] text-white transition-all hover:opacity-90 disabled:opacity-50">
+              {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" /> : "Crear cuenta gratis"}
+            </button>
+
+            <div className="flex items-center gap-3 my-2">
+              <div className="flex-1 h-px bg-[#2A2A38]" />
+              <span className="text-[11px] text-[#606078]">O continua con</span>
+              <div className="flex-1 h-px bg-[#2A2A38]" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <button type="button" onClick={handleGoogleRegister} className="flex items-center justify-center gap-2 h-[46px] rounded-xl bg-[#1a1a24] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6c63ff]">Google</button>
+              <button type="button" onClick={handleFacebookRegister} className="flex items-center justify-center gap-2 h-[46px] rounded-xl bg-[#1a1a24] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6c63ff]">Facebook</button>
+            </div>
+
+            <p className="text-center text-[13px] text-[#9090A8]">¿Ya tienes cuenta? <Link href="/login" className="text-[#6c63ff] font-bold">Inicia sesión</Link></p>
           </div>
-
-          <div className="font-sans text-[#9090a8] flex flex-col gap-5">
-            {errors.general && (
-              <div className="bg-[#2d0a0a] border border-[#5a1a1a] rounded-lg px-4 py-3 text-red-400 text-sm">
-                {errors.general}
-              </div>
-            )}
-
-            <div className="flex flex-col gap-5">
-              <div className="font-normal">
-                Únete a miles de personas que ya usan Nexora
-              </div>
-              <div className="font-bold">Soy un...</div>
-            </div>
-
-            <div className="flex gap-[15px] mb-[10px]">
-              <div
-                onClick={() => {
-                  setRol("cliente");
-                  setErrors((prev) => ({ ...prev, rol: undefined }));
-                }}
-                className={`w-[268px] h-[125px] rounded-[20px] border border-[#313141] flex flex-col justify-center items-center bg-[#22222c] cursor-pointer transition-all duration-200 ease-in-out hover:-translate-y-1 hover:border-[rgba(124,92,255,0.6)] hover:shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)] ${
-                  !rol
-                    ? ""
-                    : rol === "trabajador"
-                    ? "opacity-50"
-                    : "ring-2 ring-indigo-500"
-                }`}
-              >
-                <img
-                  className="w-[36px] h-[36px]"
-                  src="/svg/client-register.svg"
-                  alt="client-icon"
-                />
-                <p className="m-1 font-bold text-white text-[15px]">Cliente</p>
-                <p className="m-0 font-normal text-[#9090a8] text-[15px]">
-                  Necesito un servicio
-                </p>
-              </div>
-
-              <div
-                onClick={() => {
-                  setRol("trabajador");
-                  setErrors((prev) => ({ ...prev, rol: undefined }));
-                }}
-                className={`w-[268px] h-[125px] rounded-[20px] border border-[#313141] flex flex-col justify-center items-center bg-[#22222c] cursor-pointer transition-all duration-200 ease-in-out hover:-translate-y-1 hover:border-[rgba(124,92,255,0.6)] hover:shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)] ${
-                  !rol
-                    ? ""
-                    : rol === "cliente"
-                    ? "opacity-50"
-                    : "ring-2 ring-indigo-500"
-                }`}
-              >
-                <img
-                  className="w-[36px] h-[36px]"
-                  src="/svg/worker-register.svg"
-                  alt="worker-icon"
-                />
-                <p className="m-1 font-bold text-white text-[15px]">
-                  Trabajador
-                </p>
-                <p className="m-0 font-normal text-[#9090a8] text-[15px]">
-                  Ofrezco mis servicios
-                </p>
-              </div>
-            </div>
-
-            {/* Error de rol */}
-            {errors.rol && <p className={errorCls}>{errors.rol}</p>}
-
-            <div className="flex gap-[15px]">
-              <div className="flex flex-col gap-[6px] flex-1">
-                <label className="font-bold text-[15px]">NOMBRE</label>
-                <input
-                  className={inputCls}
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  type="text"
-                  placeholder="Tu nombre"
-                />
-                {errors.firstName && (
-                  <p className={errorCls}>{errors.firstName}</p>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-[6px] flex-1">
-                <label className="font-bold text-[15px]">APELLIDO</label>
-                <input
-                  className={inputCls}
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  type="text"
-                  placeholder="Tu apellido"
-                />
-                {errors.lastName && (
-                  <p className={errorCls}>{errors.lastName}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-[6px] flex-1">
-              <label className="font-bold text-[15px]">
-                CORREO ELECTRÓNICO
-              </label>
-              <input
-                className={inputCls}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                placeholder="correo@ejemplo.com"
-              />
-              {errors.email && <p className={errorCls}>{errors.email}</p>}
-            </div>
-
-            <div className="flex flex-col gap-[6px] flex-1">
-              <label className="font-bold text-[15px]">CONTRASEÑA</label>
-              <input
-                className={inputCls}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type="password"
-                placeholder="Mínimo 8 caracteres"
-              />
-              {errors.password && (
-                <p className={errorCls}>{errors.password}</p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-[6px] flex-1">
-              <label className="font-bold text-[15px]">DISTRITO</label>
-              <select
-                className="h-12 px-[14px] rounded-xl border border-[#313141] bg-[#22222c] text-white text-[15px] outline-none transition-all duration-200 ease-in-out focus:border-[#7c5cff] focus:shadow-[0_0_10px_rgba(124,92,255,0.3)] appearance-none cursor-pointer"
-                value={district}
-                onChange={(e) => setDistrict(e.target.value)}
-              >
-                <option value="default" disabled>
-                  Seleccione un distrito
-                </option>
-                <option value="sjl">San Juan de Lurigancho</option>
-                <option value="miraflores">Miraflores</option>
-                <option value="san_borja">San Borja</option>
-                <option value="surco">Surco</option>
-                <option value="la_molina">La Molina</option>
-                <option value="san_miguel">San Miguel</option>
-                <option value="barranco">Barranco</option>
-                <option value="jesus_maria">Jesús María</option>
-                <option value="lince">Lince</option>
-                <option value="pueblo_libre">Pueblo Libre</option>
-                <option value="san_isidro">San Isidro</option>
-                <option value="surquillo">Surquillo</option>
-                <option value="otro">Otro</option>
-              </select>
-              {errors.district && (
-                <p className={errorCls}>{errors.district}</p>
-              )}
-            </div>
-          </div>
-
-          <button
-            disabled={loading}
-            type="submit"
-            className={`font-bold text-[15px] mt-5 h-[50px] w-full rounded-xl bg-[#6c63ff] text-white cursor-pointer flex justify-center items-center ${
-              loading && "opacity-50"
-            }`}
-          >
-            {loading ? (
-              <div className="h-8 w-8 border-4 border-red-200 rounded-full border-t-indigo-500 animate-spin" />
-            ) : (
-              <span>Crear cuenta gratis</span>
-            )}
-          </button>
-
-          <p className="text-center text-[#9090a8] text-sm mt-4">
-            ¿Ya tienes cuenta?{" "}
-            <a href="/login" className="text-[#6c63ff] font-bold">
-              Inicia sesión
-            </a>
-          </p>
         </form>
       </div>
     </div>
   );
 }
-
-export default RegisterPage;

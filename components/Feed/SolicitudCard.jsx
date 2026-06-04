@@ -4,302 +4,93 @@ import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
 function colorAvatar(iniciales = "") {
-  const colores = [
-    "#2d1a5e", "#0f2d1a", "#2d1a0a",
-    "#0a1a2d", "#2d0a1a", "#1a0a2d", "#0a2d2d",
-  ];
+  const colores = ["#2d1a5e", "#0f2d1a", "#2d1a0a", "#0a1a2d", "#2d0a1a", "#1a0a2d", "#0a2d2d"];
   let hash = 0;
-  for (const c of iniciales)
-    hash = (hash * 31 + c.charCodeAt(0)) & 0xffffffff;
+  for (const c of iniciales) hash = (hash * 31 + c.charCodeAt(0)) & 0xffffffff;
   return colores[Math.abs(hash) % colores.length];
 }
-
-const s = {
-  card: {
-    backgroundColor: "#13131f",
-    border: "1px solid #1e1e30",
-    borderRadius: "14px",
-    padding: "18px 20px",
-    marginBottom: "14px",
-    cursor: "pointer",
-    transition: "border-color 0.2s, box-shadow 0.2s",
-  },
-  cardTop: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "12px",
-  },
-  meta: { display: "flex", alignItems: "center", gap: "10px" },
-  metaName: { color: "#888", fontSize: "13px", fontWeight: 500 },
-  metaTime: { color: "#555", fontSize: "12px" },
-  cardRight: { display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 },
-  badgeUrgente: {
-    display: "inline-block",
-    backgroundColor: "#2d0a0a",
-    color: "#f87171",
-    border: "1px solid #5a1a1a",
-    borderRadius: "20px",
-    fontSize: "11px",
-    padding: "3px 10px",
-  },
-  badgeMio: {
-    display: "inline-block",
-    backgroundColor: "#1e1a3a",
-    color: "#a78bfa",
-    border: "1px solid #4a3aaa",
-    borderRadius: "20px",
-    fontSize: "11px",
-    padding: "3px 10px",
-  },
-  price: { color: "#f0f0ff", fontWeight: 700, fontSize: "15px" },
-  imgThumb: {
-    width: "100%",
-    height: "160px",
-    objectFit: "cover",
-    borderRadius: "10px",
-    marginBottom: "12px",
-    display: "block",
-  },
-  title: {
-    fontFamily: "var(--font-syne), sans-serif",
-    fontWeight: 700,
-    fontSize: "16px",
-    color: "#f0f0ff",
-    marginBottom: "6px",
-    lineHeight: 1.4,
-  },
-  desc: {
-    color: "#666",
-    fontSize: "13px",
-    lineHeight: 1.6,
-    marginBottom: "10px",
-    overflow: "hidden",
-    display: "-webkit-box",
-    WebkitLineClamp: 3,
-    WebkitBoxOrient: "vertical",
-  },
-  verMas: { color: "#500fe9", fontSize: "12px", cursor: "pointer" },
-  chips: { display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "14px" },
-  chip: {
-    backgroundColor: "#1a1a2e",
-    color: "#9a9ab0",
-    borderRadius: "6px",
-    fontSize: "11px",
-    padding: "3px 8px",
-  },
-  bottom: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "10px",
-  },
-  stats: { display: "flex", gap: "12px", color: "#555", fontSize: "12px" },
-  btnPostular: {
-    backgroundColor: "#500fe9",
-    color: "#fff",
-    border: "none",
-    borderRadius: "8px",
-    padding: "8px 16px",
-    fontSize: "13px",
-    cursor: "pointer",
-    fontWeight: 700,
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    flexShrink: 0,
-  },
-  btnPostulado: {
-    backgroundColor: "#1a2d1a",
-    color: "#4ade80",
-    border: "1px solid #166534",
-    borderRadius: "8px",
-    padding: "8px 16px",
-    fontSize: "13px",
-    cursor: "pointer",
-    fontWeight: 700,
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    flexShrink: 0,
-  },
-  btnLoading: {
-    backgroundColor: "#2a2a3e",
-    color: "#666",
-    border: "none",
-    borderRadius: "8px",
-    padding: "8px 16px",
-    fontSize: "13px",
-    cursor: "not-allowed",
-    fontWeight: 700,
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    flexShrink: 0,
-  },
-  btnCancelar: {
-    backgroundColor: "transparent",
-    color: "#f87171",
-    border: "1px solid #5a1a1a",
-    borderRadius: "8px",
-    padding: "8px 16px",
-    fontSize: "13px",
-    cursor: "pointer",
-    fontWeight: 700,
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    flexShrink: 0,
-  },
-
-    badgeCompletado: {
-    display: "inline-block",
-    backgroundColor: "#14532d",
-    color: "#4ade80",
-    border: "1px solid #16a34a",
-    borderRadius: "20px",
-    fontSize: "11px",
-    padding: "3px 10px",
-  },
-};
-
 
 export default function SolicitudCard({
   solicitud,
   currentUserId,
-  rolUsuario,
+  currentUserRole,
   estaPostulado,
-  puedePostularse,    
+  puedePostularse,
   onToggle,
   loading,
   onVerDetalle,
   onCancelar,
 }) {
-  
-  const iniciales =
-    solicitud.iniciales ||
-    `${solicitud.nombre?.charAt(0) ?? ""}${
-      solicitud.nombre?.split(" ")[1]?.charAt(0) ?? ""
-    }`.toUpperCase() ||
-    "U";
-
-  const tiempoRelativo = solicitud.creadoEn
-    ? formatDistanceToNow(new Date(solicitud.creadoEn), {
-        addSuffix: true,
-        locale: es,
-      })
-    : "hace un momento";
-
-  const postulado         = estaPostulado(solicitud.postulantes);  
-  const totalPostulantes  = solicitud.postulantes.length;
-  const esPropietario     = Boolean(currentUserId && currentUserId === solicitud.userId);
-  const descLarga         = solicitud.descripcion.length > 120;
-  const primerImagen      = solicitud.imageUrls[0] ?? null;
-
-  const puedeAccion = puedePostularse
-    ? puedePostularse(solicitud.userId)
-    : rolUsuario === "trabajador" && !esPropietario; 
+  const iniciales = solicitud.iniciales || `${solicitud.nombre?.charAt(0) ?? ""}${solicitud.nombre?.split(" ")[1]?.charAt(0) ?? ""}`.toUpperCase() || "U";
+  const tiempoRelativo = solicitud.creadoEn ? formatDistanceToNow(new Date(solicitud.creadoEn), { addSuffix: true, locale: es }) : "hace un momento";
+  const postulado = estaPostulado?.(solicitud.postulantes ?? []) ?? false;
+  const totalPostulantes = solicitud.postulantes?.length ?? 0;
+  const esPropietario = currentUserId && currentUserId === solicitud.userId;
+  const esTrabajador = currentUserRole === "trabajador";
+  const descLarga = (solicitud.descripcion ?? "").length > 120;
+  const primerImagen = solicitud.imageUrls?.[0] ?? null;
+  const puedeAccion = esTrabajador && !esPropietario && puedePostularse?.(solicitud.userId);
 
   return (
     <div
-      style={{
-        ...s.card,
-        borderColor: postulado
-          ? "#166534"
-          : esPropietario
-          ? "#2e1a5e"
-          : "#1e1e30",
-      }}
+      className={`bg-[#13131f] border rounded-xl p-5 mb-3 cursor-pointer transition-all hover:border-[#4a3aaa] ${postulado ? "border-[#166534]" : esPropietario ? "border-[#2e1a5e]" : "border-[#1e1e30]"}`}
       onClick={() => onVerDetalle(solicitud)}
     >
-      <div style={s.cardTop}>
-        <div style={s.meta}>
-          <div
-            style={{
-              width: "36px",
-              height: "36px",
-              borderRadius: "50%",
-              backgroundColor: colorAvatar(iniciales),
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "12px",
-              fontWeight: 600,
-              color: "#fff",
-              flexShrink: 0,
-            }}
-          >
+      <div className="flex justify-between items-start mb-3">
+        <div className="flex gap-3">
+          <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0" style={{ backgroundColor: colorAvatar(iniciales) }}>
             {iniciales}
           </div>
           <div>
-            <span style={s.metaName}>
-              {solicitud.nombre} · {solicitud.distrito}
-            </span>
-            <br />
-            <span style={s.metaTime}>{tiempoRelativo}</span>
+            <span className="text-[#888] text-sm font-medium">{solicitud.nombre} · {solicitud.distrito}</span><br />
+            <span className="text-[#555] text-xs">{tiempoRelativo}</span>
           </div>
         </div>
-
-        <div style={s.cardRight}>
-          {solicitud.urgente && <span style={s.badgeUrgente}>Urgente</span>}
-          {esPropietario && solicitud.estado === "activa" && <span style={s.badgeMio}>Mi solicitud</span>}
-          {solicitud.estado === "en_progreso" && <span style={{...s.badgeMio, backgroundColor:"#0f2d1a", color:"#4ade80", border:"1px solid #16a34a"}}>En progreso</span>}
-          {solicitud.estado === "completada" && <span style={s.badgeCompletado}>Completado</span>}
-          {solicitud.estado === "cancelada" && <span style={{...s.badgeMio, backgroundColor:"#2d0a0a", color:"#f87171", border:"1px solid #5a1a1a"}}>Cancelada</span>}
-          <span style={s.price}>{solicitud.precio}</span>
+        <div className="flex items-center gap-2">
+          {solicitud.urgente && <span className="bg-[#2d0a0a] text-[#f87171] border border-[#5a1a1a] rounded-full text-xs px-2 py-1">Urgente</span>}
+          {esPropietario && <span className="bg-[#1e1a3a] text-[#a78bfa] border border-[#4a3aaa] rounded-full text-xs px-2 py-1">Mi solicitud</span>}
+          <span className="text-[#a78bfa] font-bold">{solicitud.precio}</span>
         </div>
       </div>
 
-      {primerImagen && (
-        <img
-          src={primerImagen}
-          alt="Foto de la solicitud"
-          style={s.imgThumb}
-          onClick={(e) => e.stopPropagation()}
-          onError={(e) => { e.target.style.display = "none"; }}
-        />
-      )}
+      {primerImagen && <img src={primerImagen} alt="preview" className="w-full h-40 object-cover rounded-lg mb-3" />}
 
-      <h2 style={s.title}>{solicitud.titulo}</h2>
-      <p style={s.desc}>{solicitud.descripcion}</p>
-      {descLarga && (
-        <span style={s.verMas}>Ver descripción completa →</span>
-      )}
+      <h2 className="font-syne font-bold text-white text-base mb-1">{solicitud.titulo}</h2>
+      <p className="text-[#777] text-sm line-clamp-2 mb-2">{solicitud.descripcion}</p>
+      {descLarga && <span className="text-[#500fe9] text-xs">Ver descripción completa →</span>}
 
-      <div style={s.chips}>
-        {solicitud.tags.map((t) => (
-          <span key={t} style={s.chip}>{t}</span>
-        ))}
+      <div className="flex flex-wrap gap-2 my-3">
+        {solicitud.tags?.map((t) => <span key={t} className="bg-[#1a1a2e] text-[#9a9ab0] rounded-md text-xs px-2 py-1">{t}</span>)}
       </div>
 
-      <div style={s.bottom}>
-        <div style={s.stats}>
+      <div className="flex justify-between items-center">
+        <div className="flex gap-3 text-[#555] text-xs">
           <span>{totalPostulantes} postulantes</span>
           <span>{solicitud.distrito}</span>
-          {solicitud.modalidad && <span>{solicitud.modalidad}</span>}
+          <span>{solicitud.modalidad}</span>
         </div>
 
-        {/* Propietario: cancelar */}
-          {esPropietario && solicitud.estado !== "completada" && solicitud.estado !== "cancelada" && (
-            <button
-              style={s.btnCancelar}
-              onClick={(e) => {
-                e.stopPropagation();
-                onCancelar(solicitud.id);
-              }}
-            >
-              Cancelar solicitud
-            </button>
-          )}
-        {/* Trabajador ajeno: postularse */}
+        {esPropietario && solicitud.estado !== "completada" && solicitud.estado !== "cancelada" && (
+          <button onClick={(e) => { e.stopPropagation(); onCancelar(solicitud.id); }} className="bg-transparent text-[#f87171] border border-[#5a1a1a] rounded-lg px-3 py-1 text-xs font-bold">
+            Cancelar
+          </button>
+        )}
+
+        {!currentUserId && (
+          <a href="/login" onClick={(e) => e.stopPropagation()} className="bg-[#500fe9] text-white rounded-lg px-4 py-1.5 text-xs font-bold">Iniciar sesión</a>
+        )}
+
+        {currentUserId && !esPropietario && !esTrabajador && (
+          <a href="/worker" onClick={(e) => e.stopPropagation()} className="bg-[#500fe9] text-white rounded-lg px-4 py-1.5 text-xs font-bold">Únete como trabajador</a>
+        )}
+
         {puedeAccion && (
           <button
-            style={
-              loading ? s.btnLoading : postulado ? s.btnPostulado : s.btnPostular
-            }
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle(solicitud.id, solicitud.postulantes, solicitud.userId);
-            }}
+            onClick={(e) => { e.stopPropagation(); onToggle(solicitud.id, solicitud.postulantes, solicitud.userId); }}
             disabled={loading}
+            className={`rounded-lg px-4 py-1.5 text-xs font-bold ${loading ? "bg-[#2a2a3e] text-[#666] cursor-not-allowed" : postulado ? "bg-[#1a2d1a] text-[#4ade80] border border-[#166534]" : "bg-[#500fe9] text-white"}`}
           >
-            {loading
-              ? "..."
-              : postulado
-              ? "✓ Postulado — Cancelar"
-              : "Postularme"}
+            {loading ? "..." : postulado ? "✓ Postulado — Cancelar" : "Postularme"}
           </button>
         )}
       </div>

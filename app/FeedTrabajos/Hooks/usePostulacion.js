@@ -6,25 +6,14 @@ import { db } from "@/firebase/db";
 export function usePostulacion(userId, rol) {
   const [loadingId, setLoadingId] = useState(null);
 
-  const estaPostulado = (postulantes = []) => 
-    Array.isArray(postulantes) && postulantes.includes(userId);
+  const estaPostulado = (postulantes = []) => Array.isArray(postulantes) && postulantes.includes(userId);
 
-  const puedePostularse = (propietarioId) => 
-    Boolean(userId) && rol === "trabajador" && userId !== propietarioId;
+  const puedePostularse = (propietarioId) => Boolean(userId) && rol === "trabajador" && userId !== propietarioId;
 
   const togglePostulacion = async (solicitudId, postulantesActuales = [], propietarioId = "") => {
-    if (!userId) {
-      alert("Debes iniciar sesión para postularte.");
-      return;
-    }
-    if (rol !== "trabajador") {
-      console.warn("[usePostulacion] Solo los trabajadores pueden postularse.");
-      return;
-    }
-    if (userId === propietarioId) {
-      console.warn("[usePostulacion] No puedes postularte a tu propia solicitud.");
-      return;
-    }
+    if (!userId) { alert("Debes iniciar sesión para postularte."); return; }
+    if (rol !== "trabajador") { console.warn("Solo trabajadores pueden postularse"); return; }
+    if (userId === propietarioId) { console.warn("No puedes postularte a tu propia solicitud"); return; }
     setLoadingId(solicitudId);
     const ref = doc(db, "solicitudes", solicitudId);
     try {
@@ -34,7 +23,7 @@ export function usePostulacion(userId, rol) {
         await updateDoc(ref, { postulantes: arrayUnion(userId) });
       }
     } catch (err) {
-      console.error("[usePostulacion] Error al actualizar postulación:", err);
+      console.error(err);
       alert("Ocurrió un error. Intenta nuevamente.");
     } finally {
       setLoadingId(null);
