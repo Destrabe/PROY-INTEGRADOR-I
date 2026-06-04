@@ -9,23 +9,27 @@ import {
   loginWithGoogle,
   loginWithFacebook,
 } from "../authService";
+
 import { useAuth } from "@/components/AuthContext";
 
 export default function RegisterPage() {
   const router = useRouter();
   const { login } = useAuth();
+
   const [rol, setRol] = useState("cliente");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [sended, setSended] = useState(false);
 
   const handleGoogleRegister = async () => {
     try {
       const user = await loginWithGoogle();
+
       login({
         uid: user.uid,
         email: user.email,
@@ -33,6 +37,7 @@ export default function RegisterPage() {
         last_name: user.displayName?.split(" ").slice(1).join(" ") || "",
         rol: "cliente",
       });
+
       router.push("/FeedTrabajos");
     } catch (error) {
       console.log("GOOGLE REGISTER ERROR:", error);
@@ -42,6 +47,7 @@ export default function RegisterPage() {
   const handleFacebookRegister = async () => {
     try {
       const user = await loginWithFacebook();
+
       login({
         uid: user.uid,
         email: user.email,
@@ -49,6 +55,7 @@ export default function RegisterPage() {
         last_name: "",
         rol: "cliente",
       });
+
       router.push("/FeedTrabajos");
     } catch (error) {
       console.log("FACEBOOK REGISTER ERROR:", error);
@@ -57,6 +64,7 @@ export default function RegisterPage() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
     setSended(true);
 
     if (
@@ -88,6 +96,7 @@ export default function RegisterPage() {
 
       if (result.success) {
         const firebaseUser = await loginUser(email, password);
+
         login({
           uid: firebaseUser.uid,
           email: firebaseUser.email,
@@ -95,6 +104,7 @@ export default function RegisterPage() {
           last_name: lastName,
           rol: "cliente",
         });
+
         router.push("/");
       } else {
         if (result.error?.code === "auth/email-already-in-use") {
@@ -112,10 +122,10 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex font-sans justify-center items-center bg-[#0a0a0f] min-h-screen px-4">
-      <div className="w-full max-w-[552px] ">
+    <div className="flex font-sans justify-center items-center bg-[#0a0a0f] min-h-screen py-10 px-4">
+      <div className="w-full max-w-[552px]">
         {/* LOGO */}
-        <div className="font-syne font-extrabold text-white mb-3">
+        <div className="font-syne font-extrabold text-white mb-6">
           <div className="flex text-[36px] leading-none mb-1">
             Nexora<span className="text-[#6c63ff]">.</span>
           </div>
@@ -141,20 +151,25 @@ export default function RegisterPage() {
                 onClick={() => {
                   setRol("cliente");
                 }}
-                className={`w-[268px] h-[125px] rounded-[20px] border border-[#313141] flex flex-col justify-center items-center bg-[#22222c] cursor-pointer transition-all duration-200 ease-in-out hover:-translate-y-1 hover:border-[rgba(124,92,255,0.6)] hover:shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)] ${
-                  !rol
-                    ? ""
-                    : rol === "trabajador"
-                      ? "opacity-50"
-                      : "border-[rgba(124,92,255,0.6)] shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)] ring-2 ring-indigo-500"
-                }`}
+                className={`w-[268px] h-[125px] rounded-[20px] border border-[#313141] flex flex-col justify-center items-center bg-[#22222c] cursor-pointer transition-all duration-200 ease-in-out hover:-translate-y-1 hover:border-[rgba(124,92,255,0.6)] hover:shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)]
+      
+      ${
+        !rol
+          ? ""
+          : rol === "trabajador"
+            ? "opacity-50"
+            : "border-[rgba(124,92,255,0.6)] shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)] ring-2 ring-indigo-500"
+      }
+    `}
               >
                 <img
                   className="w-[36px] h-[36px]"
                   src="/svg/client-register.svg"
                   alt="client-icon"
                 />
+
                 <p className="m-1 font-bold text-white text-[15px]">Cliente</p>
+
                 <p className="m-0 font-normal text-[#9090a8] text-[15px]">
                   Necesito un servicio
                 </p>
@@ -165,22 +180,27 @@ export default function RegisterPage() {
                 onClick={() => {
                   setRol("trabajador");
                 }}
-                className={`w-[268px] h-[125px] rounded-[20px] border border-[#313141] flex flex-col justify-center items-center bg-[#22222c] cursor-pointer transition-all duration-200 ease-in-out hover:-translate-y-1 hover:border-[rgba(124,92,255,0.6)] hover:shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)] ${
-                  !rol
-                    ? ""
-                    : rol === "cliente"
-                      ? "opacity-50"
-                      : "border-[rgba(124,92,255,0.6)] shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)] ring-2 ring-indigo-500"
-                }`}
+                className={`w-[268px] h-[125px] rounded-[20px] border border-[#313141] flex flex-col justify-center items-center bg-[#22222c] cursor-pointer transition-all duration-200 ease-in-out hover:-translate-y-1 hover:border-[rgba(124,92,255,0.6)] hover:shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)]
+
+      ${
+        !rol
+          ? ""
+          : rol === "cliente"
+            ? "opacity-50"
+            : "border-[rgba(124,92,255,0.6)] shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)] ring-2 ring-indigo-500"
+      }
+    `}
               >
                 <img
                   className="w-[36px] h-[36px]"
                   src="/svg/worker-register.svg"
                   alt="worker-icon"
                 />
+
                 <p className="m-1 font-bold text-white text-[15px]">
                   Trabajador
                 </p>
+
                 <p className="m-0 font-normal text-[#9090a8] text-[15px]">
                   Ofrezco mis servicios
                 </p>
@@ -201,6 +221,7 @@ export default function RegisterPage() {
                   className="w-full px-4 h-[46px] rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
                 />
               </div>
+
               <div className="w-1/2">
                 <label className="block text-[11px] font-bold text-[#9090A8] tracking-wider mb-1.5 uppercase">
                   Apellido
@@ -294,7 +315,7 @@ export default function RegisterPage() {
             disabled={loading}
             type="submit"
             className={`font-bold text-[15px] mt-4 h-[48px] w-full rounded-[10px] bg-[#6c63ff] text-white cursor-pointer flex justify-center items-center transition-all hover:opacity-90 ${
-              loading ? "opacity-50" : ""
+              loading && "opacity-50"
             }`}
           >
             {loading ? (
@@ -338,6 +359,7 @@ export default function RegisterPage() {
               </svg>
               Google
             </button>
+
             <button
               type="button"
               onClick={handleFacebookRegister}
