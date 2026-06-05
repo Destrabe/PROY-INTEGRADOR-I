@@ -102,7 +102,7 @@ export default function RegisterPage() {
           email: firebaseUser.email,
           first_name: firstName,
           last_name: lastName,
-          rol: "cliente",
+          rol: rol,
         });
 
         router.push("/");

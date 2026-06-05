@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useAuth } from "@/components/AuthContext";
 import { useEffect, useState } from "react";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function ConfigurationPage() {
   const { user } = useAuth();
@@ -41,6 +42,7 @@ export default function ConfigurationPage() {
   };
 
   return (
+    <ProtectedRoute>
     <div
       className="min-h-screen p-6 md:p-10"
       style={{
@@ -223,5 +225,6 @@ export default function ConfigurationPage() {
         )}
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
