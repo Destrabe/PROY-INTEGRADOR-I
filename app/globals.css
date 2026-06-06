@@ -19,7 +19,6 @@ body {
 }
 
 main {
-  overflow-x: hidden;
   width: 100%;
 }
 
@@ -38,10 +37,6 @@ input,
 textarea,
 select {
   font: inherit;
-}
-
-body {
-  overflow-x: hidden;
 }
 
 /* :root {

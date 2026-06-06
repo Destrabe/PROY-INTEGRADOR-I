@@ -34,19 +34,13 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
-      <body
-        className={`
-    ${dm_sans.variable}
-    ${syne.variable}
-    overflow-x-hidden
-  `}
-      >
-          <AuthProvider>
-            <Header />
-            {children}
-            <Analytics />
-            <SpeedInsights />
-          </AuthProvider>
+      <body className={`${dm_sans.variable}${syne.variable}`}>
+        <AuthProvider>
+          <Header />
+          {children}
+          <Analytics />
+          <SpeedInsights />
+        </AuthProvider>
       </body>
     </html>
   );
