@@ -34,7 +34,7 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
-      <body className={`${dm_sans.variable}${syne.variable}`}>
+      <body className={`${dm_sans.variable} ${syne.variable}`}>
         <AuthProvider>
           <Header />
           {children}
