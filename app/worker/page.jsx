@@ -1,263 +1,239 @@
 "use client";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/auth";
 import { useRouter } from "next/navigation";
-export default function TrabajadorPage() {
-  const [cv, setCv] = useState(null);
-  const [imagenes, setImagenes] = useState([]);
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/firebase/db";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+const CATEGORIAS = [
+  { id: "tecnologia", label: "Tecnología", tag: "Tecnología" },
+  { id: "hogar", label: "Hogar", tag: "Hogar" },
+  { id: "diseno", label: "Diseño", tag: "Diseño" },
+  { id: "educacion", label: "Educación", tag: "Educación" },
+  { id: "legal", label: "Legal", tag: "Legal" },
+  { id: "transporte", label: "Transporte", tag: "Transporte" },
+  { id: "salud", label: "Salud", tag: "Salud" },
+  { id: "otro", label: "Otro", tag: "Otro" },
+];
+
+export default function WorkerPage() {
+  const [user, loadingAuth] = useAuthState(auth);
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [profesion, setProfesion] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [experiencia, setExperiencia] = useState("");
+  const [ambitos, setAmbitos] = useState([]);
+  const [cvFile, setCvFile] = useState(null);
+  const [fotosTrabajos, setFotosTrabajos] = useState([]);
+
+  useEffect(() => {
+    if (!loadingAuth && !user) {
+      router.push("/login");
+    }
+  }, [user, loadingAuth, router]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!profesion.trim() || !descripcion.trim()) {
+      setError("Completa los campos obligatorios.");
+      return;
+    }
+    if (ambitos.length === 0) {
+      setError("Selecciona al menos un ámbito de especialización.");
+      return;
+    }
+    if (!cvFile) {
+      setError("El CV en formato PDF es obligatorio.");
+      return;
+    }
+    if (cvFile.type !== "application/pdf") {
+      setError("El CV debe ser un archivo PDF válido.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const storage = getStorage();
+      let cvUrl = null;
+      if (cvFile) {
+        const cvRef = ref(storage, `worker_applications/${user.uid}/cv_${Date.now()}.pdf`);
+        await uploadBytes(cvRef, cvFile);
+        cvUrl = await getDownloadURL(cvRef);
+      }
+
+      const fotosUrls = [];
+      if (fotosTrabajos.length > 0) {
+        for (const foto of fotosTrabajos) {
+          const fotoRef = ref(storage, `worker_applications/${user.uid}/portfolio_${Date.now()}_${foto.name}`);
+          await uploadBytes(fotoRef, foto);
+          const url = await getDownloadURL(fotoRef);
+          fotosUrls.push(url);
+        }
+      }
+
+      await setDoc(doc(db, "worker_applications", user.uid), {
+        userId: user.uid,
+        profesion,
+        descripcion,
+        experiencia: experiencia ? parseInt(experiencia) : null,
+        ambitos,
+        cvUrl,
+        fotosTrabajos: fotosUrls,
+        estado: "pending",
+        createdAt: serverTimestamp(),
+      });
+
+      router.push("/worker-pending");
+    } catch (err) {
+      console.error(err);
+      setError("Error al enviar la solicitud. Intenta nuevamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loadingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)]">
+        <div className="text-[var(--text-main)]">Cargando...</div>
+      </div>
+    );
+  }
+
+  if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white px-6 py-12">
-      <div className="max-w-3xl mx-auto">
-        <h1
-          className="text-4xl font-extrabold mb-3"
-          style={{ fontFamily: "Syne, sans-serif" }}
-        >
+    <div className="min-h-screen py-12 px-4" style={{ background: "var(--bg-main)", color: "var(--text-main)" }}>
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-extrabold mb-2" style={{ fontFamily: "var(--font-syne), sans-serif" }}>
           Únete como Trabajador
         </h1>
-
-        <p className="text-[#9090A8] mb-10">
-          Completa tu perfil profesional para generar confianza.
+        <p className="mb-6" style={{ color: "var(--text-secondary)" }}>
+          Completa tu perfil profesional para empezar a recibir solicitudes. Tu solicitud será revisada por nuestro equipo.
         </p>
 
-        <form
-          className="grid gap-6"
-          onSubmit={(e) => {
-            e.preventDefault();
-            router.push("/verificacion-trabajador");
-          }}
-        >
+        <form onSubmit={handleSubmit} className="space-y-5 p-6 rounded-2xl border" style={{ background: "var(--bg-card)", borderColor: "var(--border-color)" }}>
           <div>
-            <label className="flex items-center gap-2 mb-2 font-semibold">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#A855F7"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M20 21V19a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-              Profesión
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-muted)" }}>
+              Profesión / Oficio *
             </label>
-
             <input
               type="text"
               required
-              placeholder="Ej: Técnico de laptops"
-              className="w-full px-4 py-3 rounded-xl bg-[#111118] border border-[#2A2A38] outline-none transition-all duration-300 hover:border-[#A855F7] focus:border-[#A855F7]"
+              value={profesion}
+              onChange={(e) => setProfesion(e.target.value)}
+              placeholder="Ej: Técnico de laptops, Electricista, Pintor"
+              className="w-full rounded-lg px-4 py-2 border outline-none"
+              style={{ background: "var(--bg-input)", borderColor: "var(--border-color)", color: "var(--text-main)" }}
             />
           </div>
 
           <div>
-            <label className="flex items-center gap-2 mb-2 font-semibold">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#A855F7"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-              Descripción profesional
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-muted)" }}>
+              Descripción profesional *
             </label>
-
             <textarea
-              rows={5}
-              placeholder="Cuéntanos sobre tu experiencia..."
-              className="w-full px-4 py-3 rounded-xl bg-[#111118] border border-[#2A2A38] outline-none resize-none"
+              rows={4}
+              required
+              value={descripcion}
+              onChange={(e) => setDescripcion(e.target.value)}
+              placeholder="Cuéntanos sobre tu experiencia, especialidades y disponibilidad..."
+              className="w-full rounded-lg px-4 py-2 border outline-none resize-vertical"
+              style={{ background: "var(--bg-input)", borderColor: "var(--border-color)", color: "var(--text-main)" }}
             />
           </div>
 
           <div>
-            <label className="flex items-center gap-2 mb-2 font-semibold">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#A855F7"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 20V10" />
-                <path d="M18 20V4" />
-                <path d="M6 20v-4" />
-              </svg>
-              Años de experiencia
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-muted)" }}>
+              Años de experiencia (opcional)
             </label>
-
             <input
               type="number"
-              required
-              placeholder="3"
-              className="w-full px-4 py-3 rounded-xl bg-[#111118] border border-[#2A2A38] outline-none transition-all duration-300 hover:border-[#A855F7] focus:border-[#A855F7]"
+              value={experiencia}
+              onChange={(e) => setExperiencia(e.target.value)}
+              placeholder="Ej: 3"
+              className="w-full rounded-lg px-4 py-2 border outline-none"
+              style={{ background: "var(--bg-input)", borderColor: "var(--border-color)", color: "var(--text-main)" }}
             />
           </div>
 
           <div>
-            <label className="flex items-center gap-2 mb-2 font-semibold">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#A855F7"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="17 8 12 3 7 8" />
-                <line x1="12" y1="3" x2="12" y2="15" />
-              </svg>
-              Subir CV
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-muted)" }}>
+              Ámbitos de especialización *
             </label>
-
-            <input
-              type="file"
-              required
-              accept=".pdf,application/pdf"
-              onChange={(e) => setCv(e.target.files[0])}
-              className="w-full px-4 py-3 rounded-xl bg-[#111118] border border-[#2A2A38]
-  file:mr-4
-  file:px-4
-  file:py-2
-  file:rounded-lg
-  file:border-0
-  file:bg-[#A855F7]
-  file:text-white
-  file:cursor-pointer
-  file:transition-all
-  file:duration-300
-  hover:file:scale-105
-  hover:file:brightness-110
-  file:content-['Seleccionar_archivo']"
-            />
-
-            <p className="text-sm text-[#9090A8] mt-2">Solo archivos PDF.</p>
-
-            {cv && (
-              <div className="mt-3 flex items-center justify-between bg-[#151520] border border-[#2A2A38] rounded-xl px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#EF4444"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                  </svg>
-
-                  <span className="text-sm">{cv.name}</span>
-                </div>
-
+            <div className="flex flex-wrap gap-2 mb-2">
+              {CATEGORIAS.map((cat) => (
                 <button
+                  key={cat.id}
                   type="button"
-                  onClick={() => setCv(null)}
-                  className="text-red-400 text-sm hover:text-red-300"
+                  onClick={() => {
+                    if (ambitos.includes(cat.tag)) {
+                      setAmbitos(ambitos.filter((a) => a !== cat.tag));
+                    } else {
+                      setAmbitos([...ambitos, cat.tag]);
+                    }
+                  }}
+                  className={`px-3 py-1.5 rounded-full text-sm transition-all ${
+                    ambitos.includes(cat.tag) ? "btn-primary" : "btn-secondary"
+                  }`}
                 >
-                  Quitar
+                  {cat.label}
                 </button>
-              </div>
+              ))}
+            </div>
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+              Selecciona los ámbitos en los que ofreces servicios. Recibirás solicitudes de esas categorías.
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-muted)" }}>
+              Subir CV (PDF) *
+            </label>
+            <input
+              type="file"
+              accept=".pdf,application/pdf"
+              required
+              onChange={(e) => setCvFile(e.target.files[0] ?? null)}
+              className="w-full text-sm"
+            />
+            {cvFile && (
+              <p className="text-xs mt-1 flex items-center gap-1" style={{ color: "var(--success)" }}>
+                ✓ {cvFile.name}
+              </p>
             )}
           </div>
 
           <div>
-            <label className="flex items-center gap-2 mb-2 font-semibold">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#A855F7"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <circle cx="8.5" cy="8.5" r="1.5" />
-                <polyline points="21 15 16 10 5 21" />
-              </svg>
-              Fotos de trabajos
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-muted)" }}>
+              Fotos de trabajos (opcional)
             </label>
-
             <input
               type="file"
-              required
               multiple
-              accept="image/png,image/jpeg,image/jpg,image/webp"
-              onChange={(e) => setImagenes(Array.from(e.target.files))}
-              className="w-full px-4 py-3 rounded-xl bg-[#111118] border border-[#2A2A38]
-  file:mr-4
-  file:px-4
-  file:py-2
-  file:rounded-lg
-  file:border-0
-  file:bg-[#6366F1]
-  file:text-white
-  file:cursor-pointer
-  file:transition-all
-  file:duration-300
-  hover:file:scale-105
-  hover:file:brightness-110
-  file:content-['Seleccionar_archivo']"
+              accept="image/*"
+              onChange={(e) => setFotosTrabajos(Array.from(e.target.files))}
+              className="w-full text-sm"
             />
-
-            <p className="text-sm text-[#9090A8] mt-2">
-              Solo imágenes JPG, PNG o WEBP.
-            </p>
-
-            {imagenes.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
-                {imagenes.map((img, index) => (
-                  <div
-                    key={index}
-                    className="relative border border-[#2A2A38] rounded-xl overflow-hidden bg-[#151520]"
-                  >
-                    <img
-                      src={URL.createObjectURL(img)}
-                      alt="preview"
-                      className="w-full h-32 object-cover"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setImagenes(imagenes.filter((_, i) => i !== index))
-                      }
-                      className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-lg"
-                    >
-                      X
-                    </button>
-                  </div>
-                ))}
-              </div>
+            {fotosTrabajos.length > 0 && (
+              <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
+                {fotosTrabajos.length} archivos seleccionados
+              </p>
             )}
           </div>
 
-          <button
-            type="submit"
-            className="mt-4 py-3 rounded-xl font-bold transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(168,85,247,0.45)] active:scale-[0.98]"
-            style={{
-              background: "linear-gradient(135deg, #A855F7, #6366F1)",
-            }}
-          >
-            Enviar solicitud
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
+          <button type="submit" disabled={loading} className="btn-primary w-full justify-center">
+            {loading ? "Enviando solicitud..." : "Enviar solicitud"}
           </button>
         </form>
       </div>

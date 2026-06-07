@@ -1,4 +1,5 @@
-import {
+/*import {
+
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
@@ -78,3 +79,14 @@ export const loginWithFacebook = async () => {
   }
   return user;
 };
+
+export const loginWithFacebook = async () => {
+  const provider = new FacebookAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    return result.user;
+  } catch (error) {
+    console.error("Error en Facebook Auth:", error);
+    throw error;
+  }
+};*/

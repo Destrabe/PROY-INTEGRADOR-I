@@ -11,97 +11,64 @@ const FILTROS = [
   "SJL",
 ];
 
-const s = {
-  wrapper: { marginBottom: "16px" },
-  searchRow: { display: "flex", gap: "10px", marginBottom: "14px" },
-  search: {
-    flex: 1,
-    backgroundColor: "#13131f",
-    border: "1px solid #2a2a3e",
-    borderRadius: "10px",
-    padding: "10px 16px",
-    color: "#ccc",
-    fontSize: "14px",
-    outline: "none",
-    fontFamily: "var(--font-dm-sans), sans-serif",
-  },
-  tagsRow: { display: "flex", gap: "8px", flexWrap: "wrap" },
-  tag: {
-    padding: "5px 14px",
-    borderRadius: "20px",
-    fontSize: "13px",
-    border: "1px solid #2a2a3e",
-    color: "#888",
-    cursor: "pointer",
-    background: "transparent",
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    transition: "all 0.2s",
-  },
-  tagActive: {
-    padding: "5px 14px",
-    borderRadius: "20px",
-    fontSize: "13px",
-    border: "1px solid #4a3aaa",
-    color: "#a78bfa",
-    backgroundColor: "#1e1a3a",
-    cursor: "pointer",
-    fontFamily: "var(--font-dm-sans), sans-serif",
-  },
-
-  tagAltaValoracion: {
-    padding: "5px 14px",
-    borderRadius: "20px",
-    fontSize: "13px",
-    border: "1px solid #b45309",
-    color: "#fbbf24",
-    background: "transparent",
-    cursor: "pointer",
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    transition: "all 0.2s",
-  },
-  tagAltaValoracionActive: {
-    padding: "5px 14px",
-    borderRadius: "20px",
-    fontSize: "13px",
-    border: "1px solid #b45309",
-    color: "#fbbf24",
-    backgroundColor: "#2d1a00",
-    cursor: "pointer",
-    fontFamily: "var(--font-dm-sans), sans-serif",
-  },
-};
-
 export default function FiltrosTags({ busqueda, setBusqueda, filtroActivo, setFiltroActivo }) {
   return (
-    <div style={s.wrapper}>
-      <div style={s.searchRow}>
+    <div className="mb-4">
+      <div className="flex gap-2 mb-3">
         <input
-          style={s.search}
+          type="text"
           placeholder="Buscar por tipo de trabajo..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
+          className="flex-1 rounded-xl px-4 py-2 text-sm outline-none transition-all"
+          style={{
+            background: "var(--bg-input)",
+            border: "1px solid var(--border-color)",
+            color: "var(--text-main)",
+          }}
+          onFocus={(e) => (e.target.style.borderColor = "var(--accent)")}
+          onBlur={(e) => (e.target.style.borderColor = "var(--border-color)")}
         />
       </div>
-      <div style={s.tagsRow}>
-        {FILTROS.map((f) => {
-          const isAltaValoracion = f === "Alta valoración";
-          const isActive = f === filtroActivo;
 
-          let style;
-          if (isAltaValoracion) {
-            style = isActive ? s.tagAltaValoracionActive : s.tagAltaValoracion;
-          } else {
-            style = isActive ? s.tagActive : s.tag;
-          }
+      <div className="flex flex-wrap gap-2">
+        {FILTROS.map((f) => {
+          const isActive = f === filtroActivo;
+          const isAltaValoracion = f === "Alta valoración";
+
+          let buttonStyle = {
+            padding: "5px 14px",
+            borderRadius: "20px",
+            fontSize: "13px",
+            cursor: "pointer",
+            transition: "all 0.2s",
+            fontFamily: "var(--font-dm-sans), sans-serif",
+            background: isActive
+              ? "var(--accent-bg)"
+              : isAltaValoracion
+              ? "transparent"
+              : "transparent",
+            color: isActive
+              ? "var(--accent-text)"
+              : isAltaValoracion
+              ? "var(--warning)"
+              : "var(--text-secondary)",
+            border: isActive
+              ? "none"
+              : isAltaValoracion
+              ? `1px solid var(--warning)`
+              : `1px solid var(--border-color)`,
+          };
 
           return (
             <button
               key={f}
-              style={style}
+              style={buttonStyle}
               onClick={() => setFiltroActivo(f)}
               title={isAltaValoracion ? "Muestra solicitudes con 4 o más postulantes" : undefined}
             >
-              {isAltaValoracion ? "⭐ " : ""}{f}
+              {isAltaValoracion ? "⭐ " : ""}
+              {f}
             </button>
           );
         })}

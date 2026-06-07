@@ -9,7 +9,8 @@ import {
   getDocs,
   doc,
   updateDoc,
-  increment,   
+  increment,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "@/firebase/db";
 
@@ -33,7 +34,6 @@ export async function obtenerOCrearConversacion(uid1, uid2, solicitudId = null, 
 
   const snap = await getDocs(q);
   if (!snap.empty) {
-    // Si ya existe una conversación para esta solicitud, la devolvemos
     return snap.docs[0].id;
   }
 

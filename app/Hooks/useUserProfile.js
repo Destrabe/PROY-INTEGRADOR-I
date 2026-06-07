@@ -4,36 +4,25 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/db";
 
 const PERFIL_VACIO = {
-  // Identidad
   userId:             "",
   first_name:         "",
   last_name:          "",
   iniciales:          "",
   email:              "",
-  rol:                null,          // "cliente" | "trabajador" | null
+  rol:                null,
   avatarUrl:          "",
-
-  // Info pública
   bio:                "",
   district:           "",
   disponibilidad:     "",
   website:            "",
   disponible:         false,
-
-  // Estadísticas
   valoracionPromedio: 0,
   totalReseñas:       0,
   totalTrabajos:      0,
   porcentajeExito:    0,
   tarifaEstandar:     0,
-
-  // Arrays
   habilidades:        [],
-
-  // Flags
   verificado:         false,
-
-  // Timestamps, el componente decide cómo formatearlos)
   creadoEn:           null,
   updatedAt:          null,
 };
@@ -90,7 +79,6 @@ export function useUserProfile(uid) {
         if (snap.exists()) {
           setPerfil(normalizarPerfil(snap.data(), uid));
         } else {
-          // Usuario en Auth pero sin documento (registro incompleto)
           setPerfil({ ...PERFIL_VACIO, userId: uid });
           setError("Perfil no encontrado en Firestore.");
         }

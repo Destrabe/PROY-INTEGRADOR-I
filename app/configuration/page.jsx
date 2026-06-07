@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 
 import Link from "next/link";
 import { useAuth } from "@/components/AuthContext";
@@ -221,6 +221,71 @@ export default function ConfigurationPage() {
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+*/
+
+"use client";
+
+import { useTheme } from "next-themes";
+import { useState, useEffect } from "react";
+
+export default function ConfigurationPage() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  return (
+    <div className="min-h-screen p-6 md:p-10 bg-[var(--bg-main)] text-[var(--text-main)]">
+      <div className="max-w-2xl mx-auto rounded-3xl p-8 border border-[var(--border-color)] bg-[var(--bg-card)]">
+        <h1 className="text-3xl font-extrabold mb-8 font-syne text-[var(--text-main)]">
+          Configuración
+        </h1>
+
+        <div className="flex gap-3 mb-8">
+          <div className="px-4 py-2 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-text)]">
+            Apariencia
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-xl font-bold mb-5 font-syne text-[var(--text-main)]">
+            Apariencia
+          </h2>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setTheme("light")}
+              className={`px-5 py-3 rounded-xl transition-all font-medium ${
+                theme === "light"
+                  ? "bg-[var(--accent)] text-white border border-[var(--accent)]"
+                  : "bg-[var(--bg-main)] text-[var(--text-main)] border border-[var(--border-color)]"
+              }`}
+            >
+              Claro
+            </button>
+            <button
+              onClick={() => setTheme("dark")}
+              className={`px-5 py-3 rounded-xl transition-all font-medium ${
+                theme === "dark"
+                  ? "bg-[var(--accent)] text-white border border-[var(--accent)]"
+                  : "bg-[var(--bg-main)] text-[var(--text-main)] border border-[var(--border-color)]"
+              }`}
+            >
+              Oscuro
+            </button>
+          </div>
+          <p className="text-sm mt-6 text-[var(--text-secondary)]">
+            Esta configuración se guarda automáticamente y se aplica en toda la aplicación.
+          </p>
+        </div>
       </div>
     </div>
   );

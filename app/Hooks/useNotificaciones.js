@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
@@ -18,7 +17,6 @@ function normalizarNotif(notif) {
                     : (notif.creadoEn?.toDate?.() ?? new Date()),
   };
 }
-
 
 export function useNotificaciones(uid) {
   const [notificaciones, setNotificaciones] = useState([]);

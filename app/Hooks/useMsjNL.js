@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { escucharConversaciones } from "@/firebase/Mensajes";
+import { escucharConversaciones } from "@/firebase/messages";
 
 export function useMensajesNoLeidos(uid) {
   const [totalNoLeidos, setTotalNoLeidos] = useState(0);

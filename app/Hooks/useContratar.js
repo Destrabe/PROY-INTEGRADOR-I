@@ -24,3 +24,4 @@ export function useContratar() {
 
   return { contratar, contratando, errorContratar };
 }
+

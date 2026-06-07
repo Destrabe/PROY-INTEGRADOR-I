@@ -26,43 +26,51 @@ export const crearReseña = async (data) => {
       if (campo < 1 || campo > 5) throw new Error("Las valoraciones deben estar entre 1 y 5");
     }
 
-    await runTransaction(db, async (tx) => {
-      const trabajadorRef = doc(db, "users", trabajadorId);
-      const trabajadorSnap = await tx.get(trabajadorRef);
+  await runTransaction(db, async (tx) => {
+    // Leer el documento del trabajador
+    const trabajadorRef = doc(db, "users", trabajadorId);
+    const trabajadorSnap = await tx.get(trabajadorRef);
+    if (!trabajadorSnap.exists()) throw new Error("El trabajador no existe");
 
-      if (!trabajadorSnap.exists()) {
-        throw new Error("El trabajador no existe");
-      }
+    const solicitudRef = doc(db, "solicitudes", solicitudId);
+    const solicitudSnap = await tx.get(solicitudRef);
+    if (!solicitudSnap.exists()) throw new Error("La solicitud no existe");
+    const solicitudData = solicitudSnap.data();
+    if (solicitudData.userId !== clienteId) {
+      throw new Error("Solo el cliente de esta solicitud puede dejar una reseña");
+    }
 
-      const perfil = trabajadorSnap.data();
-      const totalActual = perfil.totalReseñas ?? 0;
-      const promedioActual = perfil.valoracionPromedio ?? 0;
-      const nuevaValoracion = (calidad + puntualidad + precio + comunicacion) / 4;
-      const nuevoTotal = totalActual + 1;
-      const nuevoPromedio = (promedioActual * totalActual + nuevaValoracion) / nuevoTotal;
+    // Calcular nuevo promedio
+    const perfil = trabajadorSnap.data();
+    const totalActual = perfil.totalReseñas ?? 0;
+    const promedioActual = perfil.valoracionPromedio ?? 0;
+    const nuevaValoracion = (calidad + puntualidad + precio + comunicacion) / 4;
+    const nuevoTotal = totalActual + 1;
+    const nuevoPromedio = (promedioActual * totalActual + nuevaValoracion) / nuevoTotal;
 
-      // Crear documento de reseña
-      const reseñaRef = doc(collection(db, COL));
-      tx.set(reseñaRef, {
-        trabajadorId,
-        clienteId,
-        clienteNombre: clienteNombre ?? "Cliente",
-        solicitudId,
-        calidad,
-        puntualidad,
-        precio,
-        comunicacion,
-        comentario: comentario?.trim() ?? "",
-        respuesta: null,
-        creadoEn: serverTimestamp(),
-      });
-
-      tx.update(trabajadorRef, {
-        valoracionPromedio: parseFloat(nuevoPromedio.toFixed(2)),
-        totalReseñas: nuevoTotal,
-        updatedAt: serverTimestamp(),
-      });
+    // Crear reseña
+    const reseñaRef = doc(collection(db, "reseñas"));
+    tx.set(reseñaRef, {
+      trabajadorId,
+      clienteId,
+      clienteNombre: clienteNombre ?? "Cliente",
+      solicitudId,
+      calidad,
+      puntualidad,
+      precio,
+      comunicacion,
+      comentario: comentario?.trim() ?? "",
+      respuesta: null,
+      creadoEn: serverTimestamp(),
     });
+
+    // Actualizar trabajador
+    tx.update(trabajadorRef, {
+      valoracionPromedio: parseFloat(nuevoPromedio.toFixed(2)),
+      totalReseñas: nuevoTotal,
+      updatedAt: serverTimestamp(),
+    });
+  });
 
     return { success: true };
   } catch (error) {

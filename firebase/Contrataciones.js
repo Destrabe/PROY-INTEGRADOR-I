@@ -7,7 +7,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase/db";
 import { crearNotificacion } from "@/firebase/Notificaciones";
-import { enviarMensaje } from "@/firebase/Mensajes";
+import { enviarMensaje } from "@/firebase/messages";
 
 export async function contratarTrabajador({
   solicitudId,

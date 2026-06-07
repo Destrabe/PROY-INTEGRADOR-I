@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query, where, limit } from "firebase/firestore";
 import { db } from "@/firebase/db";
 
 function normalizarSolicitud(id, data) {
@@ -28,7 +28,7 @@ function normalizarSolicitud(id, data) {
   };
 }
 
-export function useSolicitudes(uid) {
+export function useSolicitudes(uid, pageSize = 50) {
   const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -37,9 +37,20 @@ export function useSolicitudes(uid) {
     setLoading(true);
     setError(null);
     const baseRef = collection(db, "solicitudes");
+
     const q = uid
-      ? query(baseRef, where("userId", "==", uid), orderBy("creadoEn", "desc"))
-      : query(baseRef, where("estado", "==", "activa"), orderBy("creadoEn", "desc"));
+      ? query(
+          baseRef,
+          where("userId", "==", uid),
+          orderBy("creadoEn", "desc"),
+          limit(pageSize)
+        )
+      : query(
+          baseRef,
+          where("estado", "==", "activa"),
+          orderBy("creadoEn", "desc"),
+          limit(pageSize)
+        );
 
     const unsubscribe = onSnapshot(
       q,
@@ -55,8 +66,9 @@ export function useSolicitudes(uid) {
         setLoading(false);
       }
     );
+
     return () => unsubscribe();
-  }, [uid]);
+  }, [uid, pageSize]);
 
   return { solicitudes, loading, error };
 }

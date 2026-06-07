@@ -1,53 +1,35 @@
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-const s = {
-  sidebar: {
-    width: "180px",
-    backgroundColor: "#0d0d18",
-    borderRight: "1px solid #1a1a2e",
-    padding: "24px 16px",
-    flexShrink: 0,
-    minHeight: "calc(100vh - 90px)",
-  },
-  logo: {
-    fontFamily: "var(--font-syne), sans-serif",
-    fontWeight: 800,
-    fontSize: "22px",
-    color: "#fff",
-    display: "flex",
-    marginBottom: "20px",
-    textDecoration: "none",
-  },
-  dot: { color: "#500fe9" },
-  section: {
-    fontSize: "11px",
-    color: "#555",
-    textTransform: "uppercase",
-    letterSpacing: "1px",
-    marginBottom: "8px",
-  },
-  item: {
-    backgroundColor: "#1e1a3a",
-    color: "#a78bfa",
-    fontSize: "13px",
-    fontWeight: 500,
-    padding: "8px 12px",
-    borderRadius: "8px",
-    cursor: "pointer",
-    textDecoration: "none",
-    display: "block",
-  },
-};
+const NAV_ITEMS = [
+  { href: "/feedJobs", label: "Feed de trabajos" },
+];
 
 export default function FeedSidebar() {
+  const pathname = usePathname();
   return (
-    <aside style={s.sidebar}>
-      <Link href="/" style={s.logo}>
-        Nexora<span style={s.dot}>.</span>
+    <aside className="w-44 p-6 shrink-0 min-h-[calc(100vh-90px)] hidden md:block border-r border-[var(--border-color)] bg-[var(--accent-bg)]">
+      <Link href="/" className="font-syne font-extrabold text-2xl flex mb-5 no-underline text-[var(--text-main)]">
+        Nexora<span className="text-[var(--accent)]">.</span>
       </Link>
-      <p style={s.section}>Explorar</p>
-      <div style={s.item}>Feed de trabajos</div>
+      <p className="text-[11px] uppercase tracking-wider mb-2 text-[var(--text-muted)]">Explorar</p>
+      {NAV_ITEMS.map((item) => {
+        const activo = pathname === item.href;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`block text-sm font-medium rounded-lg px-3 py-2 transition-all mb-1 no-underline ${
+              activo
+                ? "bg-[var(--accent-bg)] text-[var(--accent-text)]"
+                : "text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
+            }`}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
     </aside>
   );
 }

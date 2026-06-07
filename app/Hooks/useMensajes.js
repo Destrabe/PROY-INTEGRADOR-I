@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { escucharMensajes, marcarLeido } from "@/firebase/Mensajes";
+import { useEffect, useState } from "react";
+import { escucharMensajes, marcarLeido } from "@/firebase/messages";
 
 function normalizarMensaje(msg) {
   return {
@@ -47,5 +47,3 @@ export function useMensajes(convId, uid) {
 
   return { mensajes, loading, error };
 }
-
-  

@@ -1,220 +1,19 @@
 "use client";
+
 import { useState } from "react";
 import { crearReseña } from "@/firebase/Reviews";
-
-const s = {
-  overlay: {
-    position: "fixed",
-    inset: 0,
-    backgroundColor: "rgba(0,0,0,0.75)",
-    backdropFilter: "blur(6px)",
-    zIndex: 100,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "20px",
-  },
-  modal: {
-    backgroundColor: "#13131f",
-    border: "1px solid #2a2a3e",
-    borderRadius: "20px",
-    maxWidth: "480px",
-    width: "100%",
-    maxHeight: "90vh",
-    overflowY: "auto",
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-  },
-  header: {
-    padding: "28px 28px 20px",
-    borderBottom: "1px solid #1a1a2e",
-    position: "relative",
-  },
-  closeBtn: {
-    position: "absolute",
-    top: "14px",
-    right: "14px",
-    background: "rgba(13,13,24,0.8)",
-    border: "1px solid #2a2a3e",
-    color: "#aaa",
-    fontSize: "16px",
-    cursor: "pointer",
-    lineHeight: 1,
-    width: "32px",
-    height: "32px",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 2,
-    transition: "border-color 0.2s, color 0.2s",
-  },
-  badge: {
-    display: "inline-block",
-    backgroundColor: "#1e1a3a",
-    color: "#a78bfa",
-    border: "1px solid #4a3aaa",
-    borderRadius: "20px",
-    fontSize: "11px",
-    padding: "3px 10px",
-    marginBottom: "10px",
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    fontWeight: 600,
-    letterSpacing: "0.03em",
-  },
-  title: {
-    fontFamily: "var(--font-syne), sans-serif",
-    fontWeight: 800,
-    fontSize: "20px",
-    color: "#f0f0ff",
-    margin: 0,
-    lineHeight: 1.3,
-  },
-  subtitle: {
-    color: "#555",
-    fontSize: "13px",
-    marginTop: "4px",
-    fontFamily: "var(--font-dm-sans), sans-serif",
-  },
-  body: {
-    padding: "24px 28px 28px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "20px",
-  },
-    metricsGrid: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr", // 2 columnas
-    gridTemplateRows: "auto auto", 
-    gap: "1px",                     
-    backgroundColor: "#0d0d18",
-    borderRadius: "12px",
-    border: "1px solid #1a1a2e",
-    overflow: "hidden",
-    },
-  metricItem: (last) => ({
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: "10px",
-    padding: "18px 10px",
-    borderRight: last ? "none" : "1px solid #1a1a2e",
-  }),
-  metricLabel: {
-    fontSize: "11px",
-    color: "#555",
-    textTransform: "uppercase",
-    letterSpacing: "0.08em",
-    fontWeight: 600,
-    fontFamily: "var(--font-dm-sans), sans-serif",
-  },
-  starsRow: {
-    display: "flex",
-    gap: "4px",
-  },
-  star: (active) => ({
-    fontSize: "22px",
-    cursor: "pointer",
-    color: active ? "#f59e0b" : "#2a2a3e",
-    transition: "color 0.15s, transform 0.1s",
-    userSelect: "none",
-    lineHeight: 1,
-  }),
-  metricValue: {
-    fontFamily: "var(--font-syne), sans-serif",
-    fontWeight: 700,
-    fontSize: "16px",
-    color: "#f0f0ff",
-  },
-  sectionLabel: {
-    fontSize: "11px",
-    color: "#555",
-    textTransform: "uppercase",
-    letterSpacing: "1px",
-    marginBottom: "8px",
-    fontWeight: 600,
-    fontFamily: "var(--font-dm-sans), sans-serif",
-  },
-  textarea: {
-    width: "100%",
-    backgroundColor: "#0d0d18",
-    border: "1px solid #2a2a3e",
-    borderRadius: "12px",
-    padding: "14px 16px",
-    color: "#f0f0ff",
-    fontSize: "14px",
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    lineHeight: 1.6,
-    resize: "vertical",
-    minHeight: "90px",
-    outline: "none",
-    boxSizing: "border-box",
-    transition: "border-color 0.2s",
-  },
-  actionRow: {
-    display: "flex",
-    gap: "10px",
-  },
-  btnCancelar: {
-    flex: 1,
-    backgroundColor: "transparent",
-    color: "#9090a8",
-    border: "1px solid #2a2a3e",
-    borderRadius: "12px",
-    padding: "14px",
-    fontSize: "14px",
-    cursor: "pointer",
-    fontWeight: 600,
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    transition: "border-color 0.2s",
-  },
-  btnEnviar: (disabled) => ({
-    flex: 2,
-    backgroundColor: disabled ? "#2a2a3e" : "#500fe9",
-    color: disabled ? "#555" : "#fff",
-    border: "none",
-    borderRadius: "12px",
-    padding: "14px",
-    fontSize: "14px",
-    cursor: disabled ? "not-allowed" : "pointer",
-    fontWeight: 700,
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    transition: "background-color 0.2s",
-  }),
-  promedioRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    backgroundColor: "#0d0d18",
-    border: "1px solid #1a1a2e",
-    borderRadius: "12px",
-    padding: "12px 16px",
-  },
-  promedioLabel: {
-    fontSize: "12px",
-    color: "#555",
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    flex: 1,
-  },
-  promedioVal: {
-    fontFamily: "var(--font-syne), sans-serif",
-    fontWeight: 800,
-    fontSize: "18px",
-    color: "#f59e0b",
-  },
-};
 
 function StarRating({ value, onChange, label }) {
   const [hover, setHover] = useState(0);
   return (
-    <div style={s.metricItem(false)}>
-      <span style={s.metricLabel}>{label}</span>
-      <div style={s.starsRow}>
+    <div className="flex flex-col items-center gap-2 p-4" style={{ borderRight: "1px solid var(--border-color)" }}>
+      <span className="text-xs uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>{label}</span>
+      <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map((i) => (
           <span
             key={i}
-            style={s.star((hover || value) >= i)}
+            className="text-2xl cursor-pointer transition-all"
+            style={{ color: (hover || value) >= i ? "#f59e0b" : "var(--border-color)" }}
             onClick={() => onChange(i)}
             onMouseEnter={() => setHover(i)}
             onMouseLeave={() => setHover(0)}
@@ -223,7 +22,7 @@ function StarRating({ value, onChange, label }) {
           </span>
         ))}
       </div>
-      <span style={s.metricValue}>{value}/5</span>
+      <span className="font-bold" style={{ color: "var(--text-main)" }}>{value}/5</span>
     </div>
   );
 }
@@ -240,7 +39,7 @@ export default function ReseñaForm({
   const [calidad, setCalidad] = useState(5);
   const [puntualidad, setPuntualidad] = useState(5);
   const [precio, setPrecio] = useState(5);
-  const [comunicacion, setComunicacion] = useState(5); 
+  const [comunicacion, setComunicacion] = useState(5);
   const [comentario, setComentario] = useState("");
   const [enviando, setEnviando] = useState(false);
 
@@ -256,7 +55,7 @@ export default function ReseñaForm({
       calidad,
       puntualidad,
       precio,
-      comunicacion,  
+      comunicacion,
       comentario,
     });
     setEnviando(false);
@@ -269,20 +68,37 @@ export default function ReseñaForm({
   };
 
   return (
-    <div style={s.overlay} onClick={onClose}>
-      <div style={s.modal} onClick={(e) => e.stopPropagation()}>
-
-        <div style={s.header}>
-          <button style={s.closeBtn} onClick={onClose}>✕</button>
-          <span style={s.badge}>Trabajo completado</span>
-          <h2 style={s.title}>Califica a {trabajadorNombre}</h2>
-          <p style={s.subtitle}>Tu opinión ayuda a otros clientes a elegir mejor</p>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ backgroundColor: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)" }}
+      onClick={onClose}
+    >
+      <div
+        className="max-w-md w-full max-h-[90vh] overflow-y-auto rounded-2xl border"
+        style={{ background: "var(--bg-card)", borderColor: "var(--border-color)" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="relative p-6 border-b" style={{ borderColor: "var(--border-color)" }}>
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center transition-all"
+            style={{ background: "rgba(13,13,24,0.8)", border: "1px solid var(--border-color)", color: "var(--text-secondary)" }}
+          >
+            ✕
+          </button>
+          <span className="inline-block mb-2 text-xs font-semibold px-3 py-1 rounded-full" style={{ background: "var(--accent-bg)", color: "var(--accent-text)" }}>
+            Trabajo completado
+          </span>
+          <h2 className="text-xl font-bold" style={{ fontFamily: "var(--font-syne), sans-serif", color: "var(--text-main)" }}>
+            Califica a {trabajadorNombre}
+          </h2>
+          <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>Tu opinión ayuda a otros clientes a elegir mejor</p>
         </div>
 
-        <div style={s.body}>
+        <div className="p-6 space-y-6">
           <div>
-            <p style={s.sectionLabel}>Valoración</p>
-            <div style={s.metricsGrid}>
+            <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: "var(--text-muted)" }}>Valoración</p>
+            <div className="grid grid-cols-2 rounded-xl overflow-hidden border" style={{ borderColor: "var(--border-color)" }}>
               <StarRating value={calidad} onChange={setCalidad} label="Calidad" />
               <StarRating value={puntualidad} onChange={setPuntualidad} label="Puntualidad" />
               <StarRating value={precio} onChange={setPrecio} label="Precio" />
@@ -290,27 +106,30 @@ export default function ReseñaForm({
             </div>
           </div>
 
-          <div style={s.promedioRow}>
-            <span style={s.promedioLabel}>Puntuación promedio</span>
-            <span style={{ fontSize: "20px", color: "#f59e0b" }}>★</span>
-            <span style={s.promedioVal}>{promedio}</span>
-            <span style={{ color: "#555", fontSize: "13px" }}>/5</span>
+          <div className="flex items-center justify-between p-3 rounded-xl" style={{ background: "var(--bg-hover)", border: "1px solid var(--border-color)" }}>
+            <span className="text-sm" style={{ color: "var(--text-secondary)" }}>Puntuación promedio</span>
+            <div className="flex items-center gap-1">
+              <span className="text-yellow-500 text-xl">★</span>
+              <span className="text-2xl font-bold" style={{ fontFamily: "var(--font-syne), sans-serif", color: "var(--text-main)" }}>{promedio}</span>
+              <span className="text-sm" style={{ color: "var(--text-muted)" }}>/5</span>
+            </div>
           </div>
 
           <div>
-            <p style={s.sectionLabel}>Comentario <span style={{ color: "#444", textTransform: "none", letterSpacing: 0 }}>(opcional)</span></p>
+            <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: "var(--text-muted)" }}>Comentario <span className="normal-case text-xs" style={{ color: "var(--text-muted)" }}>(opcional)</span></p>
             <textarea
-              style={s.textarea}
+              rows={3}
+              className="w-full rounded-xl p-3 text-sm outline-none transition-all"
+              style={{ background: "var(--bg-input)", border: "1px solid var(--border-color)", color: "var(--text-main)" }}
               placeholder="¿Cómo fue tu experiencia trabajando con este profesional?"
               value={comentario}
               onChange={(e) => setComentario(e.target.value)}
-              rows={3}
             />
           </div>
 
-          <div style={s.actionRow}>
-            <button style={s.btnCancelar} onClick={onClose}>Cancelar</button>
-            <button style={s.btnEnviar(enviando)} onClick={handleSubmit} disabled={enviando}>
+          <div className="flex gap-3 pt-2">
+            <button onClick={onClose} className="btn-secondary flex-1">Cancelar</button>
+            <button onClick={handleSubmit} disabled={enviando} className="btn-primary flex-1">
               {enviando ? "Enviando..." : "Publicar reseña"}
             </button>
           </div>

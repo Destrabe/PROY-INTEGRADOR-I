@@ -32,3 +32,4 @@ export function usePostulacion(userId, rol) {
 
   return { estaPostulado, togglePostulacion, puedePostularse, loadingId };
 }
+

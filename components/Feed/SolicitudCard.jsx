@@ -21,78 +21,165 @@ export default function SolicitudCard({
   onVerDetalle,
   onCancelar,
 }) {
-  const iniciales = solicitud.iniciales || `${solicitud.nombre?.charAt(0) ?? ""}${solicitud.nombre?.split(" ")[1]?.charAt(0) ?? ""}`.toUpperCase() || "U";
-  const tiempoRelativo = solicitud.creadoEn ? formatDistanceToNow(new Date(solicitud.creadoEn), { addSuffix: true, locale: es }) : "hace un momento";
+  const iniciales =
+    solicitud.iniciales ||
+    `${solicitud.nombre?.charAt(0) ?? ""}${solicitud.nombre?.split(" ")[1]?.charAt(0) ?? ""}`.toUpperCase() ||
+    "U";
+
+  const tiempoRelativo = solicitud.creadoEn
+    ? formatDistanceToNow(new Date(solicitud.creadoEn), { addSuffix: true, locale: es })
+    : "hace un momento";
+
   const postulado = estaPostulado?.(solicitud.postulantes ?? []) ?? false;
   const totalPostulantes = solicitud.postulantes?.length ?? 0;
   const esPropietario = currentUserId && currentUserId === solicitud.userId;
   const esTrabajador = currentUserRole === "trabajador";
-  const descLarga = (solicitud.descripcion ?? "").length > 120;
-  const primerImagen = solicitud.imageUrls?.[0] ?? null;
   const puedeAccion = esTrabajador && !esPropietario && puedePostularse?.(solicitud.userId);
+  const primerImagen = solicitud.imageUrls?.[0] ?? null;
+
+  const truncate = (text, max = 120) => {
+    if (!text) return "";
+    return text.length > max ? text.substring(0, max) + "..." : text;
+  };
 
   return (
     <div
-      className={`bg-[#13131f] border rounded-xl p-5 mb-3 cursor-pointer transition-all hover:border-[#4a3aaa] ${postulado ? "border-[#166534]" : esPropietario ? "border-[#2e1a5e]" : "border-[#1e1e30]"}`}
+      className="rounded-xl p-4 md:p-5 mb-3 cursor-pointer transition-all border"
+      style={{
+        background: "var(--bg-card)",
+        borderColor: postulado
+          ? "#166534"
+          : esPropietario
+          ? "var(--accent)"
+          : "var(--border-color)",
+      }}
       onClick={() => onVerDetalle(solicitud)}
     >
-      <div className="flex justify-between items-start mb-3">
-        <div className="flex gap-3">
-          <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0" style={{ backgroundColor: colorAvatar(iniciales) }}>
+      {/* Header*/}
+      <div className="flex flex-wrap justify-between items-start gap-2 mb-3">
+        <div className="flex gap-3 items-center">
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
+            style={{ backgroundColor: colorAvatar(iniciales) }}
+          >
             {iniciales}
           </div>
           <div>
-            <span className="text-[#888] text-sm font-medium">{solicitud.nombre} · {solicitud.distrito}</span><br />
-            <span className="text-[#555] text-xs">{tiempoRelativo}</span>
+            <span className="text-[var(--text-secondary)] text-sm font-medium">
+              {solicitud.nombre} · {solicitud.distrito}
+            </span>
+            <br />
+            <span className="text-[var(--text-muted)] text-xs">{tiempoRelativo}</span>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          {solicitud.urgente && <span className="bg-[#2d0a0a] text-[#f87171] border border-[#5a1a1a] rounded-full text-xs px-2 py-1">Urgente</span>}
-          {esPropietario && <span className="bg-[#1e1a3a] text-[#a78bfa] border border-[#4a3aaa] rounded-full text-xs px-2 py-1">Mi solicitud</span>}
-          <span className="text-[#a78bfa] font-bold">{solicitud.precio}</span>
+
+        <div className="flex items-center gap-2 flex-wrap">
+          {solicitud.urgente && (
+            <span className="badge" style={{ background: "var(--error)", color: "white", border: "none" }}>
+              Urgente
+            </span>
+          )}
+          {esPropietario && (
+            <span className="badge" style={{ background: "var(--accent)", color: "white" }}>
+              Mi solicitud
+            </span>
+          )}
+          <span className="font-bold text-[var(--accent)]">{solicitud.precio}</span>
         </div>
       </div>
 
-      {primerImagen && <img src={primerImagen} alt="preview" className="w-full h-40 object-cover rounded-lg mb-3" />}
+      {/* Imagen*/}
+      {primerImagen && (
+        <img
+          src={primerImagen}
+          alt="preview"
+          className="w-full h-40 object-cover rounded-lg mb-3"
+        />
+      )}
 
-      <h2 className="font-syne font-bold text-white text-base mb-1">{solicitud.titulo}</h2>
-      <p className="text-[#777] text-sm line-clamp-2 mb-2">{solicitud.descripcion}</p>
-      {descLarga && <span className="text-[#500fe9] text-xs">Ver descripción completa →</span>}
+      {/* Título y descripción */}
+      <h2 className="font-bold text-base mb-1 text-[var(--text-main)]">{solicitud.titulo}</h2>
+      <p className="text-sm text-[var(--text-secondary)] mb-2 line-clamp-2">
+        {truncate(solicitud.descripcion, 100)}
+      </p>
 
-      <div className="flex flex-wrap gap-2 my-3">
-        {solicitud.tags?.map((t) => <span key={t} className="bg-[#1a1a2e] text-[#9a9ab0] rounded-md text-xs px-2 py-1">{t}</span>)}
-      </div>
+      {/* Tags */}
+      {solicitud.tags?.length > 0 && (
+        <div className="flex flex-wrap gap-2 my-3">
+          {solicitud.tags.map((t) => (
+            <span key={t} className="badge text-xs">
+              {t}
+            </span>
+          ))}
+        </div>
+      )}
 
-      <div className="flex justify-between items-center">
-        <div className="flex gap-3 text-[#555] text-xs">
+      {/* Pie de card: estadísticas + botones */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-2">
+        <div className="flex gap-4 text-xs text-[var(--text-muted)]">
           <span>{totalPostulantes} postulantes</span>
           <span>{solicitud.distrito}</span>
           <span>{solicitud.modalidad}</span>
         </div>
 
-        {esPropietario && solicitud.estado !== "completada" && solicitud.estado !== "cancelada" && (
-          <button onClick={(e) => { e.stopPropagation(); onCancelar(solicitud.id); }} className="bg-transparent text-[#f87171] border border-[#5a1a1a] rounded-lg px-3 py-1 text-xs font-bold">
-            Cancelar
-          </button>
-        )}
+        <div className="flex flex-wrap gap-2">
+          {/* Si es propietario y la solicitud no está completada/cancelada */}
+          {esPropietario &&
+            solicitud.estado !== "completada" &&
+            solicitud.estado !== "cancelada" && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCancelar(solicitud.id);
+                }}
+                className="btn-secondary text-sm px-3 py-1"
+              >
+                Cancelar
+              </button>
+            )}
 
-        {!currentUserId && (
-          <a href="/login" onClick={(e) => e.stopPropagation()} className="bg-[#500fe9] text-white rounded-lg px-4 py-1.5 text-xs font-bold">Iniciar sesión</a>
-        )}
+          {/* Si no hay sesión */}
+          {!currentUserId && (
+            <a
+              href="/login"
+              onClick={(e) => e.stopPropagation()}
+              className="btn-primary text-sm px-4 py-1.5"
+            >
+              Iniciar sesión
+            </a>
+          )}
 
-        {currentUserId && !esPropietario && !esTrabajador && (
-          <a href="/worker" onClick={(e) => e.stopPropagation()} className="bg-[#500fe9] text-white rounded-lg px-4 py-1.5 text-xs font-bold">Únete como trabajador</a>
-        )}
+          {/* Si es cliente sin rol de trabajador */}
+          {currentUserId && !esPropietario && !esTrabajador && (
+            <a
+              href="/worker"
+              onClick={(e) => e.stopPropagation()}
+              className="btn-primary text-sm px-4 py-1.5"
+            >
+              Únete como trabajador
+            </a>
+          )}
 
-        {puedeAccion && (
-          <button
-            onClick={(e) => { e.stopPropagation(); onToggle(solicitud.id, solicitud.postulantes, solicitud.userId); }}
-            disabled={loading}
-            className={`rounded-lg px-4 py-1.5 text-xs font-bold ${loading ? "bg-[#2a2a3e] text-[#666] cursor-not-allowed" : postulado ? "bg-[#1a2d1a] text-[#4ade80] border border-[#166534]" : "bg-[#500fe9] text-white"}`}
-          >
-            {loading ? "..." : postulado ? "✓ Postulado — Cancelar" : "Postularme"}
-          </button>
-        )}
+          {/* Botón de postulación para trabajadores */}
+          {puedeAccion && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggle(solicitud.id, solicitud.postulantes, solicitud.userId);
+              }}
+              disabled={loading}
+              className={`text-sm px-4 py-1.5 rounded-lg font-bold transition-all ${
+                loading
+                  ? "opacity-50 cursor-not-allowed"
+                  : postulado
+                  ? "bg-transparent text-[var(--success)] border border-[var(--success)]"
+                  : "btn-primary"
+              }`}
+            >
+              {loading ? "..." : postulado ? "Postulado — Cancelar" : "Postularme"}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

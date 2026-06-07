@@ -6,17 +6,15 @@ import { useUserProfile } from "./useUserProfile";
 
 export function useUserRole() {
   const [user, loadingAuth] = useAuthState(auth);
-
-  
-  const { perfil, loading: loadingPerfil } = useUserProfile(
-    loadingAuth ? undefined : user?.uid
-  );
+  const { perfil, loading: loadingPerfil, refetch } = useUserProfile(loadingAuth ? undefined : user?.uid);
 
   return {
     user,
-    rol:         perfil.rol,          // "cliente" | "trabajador" | null
+    rol: perfil?.rol ?? null,
     perfil,
     loadingAuth,
-    loadingRol:  loadingAuth || loadingPerfil,
+    loadingRol: loadingAuth || loadingPerfil,
+    refetch,
+    isAdmin: perfil?.rol === "admin",
   };
 }

@@ -5,8 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { loginUser, loginWithGoogle, loginWithFacebook } from "@/firebase/auth";
 import { useAuth } from "@/components/AuthContext";
-import Image from "next/image";
-import { doc, getDoc } from "firebase/firestore"; 
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/db";
 
 export default function LoginPage() {
@@ -37,7 +36,7 @@ export default function LoginPage() {
         last_name: data.last_name || "",
         rol: rolReal,
       });
-      router.push("/FeedTrabajos");
+      router.push("/feedJobs");
     } catch (err) {
       const messages = {
         "auth/user-not-found": "No existe una cuenta con ese correo.",
@@ -53,15 +52,17 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     try {
-      const user = await loginWithGoogle();
+      const firebaseUser = await loginWithGoogle();
+      const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+      const data = userDoc.exists() ? userDoc.data() : {};
       login({
-        uid: user.uid,
-        email: user.email,
-        first_name: user.displayName?.split(" ")[0] || "",
-        last_name: user.displayName?.split(" ").slice(1).join(" ") || "",
-        rol: "cliente",
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        first_name: data.first_name || firebaseUser.displayName?.split(" ")[0] || "",
+        last_name: data.last_name || firebaseUser.displayName?.split(" ").slice(1).join(" ") || "",
+        rol: data.rol || "cliente",
       });
-      router.push("/FeedTrabajos");
+      router.push("/feedJobs");
     } catch (error) {
       setError("Error al iniciar sesión con Google.");
     }
@@ -69,15 +70,17 @@ export default function LoginPage() {
 
   const handleFacebookLogin = async () => {
     try {
-      const user = await loginWithFacebook();
+      const firebaseUser = await loginWithFacebook();
+      const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+      const data = userDoc.exists() ? userDoc.data() : {};
       login({
-        uid: user.uid,
-        email: user.email,
-        first_name: user.displayName || "",
-        last_name: "",
-        rol: "cliente",
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        first_name: data.first_name || firebaseUser.displayName || "",
+        last_name: data.last_name || "",
+        rol: data.rol || "cliente",
       });
-      router.push("/FeedTrabajos");
+      router.push("/feedJobs");
     } catch (error) {
       if (error.code === "auth/account-exists-with-different-credential") {
         setError("Ya existe una cuenta con este correo asociada a otro proveedor.");
@@ -88,56 +91,130 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-[#0A0A0F] font-body text-[#f0f0f5] relative overflow-hidden">
-      {/* Luces de fondo (Efecto Glow) */}
-      <div className="absolute top-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full bg-[#635bff]/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] rounded-full bg-[#9b59b6]/10 blur-[120px] pointer-events-none" />
-
+    <div
+      className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden"
+      style={{ background: "var(--bg-main)", color: "var(--text-main)" }}
+    >
       <div className="w-full max-w-[480px] z-10">
-        <div className="rounded-2xl p-6 sm:p-8 bg-[#111118] border border-[#2A2A38]">
-          <h1 className="font-extrabold text-2xl sm:text-3xl mb-1 text-center font-display text-[#F0F0F8]">Bienvenido de nuevo</h1>
-          <p className="text-sm text-center mb-6 text-[#9090A8]">Inicia sesión en tu cuenta</p>
+        <div
+          className="rounded-2xl p-6 sm:p-8 border"
+          style={{ background: "var(--bg-card)", borderColor: "var(--border-color)" }}
+        >
+          <h1 className="font-extrabold text-2xl sm:text-3xl mb-1 text-center" style={{ fontFamily: "var(--font-syne), sans-serif" }}>
+            Bienvenido de nuevo
+          </h1>
+          <p className="text-sm text-center mb-6" style={{ color: "var(--text-secondary)" }}>
+            Inicia sesión en tu cuenta
+          </p>
 
           <div className="mb-4 flex flex-col gap-2">
-            <label className="text-sm font-bold text-[#9090A8]">Correo electrónico</label>
-            <input type="email" placeholder="tu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full h-[52px] pl-9 pr-4 py-3 bg-[#1a1a24] border border-[#2A2A38] rounded-xl text-sm text-white outline-none focus:border-[#6c63ff]" />
+            <label className="text-sm font-bold" style={{ color: "var(--text-muted)" }}>
+              Correo electrónico
+            </label>
+            <input
+              type="email"
+              placeholder="tu@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full h-[52px] pl-9 pr-4 py-3 rounded-xl border outline-none transition-all"
+              style={{
+                background: "var(--bg-input)",
+                borderColor: "var(--border-color)",
+                color: "var(--text-main)",
+              }}
+              onFocus={(e) => (e.target.style.borderColor = "var(--accent)")}
+              onBlur={(e) => (e.target.style.borderColor = "var(--border-color)")}
+            />
           </div>
 
           <div className="mb-4 flex flex-col gap-2">
-            <label className="text-sm font-bold text-[#9090A8]">Contraseña</label>
-            <input type="password" placeholder="********" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full h-[52px] pl-9 pr-4 py-3 bg-[#1a1a24] border border-[#2A2A38] rounded-xl text-sm text-white outline-none focus:border-[#6c63ff]" onKeyDown={(e) => e.key === "Enter" && handleSubmit()} />
+            <label className="text-sm font-bold" style={{ color: "var(--text-muted)" }}>
+              Contraseña
+            </label>
+            <input
+              type="password"
+              placeholder="********"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full h-[52px] pl-9 pr-4 py-3 rounded-xl border outline-none transition-all"
+              style={{
+                background: "var(--bg-input)",
+                borderColor: "var(--border-color)",
+                color: "var(--text-main)",
+              }}
+              onFocus={(e) => (e.target.style.borderColor = "var(--accent)")}
+              onBlur={(e) => (e.target.style.borderColor = "var(--border-color)")}
+              onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            />
           </div>
 
           <div className="flex items-center justify-between mb-6 mt-4">
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={recordar} onChange={(e) => setRecordar(e.target.checked)} className="accent-[#6C63FF]" />
-              <span className="text-sm text-[#9090A8]">Recordarme</span>
+              <input
+                type="checkbox"
+                checked={recordar}
+                onChange={(e) => setRecordar(e.target.checked)}
+                className="accent-[var(--accent)]"
+              />
+              <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                Recordarme
+              </span>
             </label>
-            <Link href="/forgot-password" className="text-sm font-bold text-[#6C63FF]">¿Olvidaste tu contraseña?</Link>
+            <Link href="/forgot-password" className="text-sm font-bold" style={{ color: "var(--accent)" }}>
+              ¿Olvidaste tu contraseña?
+            </Link>
           </div>
 
-          {error && <p className="text-red-400 text-sm text-center mb-4 bg-red-500/10 py-2.5 rounded-xl">{error}</p>}
+          {error && (
+            <p
+              className="text-sm text-center mb-4 py-2.5 rounded-xl"
+              style={{ background: "var(--error)", color: "white" }}
+            >
+              {error}
+            </p>
+          )}
 
-          <button onClick={handleSubmit} disabled={loading} className="w-full h-[52px] rounded-xl text-sm font-bold text-white bg-gradient-to-r from-[#6C63FF] to-[#9B59B6] hover:shadow-lg disabled:opacity-70">
-            {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" /> : "Iniciar Sesión"}
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="btn-primary w-full justify-center"
+          >
+            {loading ? (
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
+            ) : (
+              "Iniciar Sesión"
+            )}
           </button>
 
           <div className="flex items-center gap-3 my-5">
-            <div className="flex-1 h-px bg-[#2A2A38]" />
-            <span className="text-xs text-[#606078]">O continua con</span>
-            <div className="flex-1 h-px bg-[#2A2A38]" />
+            <div className="flex-1 h-px" style={{ background: "var(--border-color)" }} />
+            <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+              O continua con
+            </span>
+            <div className="flex-1 h-px" style={{ background: "var(--border-color)" }} />
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-6">
-            <button onClick={handleGoogleLogin} className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#1A1A28] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6C63FF]">
-              <Image src="/svg/google.svg" alt="Google" width={16} height={16} /> Google
+            <button
+              onClick={handleGoogleLogin}
+              className="btn-secondary flex items-center justify-center gap-2"
+            >
+              Google
             </button>
-            <button onClick={handleFacebookLogin} className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#1A1A28] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6C63FF]">
-              <Image src="/svg/facebook.svg" alt="Facebook" width={16} height={16} /> Facebook
+            <button
+              onClick={handleFacebookLogin}
+              className="btn-secondary flex items-center justify-center gap-2"
+            >
+              Facebook
             </button>
           </div>
 
-          <p className="text-sm text-center text-[#9090A8]">¿No tienes una cuenta? <Link href="/register" className="text-[#6C63FF]">Regístrate aquí</Link></p>
+          <p className="text-sm text-center" style={{ color: "var(--text-secondary)" }}>
+            ¿No tienes una cuenta?{" "}
+            <Link href="/register" className="font-bold" style={{ color: "var(--accent)" }}>
+              Regístrate aquí
+            </Link>
+          </p>
         </div>
       </div>
     </div>

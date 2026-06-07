@@ -24,289 +24,25 @@ const DISTRITOS = [
   "Pueblo Libre", "San Isidro", "Surquillo", "Otro",
 ];
 
-const URGENCIA = [
-  { value: "hoy",     label: "Hoy mismo (urgente)" },
-  { value: "semana",  label: "Esta semana"          },
-  { value: "mes",     label: "Este mes"             },
-  { value: "acordar", label: "A coordinar"          },
-];
-
 const PASOS = ["Categoría", "Descripción", "Detalles", "Publicar"];
 const MAX_IMAGENES = 4;
-const s = {
-  root: {
-    minHeight: "calc(100vh - 90px)",
-    backgroundColor: "#0a0a0f",
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    display: "flex",
-    flexDirection: "column",
-  },
-  inner: {
-    maxWidth: "760px",
-    margin: "0 auto",
-    padding: "40px 24px 120px",
-    width: "100%",
-  },
-  topRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: "16px",
-    marginBottom: "28px",
-  },
-  backBtn: {
-    backgroundColor: "transparent",
-    border: "1px solid #2a2a3e",
-    color: "#888",
-    borderRadius: "8px",
-    padding: "6px 14px",
-    fontSize: "13px",
-    cursor: "pointer",
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    textDecoration: "none",
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "6px",
-    transition: "border-color 0.2s",
-  },
-  pageTitle: {
-    fontFamily: "var(--font-syne), sans-serif",
-    fontWeight: 800,
-    fontSize: "32px",
-    color: "#fff",
-    margin: 0,
-  },
-  stepper: { display: "flex", alignItems: "center", marginBottom: "40px" },
-  stepCircle: (active, done) => ({
-    width: "28px", height: "28px", borderRadius: "50%",
-    display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: "13px", fontWeight: 700, flexShrink: 0,
-    backgroundColor: done || active ? "#500fe9" : "#1a1a2e",
-    color: done || active ? "#fff" : "#555",
-    border: done || active ? "none" : "1px solid #2a2a3e",
-    transition: "all 0.3s",
-  }),
-  stepLabel: (active, done) => ({
-    fontSize: "13px", whiteSpace: "nowrap",
-    color: done ? "#a78bfa" : active ? "#fff" : "#555",
-    fontWeight: active || done ? 600 : 400,
-  }),
-  stepLine: (done) => ({
-    flex: 1, height: "1px", margin: "0 12px", minWidth: "40px",
-    backgroundColor: done ? "#500fe9" : "#1a1a2e",
-    transition: "background-color 0.3s",
-  }),
-  sectionTitle: {
-    fontFamily: "var(--font-syne), sans-serif",
-    fontWeight: 800, fontSize: "22px", color: "#f0f0ff", marginBottom: "8px",
-  },
-  sectionSub: { color: "#555", fontSize: "14px", marginBottom: "24px" },
-  grid: {
-    display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
-    gap: "12px", marginBottom: "32px",
-  },
-  catBtn: (sel) => ({
-    backgroundColor: sel ? "#1e1a3a" : "#13131f",
-    border: sel ? "1px solid #4a3aaa" : "1px solid #1e1e30",
-    borderRadius: "12px", padding: "20px 12px",
-    color: sel ? "#a78bfa" : "#888",
-    fontSize: "14px", fontWeight: sel ? 600 : 400,
-    cursor: "pointer", fontFamily: "var(--font-dm-sans), sans-serif",
-    display: "flex", flexDirection: "column", alignItems: "center", gap: "8px",
-    transition: "all 0.2s",
-    boxShadow: sel ? "0 0 0 1px #500fe940" : "none",
-  }),
-  formCard: {
-    backgroundColor: "#13131f", border: "1px solid #1e1e30",
-    borderRadius: "16px", padding: "28px 28px 24px", marginBottom: "16px",
-  },
-  formCardTitle: {
-    fontFamily: "var(--font-syne), sans-serif",
-    fontWeight: 700, fontSize: "18px", color: "#f0f0ff", marginBottom: "20px",
-  },
-  fieldGroup: { display: "flex", flexDirection: "column", gap: "16px" },
-  fieldRow: { display: "flex", gap: "16px" },
-  field: { display: "flex", flexDirection: "column", gap: "6px", flex: 1 },
-  label: {
-    fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em",
-    color: "#555", textTransform: "uppercase",
-  },
-  input: {
-    backgroundColor: "#0d0d18", border: "1px solid #2a2a3e",
-    borderRadius: "10px", padding: "12px 14px", color: "#e0e0f0",
-    fontSize: "14px", fontFamily: "var(--font-dm-sans), sans-serif",
-    outline: "none", transition: "border-color 0.2s, box-shadow 0.2s",
-    width: "100%", boxSizing: "border-box",
-  },
-  textarea: {
-    backgroundColor: "#0d0d18", border: "1px solid #2a2a3e",
-    borderRadius: "10px", padding: "12px 14px", color: "#e0e0f0",
-    fontSize: "14px", fontFamily: "var(--font-dm-sans), sans-serif",
-    outline: "none", transition: "border-color 0.2s",
-    width: "100%", boxSizing: "border-box", resize: "vertical",
-    minHeight: "120px", lineHeight: 1.6,
-  },
-  select: {
-    backgroundColor: "#0d0d18", border: "1px solid #2a2a3e",
-    borderRadius: "10px", padding: "12px 14px", color: "#e0e0f0",
-    fontSize: "14px", fontFamily: "var(--font-dm-sans), sans-serif",
-    outline: "none", width: "100%", cursor: "pointer", appearance: "none",
-    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
-    backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center",
-    paddingRight: "36px", boxSizing: "border-box",
-  },
-  toggleRow: {
-    display: "flex", alignItems: "center",
-    justifyContent: "space-between",
-    padding: "14px 16px", backgroundColor: "#0d0d18",
-    border: "1px solid #2a2a3e", borderRadius: "10px",
-  },
-  toggleLabel: { color: "#ccc", fontSize: "14px" },
-  toggle: (on) => ({
-    width: "40px", height: "22px", borderRadius: "11px",
-    backgroundColor: on ? "#500fe9" : "#2a2a3e",
-    cursor: "pointer", position: "relative", transition: "background-color 0.2s", flexShrink: 0,
-  }),
-  toggleDot: (on) => ({
-    width: "16px", height: "16px", borderRadius: "50%",
-    backgroundColor: "#fff", position: "absolute",
-    top: "3px", left: on ? "21px" : "3px", transition: "left 0.2s",
-  }),
 
-  dropzone: (dragging) => ({
-    backgroundColor: dragging ? "#1a1a2e" : "#13131f",
-    border: `1.5px dashed ${dragging ? "#500fe9" : "#2a2a3e"}`,
-    borderRadius: "16px", padding: "36px 24px",
-    textAlign: "center", cursor: "pointer",
-    transition: "all 0.2s", marginBottom: "16px",
-  }),
-  dropzoneIcon: { fontSize: "32px", marginBottom: "10px" },
-  dropzoneText: { color: "#666", fontSize: "14px", marginBottom: "4px" },
-  dropzoneLink: { color: "#500fe9", cursor: "pointer", fontWeight: 600 },
-  dropzoneLimit: { color: "#444", fontSize: "12px", marginTop: "6px" },
-
-  previews: {
-    display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
-    gap: "10px", marginBottom: "16px",
-  },
-  previewItem: {
-    position: "relative", borderRadius: "10px", overflow: "hidden",
-    border: "1px solid #2a2a3e", aspectRatio: "1",
-  },
-  previewImg: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
-  previewRemove: {
-    position: "absolute", top: "4px", right: "4px",
-    width: "20px", height: "20px", borderRadius: "50%",
-    backgroundColor: "rgba(0,0,0,0.7)", color: "#fff",
-    border: "none", cursor: "pointer", fontSize: "12px",
-    display: "flex", alignItems: "center", justifyContent: "center",
-  },
-  uploadProgress: {
-    display: "flex", alignItems: "center", gap: "10px",
-    padding: "12px 16px", backgroundColor: "#0d0d18",
-    borderRadius: "10px", border: "1px solid #2a2a3e",
-    color: "#a78bfa", fontSize: "13px", marginBottom: "8px",
-  },
-  progressBar: {
-    flex: 1, height: "4px", backgroundColor: "#1a1a2e",
-    borderRadius: "2px", overflow: "hidden",
-  },
-  progressFill: (pct) => ({
-    height: "100%", backgroundColor: "#500fe9",
-    width: `${pct}%`, transition: "width 0.3s",
-    borderRadius: "2px",
-  }),
-
-  summaryCard: {
-    backgroundColor: "#13131f", border: "1px solid #1e1e30",
-    borderRadius: "16px", padding: "28px", marginBottom: "16px",
-  },
-  summaryRow: {
-    display: "flex", justifyContent: "space-between",
-    padding: "10px 0", borderBottom: "1px solid #1a1a2e",
-    fontSize: "14px",
-  },
-  summaryKey: { color: "#555", fontWeight: 500 },
-  summaryVal: { color: "#e0e0f0", textAlign: "right", maxWidth: "60%" },
-  urgentBadge: {
-    display: "inline-block", backgroundColor: "#2d0a0a",
-    color: "#f87171", border: "1px solid #5a1a1a",
-    borderRadius: "20px", fontSize: "11px", padding: "3px 10px",
-  },
-  summaryImgs: {
-    display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "4px",
-  },
-  summaryImg: {
-    width: "60px", height: "60px", objectFit: "cover",
-    borderRadius: "6px", border: "1px solid #2a2a3e",
-  },
-
-  bottomBar: {
-    position: "fixed", bottom: 0, left: 0, right: 0,
-    backgroundColor: "rgba(10,10,15,0.95)",
-    borderTop: "1px solid #1a1a2e",
-    backdropFilter: "blur(12px)",
-    padding: "16px 24px",
-    display: "flex", justifyContent: "center", gap: "12px", zIndex: 40,
-  },
-  btnCancel: {
-    backgroundColor: "transparent", border: "1px solid #2a2a3e",
-    color: "#888", borderRadius: "10px", padding: "12px 28px",
-    fontSize: "14px", cursor: "pointer",
-    fontFamily: "var(--font-dm-sans), sans-serif", fontWeight: 500,
-  },
-  btnBack: {
-    backgroundColor: "transparent", border: "1px solid #2a2a3e",
-    color: "#ccc", borderRadius: "10px", padding: "12px 28px",
-    fontSize: "14px", cursor: "pointer",
-    fontFamily: "var(--font-dm-sans), sans-serif", fontWeight: 500,
-  },
-  btnNext: {
-    backgroundColor: "#500fe9", border: "none",
-    color: "#fff", borderRadius: "10px", padding: "12px 32px",
-    fontSize: "14px", cursor: "pointer",
-    fontFamily: "var(--font-dm-sans), sans-serif", fontWeight: 700,
-  },
-  btnDisabled: {
-    backgroundColor: "#2a2a3e", border: "none",
-    color: "#555", borderRadius: "10px", padding: "12px 32px",
-    fontSize: "14px", cursor: "not-allowed",
-    fontFamily: "var(--font-dm-sans), sans-serif", fontWeight: 700,
-  },
-  errorMsg: { color: "#f87171", fontSize: "12px", marginTop: "4px" },
-
-  centrado: {
-    display: "flex", flexDirection: "column", alignItems: "center",
-    justifyContent: "center", padding: "80px 24px", textAlign: "center",
-  },
-  bigIcon: { fontSize: "56px", marginBottom: "20px" },
-  bigTitle: {
-    fontFamily: "var(--font-syne), sans-serif", fontWeight: 800,
-    fontSize: "28px", color: "#f0f0ff", marginBottom: "10px",
-  },
-  bigSub: { color: "#666", fontSize: "15px", marginBottom: "32px" },
-  btnPrimary: {
-    backgroundColor: "#500fe9", color: "#fff", border: "none",
-    borderRadius: "10px", padding: "14px 32px", fontSize: "15px",
-    fontWeight: 700, cursor: "pointer",
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    textDecoration: "none",
-  },
-};
+function obtenerIniciales(nombre) {
+  const p = nombre.trim().split(" ");
+  return (p[0][0] + (p[1]?.[0] ?? "")).toUpperCase();
+}
 
 export default function NuevaSolicitud() {
   const router = useRouter();
   const [user, loadingAuth] = useAuthState(auth);
   const fileInputRef = useRef(null);
-
   const [paso, setPaso] = useState(1);
   const [enviando, setEnviando] = useState(false);
   const [publicado, setPublicado] = useState(false);
   const [errores, setErrores] = useState({});
-  const [dragging, setDragging] = useState(false);
-
-  const [archivos, setArchivos] = useState([]);   
-  const [previews, setPreviews] = useState([]);      
-  const [subiendoPct, setSubiendoPct] = useState(null); 
+  const [archivos, setArchivos] = useState([]);
+  const [previews, setPreviews] = useState([]);
+  const [subiendoPct, setSubiendoPct] = useState(null);
 
   const [form, setForm] = useState({
     categoria: null,
@@ -315,29 +51,22 @@ export default function NuevaSolicitud() {
     presupuesto: "",
     modalidad: "Presencial",
     distrito: "",
-    urgencia: "acordar",
+    fechaNecesidad: "",  
     urgente: false,
   });
 
   const setF = (key, val) => setForm((p) => ({ ...p, [key]: val }));
-  const focus = { borderColor: "#500fe9", boxShadow: "0 0 0 3px rgba(80,15,233,0.15)" };
-  const blur  = { borderColor: "#2a2a3e", boxShadow: "none" };
 
   const agregarArchivos = (nuevos) => {
     const validos = Array.from(nuevos)
       .filter((f) => f.type.startsWith("image/"))
       .slice(0, MAX_IMAGENES - archivos.length);
-
     if (validos.length === 0) return;
-
     validos.forEach((file) => {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setPreviews((p) => [...p, e.target.result]);
-      };
+      reader.onload = (e) => setPreviews((p) => [...p, e.target.result]);
       reader.readAsDataURL(file);
     });
-
     setArchivos((p) => [...p, ...validos]);
   };
 
@@ -346,63 +75,48 @@ export default function NuevaSolicitud() {
     setPreviews((p) => p.filter((_, i) => i !== idx));
   };
 
-  const onDrop = (e) => {
-    e.preventDefault();
-    setDragging(false);
-    agregarArchivos(e.dataTransfer.files);
-  };
-
   const validarPaso = () => {
     const e = {};
     if (paso === 1 && !form.categoria) e.categoria = "Selecciona una categoría";
     if (paso === 2) {
-      if (!form.titulo.trim())       e.titulo      = "El título es obligatorio";
-      if (!form.descripcion.trim())  e.descripcion = "La descripción es obligatoria";
+      if (!form.titulo.trim()) e.titulo = "El título es obligatorio";
+      if (!form.descripcion.trim()) e.descripcion = "La descripción es obligatoria";
     }
     if (paso === 3 && !form.distrito) e.distrito = "Selecciona un distrito";
     setErrores(e);
     return Object.keys(e).length === 0;
   };
 
-  const avanzar = () => { if (validarPaso()) setPaso((p) => Math.min(p + 1, 4)); };
+  const avanzar = () => {
+    if (validarPaso()) setPaso((p) => Math.min(p + 1, 4));
+  };
 
-  
-  
   const publicar = async () => {
     if (!user) return;
     setEnviando(true);
-
     try {
       let imageUrls = [];
       if (archivos.length > 0) {
         setSubiendoPct(0);
-        imageUrls = await subirImagenesSolicitud(
-          archivos,
-          user.uid,
-          (pct) => setSubiendoPct(Math.round(pct))
-        );
+        imageUrls = await subirImagenesSolicitud(archivos, user.uid, (pct) => setSubiendoPct(Math.round(pct)));
         setSubiendoPct(null);
       }
-
-      // 2. Guardar solicitud en Firestore
-      const urgente = form.urgencia === "hoy" || form.urgente;
       const result = await crearSolicitud(
         {
-          titulo:      form.titulo.trim(),
+          titulo: form.titulo.trim(),
           descripcion: form.descripcion.trim(),
-          tags:        [form.categoria.tag],
-          precio:      form.presupuesto ? `s/ ${form.presupuesto}` : "A coordinar",
-          distrito:    form.distrito,
-          urgente,
-          modalidad:   form.modalidad,
-          urgencia:    form.urgencia,
-          nombre:      user.displayName ?? user.email?.split("@")[0] ?? "Usuario",
-          iniciales:   obtenerIniciales(user.displayName ?? user.email ?? "U"),
-          imageUrls,  // ← URLs de Storage
+          tags: [form.categoria.tag],
+          precio: form.presupuesto ? `S/ ${form.presupuesto}` : "A coordinar",
+          distrito: form.distrito,
+          modalidad: form.modalidad,
+          fechaNecesidad: form.fechaNecesidad ? new Date(form.fechaNecesidad) : null,
+          urgente: form.urgente,
+          nombre: user.displayName ?? user.email?.split("@")[0] ?? "Usuario",
+          iniciales: obtenerIniciales(user.displayName ?? user.email ?? "U"),
+          imageUrls,
         },
         user.uid
       );
-
       if (result.success) {
         setPublicado(true);
       } else {
@@ -410,32 +124,24 @@ export default function NuevaSolicitud() {
       }
     } catch (err) {
       console.error(err);
-      alert("Error inesperado. Revisa la consola.");
+      alert("Error inesperado.");
     } finally {
       setEnviando(false);
     }
   };
 
- 
-  function obtenerIniciales(nombre) {
-    const p = nombre.trim().split(" ");
-    return (p[0][0] + (p[1]?.[0] ?? "")).toUpperCase();
-  }
-
-  function formatUrgencia(u) {
-    return URGENCIA.find((x) => x.value === u)?.label ?? u;
-  }
-
+  // Redirección si no está logueado
   if (!loadingAuth && !user) {
     return (
-      <div style={s.root}>
-        <div style={s.inner}>
-          <div style={s.centrado}>
-            <div style={s.bigIcon}>🔒</div>
-            <h2 style={s.bigTitle}>Inicia sesión primero</h2>
-            <p style={s.bigSub}>Para publicar una solicitud necesitas una cuenta en Nexora.</p>
-            <Link href="/login" style={s.btnPrimary}>Ingresar</Link>
-          </div>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-main)" }}>
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-syne), sans-serif", color: "var(--text-main)" }}>
+            Inicia sesión primero
+          </h2>
+          <p className="mb-6" style={{ color: "var(--text-secondary)" }}>
+            Para publicar una solicitud necesitas una cuenta en Nexora.
+          </p>
+          <Link href="/login" className="btn-primary">Ingresar</Link>
         </div>
       </div>
     );
@@ -443,30 +149,37 @@ export default function NuevaSolicitud() {
 
   if (publicado) {
     return (
-      <div style={s.root}>
-        <div style={s.inner}>
-          <div style={s.centrado}>
-            <div style={s.bigIcon}>🎉</div>
-            <h2 style={s.bigTitle}>¡Solicitud publicada!</h2>
-            <p style={s.bigSub}>Los trabajadores de tu zona ya pueden postularse.</p>
-            <div style={{ display: "flex", gap: "12px" }}>
-              <button style={{ ...s.btnCancel, cursor: "pointer" }} onClick={() => router.push("/FeedTrabajos")}>
-                Ver el feed
-              </button>
-              <button
-                style={s.btnPrimary}
-                onClick={() => {
-                  setPublicado(false);
-                  setPaso(1);
-                  setArchivos([]);
-                  setPreviews([]);
-                  setForm({ categoria: null, titulo: "", descripcion: "", presupuesto: "",
-                             modalidad: "Presencial", distrito: "", urgencia: "acordar", urgente: false });
-                }}
-              >
-                Publicar otra
-              </button>
-            </div>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-main)" }}>
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-syne), sans-serif", color: "var(--text-main)" }}>
+            ¡Solicitud publicada!
+          </h2>
+          <p className="mb-6" style={{ color: "var(--text-secondary)" }}>
+            Los trabajadores de tu zona ya pueden postularse.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <button onClick={() => router.push("/feedJobs")} className="btn-secondary">Ver el feed</button>
+            <button
+              onClick={() => {
+                setPublicado(false);
+                setPaso(1);
+                setArchivos([]);
+                setPreviews([]);
+                setForm({
+                  categoria: null,
+                  titulo: "",
+                  descripcion: "",
+                  presupuesto: "",
+                  modalidad: "Presencial",
+                  distrito: "",
+                  fechaNecesidad: "",
+                  urgente: false,
+                });
+              }}
+              className="btn-primary"
+            >
+              Publicar otra
+            </button>
           </div>
         </div>
       </div>
@@ -474,24 +187,34 @@ export default function NuevaSolicitud() {
   }
 
   return (
-    <div style={s.root}>
-      <div style={s.inner}>
-          <div style={{ textAlign: "center", width: "100%" }}>
-                <h1 style={s.pageTitle}>Nueva solicitud</h1>
-            </div>
-
-        <div style={s.stepper}>
+    <div className="min-h-screen" style={{ background: "var(--bg-main)" }}>
+      <div className="max-w-3xl mx-auto px-4 py-8 pb-28">
+        <h1 className="text-3xl font-extrabold text-center mb-8" style={{ fontFamily: "var(--font-syne), sans-serif", color: "var(--text-main)" }}>
+          Nueva solicitud
+        </h1>
+        <div className="flex items-center justify-between mb-8">
           {PASOS.map((nombre, i) => {
             const n = i + 1;
             const active = paso === n;
-            const done   = paso > n;
+            const done = paso > n;
             return (
-              <div key={n} style={{ display: "flex", alignItems: "center", flex: i < 3 ? 1 : "unset" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <div style={s.stepCircle(active, done)}>{done ? "✓" : n}</div>
-                  <span style={s.stepLabel(active, done)}>{nombre}</span>
+              <div key={n} className="flex items-center flex-1">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all"
+                    style={{
+                      background: done || active ? "var(--accent)" : "var(--bg-card)",
+                      color: done || active ? "white" : "var(--text-secondary)",
+                      border: done || active ? "none" : `1px solid var(--border-color)`,
+                    }}
+                  >
+                    {done ? "✓" : n}
+                  </div>
+                  <span className="text-sm whitespace-nowrap" style={{ color: done ? "var(--accent)" : active ? "var(--text-main)" : "var(--text-muted)" }}>
+                    {nombre}
+                  </span>
                 </div>
-                {i < 3 && <div style={s.stepLine(done)} />}
+                {i < PASOS.length - 1 && <div className="flex-1 h-px mx-4" style={{ background: done ? "var(--accent)" : "var(--border-color)" }} />}
               </div>
             );
           })}
@@ -499,231 +222,241 @@ export default function NuevaSolicitud() {
 
         {paso === 1 && (
           <>
-            <h2 style={s.sectionTitle}>¿Qué tipo de servicio necesitas?</h2>
-            <p style={s.sectionSub}>Elige la categoría que mejor describe tu solicitud</p>
-            <div style={s.grid}>
+            <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: "var(--font-syne), sans-serif", color: "var(--text-main)" }}>
+              ¿Qué tipo de servicio necesitas?
+            </h2>
+            <p className="mb-6" style={{ color: "var(--text-secondary)" }}>Elige la categoría que mejor describe tu solicitud</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
               {CATEGORIAS.map((cat) => (
                 <button
                   key={cat.id}
-                  style={s.catBtn(form.categoria?.id === cat.id)}
                   onClick={() => { setF("categoria", cat); setErrores({}); }}
+                  className="p-5 rounded-xl border flex flex-col items-center gap-2 transition-all"
+                  style={{
+                    background: form.categoria?.id === cat.id ? "var(--accent-bg)" : "var(--bg-card)",
+                    borderColor: form.categoria?.id === cat.id ? "var(--accent)" : "var(--border-color)",
+                    color: form.categoria?.id === cat.id ? "var(--accent-text)" : "var(--text-secondary)",
+                  }}
                 >
-                  <span style={{ fontSize: "22px" }}>{cat.icon}</span>
-                  {cat.label}
+                  <span className="text-2xl">{cat.icon || "📌"}</span>
+                  <span className="text-sm font-medium">{cat.label}</span>
                 </button>
               ))}
             </div>
-            {errores.categoria && <p style={s.errorMsg}>{errores.categoria}</p>}
+            {errores.categoria && <p className="text-sm" style={{ color: "var(--error)" }}>{errores.categoria}</p>}
           </>
         )}
 
         {paso === 2 && (
-          <div style={s.formCard}>
-            <div style={s.formCardTitle}>Describe tu solicitud</div>
-            <div style={s.fieldGroup}>
-              <div style={s.field}>
-                <label style={s.label}>Título de la solicitud</label>
+          <div className="rounded-xl p-6 border" style={{ background: "var(--bg-card)", borderColor: "var(--border-color)" }}>
+            <h3 className="text-xl font-bold mb-4" style={{ fontFamily: "var(--font-syne), sans-serif", color: "var(--text-main)" }}>
+              Describe tu solicitud
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase mb-1" style={{ color: "var(--text-muted)" }}>Título de la solicitud</label>
                 <input
-                  style={s.input}
+                  type="text"
                   placeholder="Ej. Necesito técnico para instalar cámaras de seguridad en casa"
                   value={form.titulo}
                   onChange={(e) => setF("titulo", e.target.value)}
-                  onFocus={(e) => Object.assign(e.target.style, focus)}
-                  onBlur={(e)  => Object.assign(e.target.style, blur)}
+                  className="w-full rounded-lg px-4 py-2 outline-none transition-all"
+                  style={{ background: "var(--bg-input)", border: `1px solid ${errores.titulo ? "var(--error)" : "var(--border-color)"}`, color: "var(--text-main)" }}
+                  onFocus={(e) => (e.target.style.borderColor = "var(--accent)")}
+                  onBlur={(e) => (e.target.style.borderColor = errores.titulo ? "var(--error)" : "var(--border-color)")}
                 />
-                {errores.titulo && <p style={s.errorMsg}>{errores.titulo}</p>}
+                {errores.titulo && <p className="text-xs mt-1" style={{ color: "var(--error)" }}>{errores.titulo}</p>}
               </div>
-              <div style={s.field}>
-                <label style={s.label}>Descripción detallada</label>
+              <div>
+                <label className="block text-xs font-bold uppercase mb-1" style={{ color: "var(--text-muted)" }}>Descripción detallada</label>
                 <textarea
-                  style={s.textarea}
+                  rows={4}
                   placeholder="Cuéntanos qué necesitas exactamente, cuándo, dónde y cualquier detalle relevante..."
                   value={form.descripcion}
                   onChange={(e) => setF("descripcion", e.target.value)}
-                  onFocus={(e) => (e.target.style.borderColor = "#500fe9")}
-                  onBlur={(e)  => (e.target.style.borderColor = "#2a2a3e")}
+                  className="w-full rounded-lg px-4 py-2 outline-none transition-all resize-vertical"
+                  style={{ background: "var(--bg-input)", border: `1px solid ${errores.descripcion ? "var(--error)" : "var(--border-color)"}`, color: "var(--text-main)" }}
+                  onFocus={(e) => (e.target.style.borderColor = "var(--accent)")}
+                  onBlur={(e) => (e.target.style.borderColor = errores.descripcion ? "var(--error)" : "var(--border-color)")}
                 />
-                {errores.descripcion && <p style={s.errorMsg}>{errores.descripcion}</p>}
+                {errores.descripcion && <p className="text-xs mt-1" style={{ color: "var(--error)" }}>{errores.descripcion}</p>}
+              </div>
+
+              {/* Subida de imágenes */}
+              <div className="mt-4">
+                <label className="block text-xs font-bold uppercase mb-2" style={{ color: "var(--text-muted)" }}>Imágenes (opcional)</label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={e => agregarArchivos(e.target.files)}
+                />
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="rounded-xl p-6 text-center cursor-pointer border border-dashed transition-all"
+                  style={{ background: "var(--bg-card)", borderColor: "var(--border-color)" }}
+                  onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = "var(--accent)"; }}
+                  onDragLeave={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = "var(--border-color)"; }}
+                  onDrop={(e) => { e.preventDefault(); agregarArchivos(e.dataTransfer.files); }}
+                >
+                  <div className="text-3xl mb-2">🖼️</div>
+                  <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Arrastra o haz clic para subir imágenes</p>
+                  <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Máximo {MAX_IMAGENES} imágenes</p>
+                </div>
+                {previews.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                    {previews.map((src, i) => (
+                      <div key={i} className="relative rounded-xl overflow-hidden border" style={{ borderColor: "var(--border-color)" }}>
+                        <img src={src} alt={`preview-${i}`} className="w-full h-24 object-cover" />
+                        <button
+                          onClick={() => quitarImagen(i)}
+                          className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/70 text-white text-xs flex items-center justify-center"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         )}
 
         {paso === 3 && (
-          <>
-            <div style={s.formCard}>
-              <div style={s.formCardTitle}>Detalles del trabajo</div>
-              <div style={s.fieldGroup}>
-                <div style={s.fieldRow}>
-                  <div style={s.field}>
-                    <label style={s.label}>Presupuesto (S/)</label>
-                    <input
-                      style={s.input}
-                      placeholder="Ej: 100-200"
-                      value={form.presupuesto}
-                      onChange={(e) => setF("presupuesto", e.target.value)}
-                      onFocus={(e) => Object.assign(e.target.style, focus)}
-                      onBlur={(e)  => Object.assign(e.target.style, blur)}
-                    />
-                  </div>
-                  <div style={s.field}>
-                    <label style={s.label}>Modalidad</label>
-                    <select style={s.select} value={form.modalidad} onChange={(e) => setF("modalidad", e.target.value)}>
-                      <option>Presencial</option>
-                      <option>Remoto</option>
-                      <option>Híbrido</option>
-                    </select>
-                  </div>
+          <div className="rounded-xl p-6 border" style={{ background: "var(--bg-card)", borderColor: "var(--border-color)" }}>
+            <h3 className="text-xl font-bold mb-4" style={{ fontFamily: "var(--font-syne), sans-serif", color: "var(--text-main)" }}>
+              Detalles del trabajo
+            </h3>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase mb-1" style={{ color: "var(--text-muted)" }}>Presupuesto (S/)</label>
+                  <input
+                    type="text"
+                    placeholder="Ej: 100-200"
+                    value={form.presupuesto}
+                    onChange={(e) => setF("presupuesto", e.target.value)}
+                    className="w-full rounded-lg px-4 py-2 outline-none transition-all"
+                    style={{ background: "var(--bg-input)", border: `1px solid var(--border-color)`, color: "var(--text-main)" }}
+                    onFocus={(e) => (e.target.style.borderColor = "var(--accent)")}
+                    onBlur={(e) => (e.target.style.borderColor = "var(--border-color)")}
+                  />
                 </div>
-
-                <div style={s.fieldRow}>
-                  <div style={s.field}>
-                    <label style={s.label}>Ubicación</label>
-                    <select
-                      style={s.select}
-                      value={form.distrito}
-                      onChange={(e) => { setF("distrito", e.target.value); setErrores({}); }}
-                    >
-                      <option value="">Selecciona un distrito</option>
-                      {DISTRITOS.map((d) => <option key={d} value={d}>{d}</option>)}
-                    </select>
-                    {errores.distrito && <p style={s.errorMsg}>{errores.distrito}</p>}
-                  </div>
-                  <div style={s.field}>
-                    <label style={s.label}>¿Cuándo lo necesitas?</label>
-                    <select style={s.select} value={form.urgencia} onChange={(e) => setF("urgencia", e.target.value)}>
-                      {URGENCIA.map((u) => <option key={u.value} value={u.value}>{u.label}</option>)}
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase mb-1" style={{ color: "var(--text-muted)" }}>Modalidad</label>
+                  <select
+                    value={form.modalidad}
+                    onChange={(e) => setF("modalidad", e.target.value)}
+                    className="w-full rounded-lg px-4 py-2 outline-none transition-all appearance-none cursor-pointer"
+                    style={{ background: "var(--bg-input)", border: `1px solid var(--border-color)`, color: "var(--text-main)" }}
+                  >
+                    <option>Presencial</option>
+                    <option>Remoto</option>
+                    <option>Híbrido</option>
+                  </select>
                 </div>
-
-                <div style={s.toggleRow}>
-                  <span style={s.toggleLabel}>Marcar como urgente</span>
-                  <div style={s.toggle(form.urgente)} onClick={() => setF("urgente", !form.urgente)}>
-                    <div style={s.toggleDot(form.urgente)} />
-                  </div>
-                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase mb-1" style={{ color: "var(--text-muted)" }}>Ubicación</label>
+                <select
+                  value={form.distrito}
+                  onChange={(e) => { setF("distrito", e.target.value); setErrores({}); }}
+                  className="w-full rounded-lg px-4 py-2 outline-none transition-all appearance-none cursor-pointer"
+                  style={{ background: "var(--bg-input)", border: `1px solid ${errores.distrito ? "var(--error)" : "var(--border-color)"}`, color: "var(--text-main)" }}
+                >
+                  <option value="">Selecciona un distrito</option>
+                  {DISTRITOS.map((d) => <option key={d} value={d}>{d}</option>)}
+                </select>
+                {errores.distrito && <p className="text-xs mt-1" style={{ color: "var(--error)" }}>{errores.distrito}</p>}
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase mb-1" style={{ color: "var(--text-muted)" }}>Fecha en que necesitas el servicio</label>
+                <input
+                  type="date"
+                  value={form.fechaNecesidad}
+                  onChange={(e) => setF("fechaNecesidad", e.target.value)}
+                  className="w-full rounded-lg px-4 py-2 outline-none transition-all"
+                  style={{ background: "var(--bg-input)", border: `1px solid var(--border-color)`, color: "var(--text-main)" }}
+                />
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-lg border" style={{ background: "var(--bg-input)", borderColor: "var(--border-color)" }}>
+                <span className="text-sm" style={{ color: "var(--text-secondary)" }}>Marcar como urgente</span>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={form.urgente}
+                  aria-label="Marcar solicitud como urgente"
+                  onClick={() => setF("urgente", !form.urgente)}
+                  className="relative w-10 h-5 rounded-full transition-all"
+                  style={{ background: form.urgente ? "var(--accent)" : "var(--border-color)" }}
+                >
+                  <span className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"
+                    style={{ left: form.urgente ? "22px" : "2px" }} />
+                </button>
               </div>
             </div>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              style={{ display: "none" }}
-              onChange={(e) => agregarArchivos(e.target.files)}
-            />
-
-            {previews.length > 0 && (
-              <div style={s.previews}>
-                {previews.map((src, i) => (
-                  <div key={i} style={s.previewItem}>
-                    <img src={src} alt={`preview-${i}`} style={s.previewImg} />
-                    <button style={s.previewRemove} onClick={() => quitarImagen(i)}>✕</button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {archivos.length < MAX_IMAGENES && (
-              <div
-                style={s.dropzone(dragging)}
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-                onDragLeave={() => setDragging(false)}
-                onDrop={onDrop}
-              >
-                <p style={s.dropzoneText}>
-                  {previews.length === 0
-                    ? "Arrastra fotos del trabajo aquí"
-                    : `${previews.length} imagen${previews.length > 1 ? "es" : ""} seleccionada${previews.length > 1 ? "s" : ""}`}
-                </p>
-                <p style={{ ...s.dropzoneText, marginBottom: 0 }}>
-                  o <span style={s.dropzoneLink}>selecciona archivos</span>
-                </p>
-                <p style={s.dropzoneLimit}>
-                  Máximo {MAX_IMAGENES} imágenes · JPG, PNG, WEBP
-                </p>
-              </div>
-            )}
-          </>
+          </div>
         )}
 
         {paso === 4 && (
           <>
-            <h2 style={s.sectionTitle}>Revisa tu solicitud</h2>
-            <p style={s.sectionSub}>Confirma que todo esté correcto antes de publicar</p>
-
+            <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: "var(--font-syne), sans-serif", color: "var(--text-main)" }}>
+              Revisa tu solicitud
+            </h2>
+            <p className="mb-6" style={{ color: "var(--text-secondary)" }}>Confirma que todo esté correcto antes de publicar</p>
             {subiendoPct !== null && (
-              <div style={s.uploadProgress}>
-                <span>Subiendo imágenes... {subiendoPct}%</span>
-                <div style={s.progressBar}>
-                  <div style={s.progressFill(subiendoPct)} />
+              <div className="flex items-center gap-3 p-3 rounded-lg mb-4" style={{ background: "var(--bg-card)", border: `1px solid var(--border-color)` }}>
+                <span className="text-sm" style={{ color: "var(--accent)" }}>Subiendo imágenes... {subiendoPct}%</span>
+                <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "var(--bg-hover)" }}>
+                  <div className="h-full transition-all" style={{ width: `${subiendoPct}%`, background: "var(--accent)" }} />
                 </div>
               </div>
             )}
-
-            <div style={s.summaryCard}>
+            <div className="rounded-xl p-6 border mb-6" style={{ background: "var(--bg-card)", borderColor: "var(--border-color)" }}>
               {[
-                { k: "Categoría",    v: <>{form.categoria?.icon} {form.categoria?.label}</> },
-                { k: "Título",       v: form.titulo },
-                { k: "Descripción",  v: form.descripcion },
-                { k: "Presupuesto",  v: form.presupuesto ? `s/ ${form.presupuesto}` : "A coordinar" },
-                { k: "Modalidad",    v: form.modalidad },
-                { k: "Distrito",     v: form.distrito },
-                { k: "Cuándo",       v: formatUrgencia(form.urgencia) },
-                {
-                  k: "Estado",
-                  v: (form.urgente || form.urgencia === "hoy")
-                    ? <span style={s.urgentBadge}> Urgente</span>
-                    : <span style={{ color: "#555" }}>Normal</span>,
-                },
-              ].map(({ k, v }, i) => (
-                <div key={k} style={{ ...s.summaryRow, borderBottom: i === 7 ? "none" : "1px solid #1a1a2e" }}>
-                  <span style={s.summaryKey}>{k}</span>
-                  <span style={s.summaryVal}>{v}</span>
+                { k: "Categoría", v: form.categoria?.label },
+                { k: "Título", v: form.titulo },
+                { k: "Descripción", v: form.descripcion },
+                { k: "Presupuesto", v: form.presupuesto ? `S/ ${form.presupuesto}` : "A coordinar" },
+                { k: "Modalidad", v: form.modalidad },
+                { k: "Distrito", v: form.distrito },
+                { k: "Fecha necesaria", v: form.fechaNecesidad ? new Date(form.fechaNecesidad).toLocaleDateString() : "No especificada" },
+                { k: "Estado", v: form.urgente ? "⚠️ Urgente" : "Normal" },
+              ].map(({ k, v }) => (
+                <div key={k} className="flex justify-between py-2 border-b last:border-0" style={{ borderColor: "var(--border-color)" }}>
+                  <span className="text-sm font-medium" style={{ color: "var(--text-muted)" }}>{k}</span>
+                  <span className="text-sm text-right" style={{ color: "var(--text-main)" }}>{v || "—"}</span>
                 </div>
               ))}
-
               {previews.length > 0 && (
-                <div style={{ ...s.summaryRow, borderBottom: "none", flexDirection: "column", alignItems: "flex-start", gap: "8px" }}>
-                  <span style={s.summaryKey}>Imágenes ({previews.length})</span>
-                  <div style={s.summaryImgs}>
+                <div className="mt-4">
+                  <p className="text-sm font-medium mb-2" style={{ color: "var(--text-muted)" }}>Imágenes ({previews.length})</p>
+                  <div className="flex flex-wrap gap-2">
                     {previews.map((src, i) => (
-                      <img key={i} src={src} alt="" style={s.summaryImg} />
+                      <img key={i} src={src} alt="" className="w-16 h-16 object-cover rounded-md border" style={{ borderColor: "var(--border-color)" }} />
                     ))}
                   </div>
                 </div>
               )}
             </div>
-
-            <p style={{ color: "#555", fontSize: "13px", textAlign: "center" }}>
-              Al publicar, tu solicitud estará visible para los trabajadores de tu zona inmediatamente.
-            </p>
           </>
         )}
-      </div>
-      <div style={s.bottomBar}>
-        <button style={s.btnCancel} onClick={() => router.push("/FeedTrabajos")}>Cancelar</button>
-        {paso > 1 && (
-          <button style={s.btnBack} onClick={() => setPaso((p) => p - 1)}>Atrás</button>
-        )}
-        {paso < 4 ? (
-          <button style={s.btnNext} onClick={avanzar}>Continuar</button>
-        ) : (
-          <button
-            style={enviando ? s.btnDisabled : s.btnNext}
-            onClick={publicar}
-            disabled={enviando}
-          >
-            {enviando
-              ? subiendoPct !== null
-                ? `Subiendo imágenes ${subiendoPct}%...`
-                : "Publicando..."
-              : "Publicar solicitud"}
-          </button>
-        )}
+
+        {/* Botones fijos abajo */}
+        <div className="sticky bottom-0 left-0 right-0 p-4 flex justify-center gap-4 backdrop-blur-md mt-8" style={{ background: "var(--bg-main)", borderTop: `1px solid var(--border-color)`, zIndex: 40 }}>
+          <button onClick={() => router.push("/feedJobs")} className="btn-secondary">Cancelar</button>
+          {paso > 1 && <button onClick={() => setPaso(p => p - 1)} className="btn-secondary">Atrás</button>}
+          {paso < 4 ? (
+            <button onClick={avanzar} className="btn-primary">Continuar</button>
+          ) : (
+            <button onClick={publicar} disabled={enviando} className="btn-primary">
+              {enviando ? (subiendoPct !== null ? `Subiendo imágenes ${subiendoPct}%...` : "Publicando...") : "Publicar solicitud"}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
