@@ -1,7 +1,9 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-export default function TrabajadorPage() {
+import ProtectedRoute from "@/components/ProtectedRoute";
+
+function TrabajadorPageContent() {
   const [cv, setCv] = useState(null);
   const [imagenes, setImagenes] = useState([]);
   const router = useRouter();
@@ -262,5 +264,13 @@ export default function TrabajadorPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function TrabajadorPage() {
+  return (
+    <ProtectedRoute>
+      <TrabajadorPageContent />
+    </ProtectedRoute>
   );
 }
