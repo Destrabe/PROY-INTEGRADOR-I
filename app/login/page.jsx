@@ -77,12 +77,6 @@ export default function LoginPage() {
       const rolReal = data.rol || "cliente";
       const esAdmin = rolReal === "admin";
 
-      if (tipo === "admin" && !esAdmin) {
-        setError("No tienes permisos");
-        setLoading(false);
-        return;
-      }
-
       login({
         uid: firebaseUser.uid,
         email: firebaseUser.email,
@@ -91,7 +85,8 @@ export default function LoginPage() {
         rol: rolReal,
       });
 
-      router.push(esAdmin ? "/admin/dashboard" : "/FeedTrabajos");
+      router.push("/FeedTrabajos");
+
     } catch (err) {
       const messages = {
         "auth/user-not-found": "No existe una cuenta con ese correo.",
