@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/auth";
+import { useThemeStore } from "@/store/themeStore";
 
 const CATEGORIAS = [
   "Desarrollo Web",
@@ -81,6 +82,10 @@ const STATS = [
 
 export default function Hero() {
   const [user, loading] = useAuthState(auth);
+
+  const theme = useThemeStore((state) => state.theme);
+  const background = useThemeStore((state) => state.background);
+  const textColor = useThemeStore((state) => state.textColor);
 
   return (
     <main>

@@ -5,31 +5,49 @@ import { useAuth } from "./AuthContext";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useThemeStore } from "@/store/themeStore";
+import ThemeToggle from "./themeToogle";
 
-const Logo = () => (
-  <div className="flex items-end font-extrabold text-2xl leading-none text-white font-syne select-none">
+const Logo = (color) => (
+  <div
+    style={{
+      color: color.color,
+    }}
+    className="flex items-end font-extrabold text-2xl leading-none  font-syne select-none"
+  >
     <div className="logo-header-name">Nexora</div>
     <div className="text-[32px] text-[#6c63ff] relative top-[3px]">.</div>
   </div>
 );
 
-const NavLink = ({ href, children, active }) => (
-  <Link
-    href={href}
-    className={`flex items-center transition-colors ${
-      active ? "text-[#6c63ff]" : "text-zinc-400 hover:text-[#6c63ff]"
-    }`}
-  >
-    {children}
-  </Link>
-);
+const NavLink = ({ href, children, active }) => {
+  const theme = useThemeStore((state) => state.theme);
+  const background = useThemeStore((state) => state.background);
+  const textColor = useThemeStore((state) => state.textColor);
+
+  return (
+    <Link
+      href={href}
+      style={{
+        color: active ? "#6c63ff" : textColor[theme],
+      }}
+      className={`flex items-center transition-colors ${
+        active ? "text-[#6c63ff]" : "text-zinc-400 hover:text-[#6c63ff]"
+      }`}
+    >
+      {children}
+    </Link>
+  );
+};
 
 export default function Header() {
   const { user, logout, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [profilePhoto, setProfilePhoto] = useState(null);
-
+  const theme = useThemeStore((state) => state.theme);
+  const background = useThemeStore((state) => state.background);
+  const textColor = useThemeStore((state) => state.textColor);
   const handleLogout = async () => {
     await logout();
     router.push("/");
@@ -46,12 +64,18 @@ export default function Header() {
   }
 
   return (
-    <div className="font-sans w-full lg:h-[90px] py-3 lg:py-0 transition-all bg-[#0a0a0a] text-white border-b border-zinc-800">
+    <div
+      style={{
+        backgroundColor: background[theme],
+        color: textColor[theme],
+      }}
+      className="font-sans w-full lg:h-[90px] py-3 lg:py-0 transition-all border-zinc-800"
+    >
       <div className="h-full flex flex-col lg:grid lg:grid-cols-3 items-center px-4 sm:px-6 lg:px-[60px] py-4 gap-4">
         {/* LOGO */}
         <div className="h-full flex items-center justify-center lg:justify-start select-none w-full">
           <Link href="/" className="flex items-center gap-2 text-white">
-            <Logo />
+            <Logo color={textColor[theme]} />
           </Link>
         </div>
 
@@ -91,6 +115,9 @@ export default function Header() {
 
         {/* AUTH */}
         <div className="flex justify-center lg:justify-end items-center gap-4 w-full">
+          <div className="">
+            <ThemeToggle />
+          </div>
           {user ? (
             <div className="relative group">
               <button className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all bg-[#121212] border border-zinc-800 text-white">
@@ -129,13 +156,13 @@ export default function Header() {
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Link
                 href="/login"
-                className="px-4 py-2 border border-white/26 rounded-[10px] text-center transition-all text-white hover:text-[#6c63ff]"
+                className="h-[42px] px-4 border border-white/26 flex items-center justify-center rounded-[10px] text-center transition-all text-white hover:text-[#6c63ff]"
               >
                 Iniciar Sesión
               </Link>
               <Link
                 href="/register"
-                className="px-4 py-2 text-center rounded-[10px] text-white transition-all bg-[#6c63ff] hover:bg-[#5b52e5]"
+                className="h-[42px] px-4 flex items-center justify-center rounded-[10px] text-white transition-all bg-[#6c63ff] hover:bg-[#5b52e5]"
               >
                 Registrarse
               </Link>
