@@ -3,6 +3,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { auth } from "@/firebase/auth";
 import { signOut, onAuthStateChanged } from "firebase/auth";
+import { db } from "@/firebase/db";
+import { doc, getDoc } from "firebase/firestore";
 
 const AuthContext = createContext(null);
 
@@ -12,7 +14,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       console.log("FIREBASE USER:", firebaseUser);
 
       const expiration = localStorage.getItem("sessionExpiration");
@@ -29,11 +31,29 @@ export function AuthProvider({ children }) {
         const savedRole =
           localStorage.getItem(`role_${firebaseUser.uid}`) || "cliente";
 
+        const savedFirstName =
+          localStorage.getItem(`firstName_${firebaseUser.uid}`) || "";
+
+        const savedLastName =
+          localStorage.getItem(`lastName_${firebaseUser.uid}`) || "";
+
+        const userRef = doc(db, "users", firebaseUser.uid);
+        const userSnap = await getDoc(userRef);
+
+        let firestorePhoto = null;
+
+        if (userSnap.exists()) {
+          firestorePhoto = userSnap.data().photoURL || null;
+        }
+
         setUser({
           uid: firebaseUser.uid,
+          first_name: savedFirstName,
+          last_name: savedLastName,
           name: firebaseUser.displayName || firebaseUser.email,
           email: firebaseUser.email,
           rol: savedRole,
+          photoURL: firestorePhoto,
         });
       } else {
         setUser(null);
@@ -50,11 +70,21 @@ export function AuthProvider({ children }) {
 
     localStorage.setItem(`role_${userData.uid}`, role);
 
+    localStorage.setItem(
+      `firstName_${userData.uid}`,
+      userData.first_name || "",
+    );
+
+    localStorage.setItem(`lastName_${userData.uid}`, userData.last_name || "");
+
     const newUser = {
       uid: userData.uid,
+      first_name: userData.first_name,
+      last_name: userData.last_name,
       name: `${userData.first_name} ${userData.last_name}`,
       email: userData.email,
       rol: role,
+      photoURL: userData.photoURL || null,
     };
 
     setUser(newUser);
