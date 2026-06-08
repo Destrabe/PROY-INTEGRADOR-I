@@ -29,8 +29,16 @@ export function AuthProvider({ children }) {
         const savedRole =
           localStorage.getItem(`role_${firebaseUser.uid}`) || "cliente";
 
+        const savedFirstName =
+          localStorage.getItem(`firstName_${firebaseUser.uid}`) || "";
+
+        const savedLastName =
+          localStorage.getItem(`lastName_${firebaseUser.uid}`) || "";
+
         setUser({
           uid: firebaseUser.uid,
+          first_name: savedFirstName,
+          last_name: savedLastName,
           name: firebaseUser.displayName || firebaseUser.email,
           email: firebaseUser.email,
           rol: savedRole,
@@ -50,8 +58,17 @@ export function AuthProvider({ children }) {
 
     localStorage.setItem(`role_${userData.uid}`, role);
 
+    localStorage.setItem(
+      `firstName_${userData.uid}`,
+      userData.first_name || "",
+    );
+
+    localStorage.setItem(`lastName_${userData.uid}`, userData.last_name || "");
+
     const newUser = {
       uid: userData.uid,
+      first_name: userData.first_name,
+      last_name: userData.last_name,
       name: `${userData.first_name} ${userData.last_name}`,
       email: userData.email,
       rol: role,

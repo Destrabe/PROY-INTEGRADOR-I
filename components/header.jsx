@@ -109,7 +109,9 @@ export default function Header() {
                 <span className="text-sm text-zinc-400">
                   Hola,{" "}
                   <span className="text-white font-semibold">
-                    {user.name || user.email}
+                    {user?.first_name
+                      ? `${user.first_name} ${user.last_name?.split(" ")[0] || ""}`
+                      : user.email}
                   </span>
                 </span>
                 <ArrowIcon />
