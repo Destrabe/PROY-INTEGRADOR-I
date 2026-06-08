@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useAuth } from "@/components/AuthContext";
 import { useEffect, useState } from "react";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function ConfigurationPage() {
   const { user } = useAuth();
@@ -41,11 +42,12 @@ export default function ConfigurationPage() {
   };
 
   return (
+    <ProtectedRoute>
     <div
       className="min-h-screen p-6 md:p-10"
       style={{
-        background: "var(--bg-main)",
-        color: "var(--text-main)",
+        background: "#0A0A0F",
+        color: "#F0F0F8",
       }}
     >
       <div
@@ -67,8 +69,8 @@ export default function ConfigurationPage() {
             onClick={() => setTab("perfil")}
             className="px-4 py-2 rounded-xl transition-all"
             style={{
-              background: tab === "perfil" ? "#6c63ff" : "var(--bg-main)",
-              color: tab === "perfil" ? "#fff" : "var(--text-main)",
+              background: tab === "perfil" ? "#6c63ff" : "#0A0A0F",
+              color: tab === "perfil" ? "#fff" : "#0A0A0F",
               border: "1px solid var(--border-color)",
             }}
           >
@@ -79,8 +81,8 @@ export default function ConfigurationPage() {
             onClick={() => setTab("apariencia")}
             className="px-4 py-2 rounded-xl transition-all"
             style={{
-              background: tab === "apariencia" ? "#6c63ff" : "var(--bg-main)",
-              color: tab === "apariencia" ? "#fff" : "var(--text-main)",
+              background: tab === "apariencia" ? "#6c63ff" : "#0A0A0F",
+              color: tab === "apariencia" ? "#fff" : "#0A0A0F",
               border: "1px solid var(--border-color)",
             }}
           >
@@ -95,7 +97,7 @@ export default function ConfigurationPage() {
                 className="w-32 h-32 rounded-full overflow-hidden border-4"
                 style={{
                   borderColor: "#6c63ff",
-                  background: "var(--bg-main)",
+                  background: "#0A0A0F",
                 }}
               >
                 {preview ? (
@@ -199,8 +201,8 @@ export default function ConfigurationPage() {
                 onClick={() => setTheme("light")}
                 className="px-5 py-3 rounded-xl"
                 style={{
-                  background: theme === "light" ? "#6c63ff" : "var(--bg-main)",
-                  color: theme === "light" ? "#fff" : "var(--text-main)",
+                  background: theme === "light" ? "#6c63ff" : "#0A0A0F",
+                  color: theme === "light" ? "#fff" : "#F0F0F8",
                   border: "1px solid var(--border-color)",
                 }}
               >
@@ -211,8 +213,8 @@ export default function ConfigurationPage() {
                 onClick={() => setTheme("dark")}
                 className="px-5 py-3 rounded-xl"
                 style={{
-                  background: theme === "dark" ? "#6c63ff" : "var(--bg-main)",
-                  color: theme === "dark" ? "#fff" : "var(--text-main)",
+                  background: theme === "dark" ? "#6c63ff" : "#0A0A0F",
+                  color: theme === "dark" ? "#fff" : "#F0F0F8",
                   border: "1px solid var(--border-color)",
                 }}
               >
@@ -223,5 +225,6 @@ export default function ConfigurationPage() {
         )}
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

@@ -87,7 +87,7 @@ export default function Hero() {
       {/* HERO */}
       <section
         className="w-full min-h-screen flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 py-20 relative overflow-hidden"
-        style={{ background: "var(--bg-main)" }}
+        style={{ background: "#0A0A0F" }}
       >
         <div
           className="absolute inset-0 pointer-events-none"
@@ -220,7 +220,7 @@ export default function Hero() {
             style={{
               fontFamily: "Syne, sans-serif",
               fontSize: "22px",
-              color: "var(--text-main)",
+              color: "#F0F0F8",
             }}
           >
             Categorías Populares
@@ -302,7 +302,7 @@ export default function Hero() {
                 style={{
                   fontFamily: "Syne, sans-serif",
                   fontSize: "28px",
-                  color: "var(--text-main)",
+                  color: "#F0F0F8",
                   letterSpacing: "-0.5px",
                 }}
               >
@@ -404,7 +404,7 @@ export default function Hero() {
                       style={{
                         fontFamily: "Syne, sans-serif",
                         fontSize: "16px",
-                        color: "var(--text-main)",
+                        color: "#F0F0F8",
                       }}
                     >
                       {item.title}
@@ -433,7 +433,7 @@ export default function Hero() {
               style={{
                 fontFamily: "Syne, sans-serif",
                 fontSize: "clamp(22px, 4vw, 28px)",
-                color: "var(--text-main)",
+                color: "#F0F0F8",
                 letterSpacing: "-0.5px",
               }}
             >
@@ -522,7 +522,7 @@ export default function Hero() {
                   </div>
                   <h3
                     className="font-bold text-sm mb-2"
-                    style={{ fontFamily: "Syne, sans-serif", color: "var(--text-main)" }}
+                    style={{ fontFamily: "Syne, sans-serif", color: "#F0F0F8" }}
                   >
                     {item.title}
                   </h3>
@@ -607,14 +607,14 @@ export default function Hero() {
                 style={{
                   fontFamily: "Syne, sans-serif",
                   fontSize: "clamp(18px, 3vw, 22px)",
-                  color: "var(--text-main)",
+                  color: "#F0F0F8",
                 }}
               >
                 Nuestra meta es digitalizar el talento de San Juan de
                 Lurigancho, brindando herramientas modernas a los trabajadores y
                 tranquilidad a las familias del distrito.
               </p>
-              <p className="font-bold text-sm" style={{ color: "var(--text-main)" }}>
+              <p className="font-bold text-sm" style={{ color: "#F0F0F8" }}>
                 El equipo
               </p>
               <p className="text-sm mt-1" style={{ color: "#606078" }}>

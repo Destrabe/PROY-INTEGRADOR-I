@@ -13,6 +13,18 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      console.log("FIREBASE USER:", firebaseUser);
+
+      const expiration = localStorage.getItem("sessionExpiration");
+
+      if (firebaseUser && expiration && Date.now() > Number(expiration)) {
+        signOut(auth);
+        localStorage.removeItem("sessionExpiration");
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
       if (firebaseUser) {
         const savedRole =
           localStorage.getItem(`role_${firebaseUser.uid}`) || "cliente";

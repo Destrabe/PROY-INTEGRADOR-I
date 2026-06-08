@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Syne } from "next/font/google";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const syne = Syne({
   subsets: ["latin"],
@@ -100,7 +101,8 @@ export default function MensajesPage() {
   const [mostrarChat, setMostrarChat] = useState(false);
 
   return (
-    <div className="flex h-[calc(100vh-90px)] bg-[#0A0A0F] text-white font-sans overflow-hidden">
+    <ProtectedRoute>
+      <div className="flex h-[calc(100vh-90px)] bg-[#0A0A0F] text-white font-sans overflow-hidden">
       {/* Lista izquierda */}
       <div
         className={`${mostrarChat ? "hidden" : "flex"} md:flex w-full md:w-80 border-r border-[#2A2A38] flex-col`}
@@ -258,5 +260,6 @@ export default function MensajesPage() {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

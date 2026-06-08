@@ -29,7 +29,11 @@ export default function LoginPage() {
         last_name: "",
         rol: "cliente",
       });
-      router.push("/");
+      localStorage.setItem(
+        "sessionExpiration",
+        String(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      );
+      uid: (user.uid, router.push("/"));
     } catch (error) {
       console.log("GOOGLE ERROR:", error);
       setError("Error al iniciar sesión con Google.");
@@ -47,7 +51,10 @@ export default function LoginPage() {
         last_name: "",
         rol: "cliente",
       });
-
+      localStorage.setItem(
+        "sessionExpiration",
+        String(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      );
       router.push("/");
     } catch (error) {
       console.log("FACEBOOK ERROR:", error);
@@ -84,6 +91,10 @@ export default function LoginPage() {
         last_name: data.last_name || "",
         rol: rolReal,
       });
+      localStorage.setItem(
+        "sessionExpiration",
+        String(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      );
 
       router.push("/FeedTrabajos");
 
