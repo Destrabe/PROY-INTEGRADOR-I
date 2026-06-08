@@ -8,8 +8,8 @@ export function initAdmin() {
     initializeApp({
       credential: cert(serviceAccount),
     });
-    console.log("🚀 Firebase Admin inicializado con éxito absoluto.");
+    console.log("Firebase Admin inicializado con éxito absoluto.");
   } catch (error) {
-    console.error("❌ Error al inicializar Firebase Admin:", error);
+    console.error("Error al inicializar Firebase Admin:", error);
   }
 }
