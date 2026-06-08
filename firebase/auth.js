@@ -35,3 +35,35 @@ export const loginWithFacebook = async () => {
     throw error;
   }
 };
+export const sendOtpCode = async (email) => {
+  const res = await fetch("/api/otp/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  const data = await res.json();
+  if (!data.success) throw new Error(data.error);
+  return data;
+};
+
+export const verifyOtpCode = async (email, code) => {
+  const res = await fetch("/api/otp/verify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, code }),
+  });
+  const data = await res.json();
+  if (!data.success) throw new Error(data.error);
+  return data;
+};
+
+export const changePassword = async (email, newPassword) => {
+  const res = await fetch("/api/otp/reset", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, newPassword }),
+  });
+  const data = await res.json();
+  if (!data.success) throw new Error(data.error);
+  return data;
+};
