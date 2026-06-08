@@ -44,6 +44,7 @@ export default function Header() {
   const { user, logout, loading } = useAuth();
 
   console.log("HEADER USER:", user);
+  console.log("PHOTO:", user?.photoURL);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -134,7 +135,7 @@ export default function Header() {
                     <img
                       src="/svg/userIcon.svg"
                       alt="User Icon"
-                      className="w-full h-full object-cover"
+                      className="w-4 h-4 opacity-70"
                     />
                   )}
                 </div>
@@ -143,7 +144,7 @@ export default function Header() {
                   Hola,{" "}
                   <span className="text-white font-semibold">
                     {user?.first_name
-                      ? `${user.first_name} ${user.last_name?.split(" ")[0] || ""}`
+                      ? `${user.first_name.split(" ")[0]} ${user.last_name?.split(" ")[0] || ""}`
                       : user.email}
                   </span>
                 </span>

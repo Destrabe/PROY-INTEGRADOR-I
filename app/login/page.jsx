@@ -22,12 +22,16 @@ export default function LoginPage() {
     try {
       setError("");
       const user = await loginWithGoogle();
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      const data = userDoc.exists() ? userDoc.data() : {};
+
       login({
         uid: user.uid,
         email: user.email,
-        first_name: user.displayName || "",
-        last_name: "",
-        rol: "cliente",
+        first_name: data.first_name || user.displayName || "",
+        last_name: data.last_name || "",
+        rol: data.rol || "cliente",
+        photoURL: data.photoURL || null,
       });
       localStorage.setItem(
         "sessionExpiration",
@@ -44,12 +48,16 @@ export default function LoginPage() {
     try {
       setError("");
       const user = await loginWithFacebook();
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      const data = userDoc.exists() ? userDoc.data() : {};
+
       login({
         uid: user.uid,
         email: user.email,
-        first_name: user.displayName || "",
-        last_name: "",
-        rol: "cliente",
+        first_name: data.first_name || user.displayName || "",
+        last_name: data.last_name || "",
+        rol: data.rol || "cliente",
+        photoURL: data.photoURL || null,
       });
       localStorage.setItem(
         "sessionExpiration",
@@ -90,6 +98,7 @@ export default function LoginPage() {
         first_name: data.first_name || "",
         last_name: data.last_name || "",
         rol: rolReal,
+        photoURL: data.photoURL || null,
       });
       localStorage.setItem(
         "sessionExpiration",
@@ -97,7 +106,6 @@ export default function LoginPage() {
       );
 
       router.push("/FeedTrabajos");
-
     } catch (err) {
       const messages = {
         "auth/user-not-found": "No existe una cuenta con ese correo.",
