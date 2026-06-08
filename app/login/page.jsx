@@ -96,7 +96,8 @@ export default function LoginPage() {
         String(Date.now() + 30 * 24 * 60 * 60 * 1000),
       );
 
-      router.push(esAdmin ? "/admin" : "/FeedTrabajos");
+      router.push("/FeedTrabajos");
+
     } catch (err) {
       const messages = {
         "auth/user-not-found": "No existe una cuenta con ese correo.",
