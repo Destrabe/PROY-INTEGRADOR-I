@@ -165,13 +165,16 @@ export default function Header() {
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Link
                 href="/login"
-                className="h-[42px] px-4 border border-white/26 flex items-center justify-center rounded-[10px] text-center transition-all text-white hover:text-[#6c63ff]"
+                style={{
+                  color: textColor[theme],
+                }}
+                className="h-[42px] px-4 border border-zinc-500 flex items-center justify-center rounded-[10px] text-center transition-all hover:!text-[#6c63ff] hover:!border-[#6c63ff]"
               >
                 Iniciar Sesión
               </Link>
               <Link
                 href="/register"
-                className="h-[42px] px-4 flex items-center justify-center rounded-[10px] text-white transition-all bg-[#6c63ff] hover:bg-[#5b52e5]"
+                className="h-[42px] px-4 flex items-center justify-center rounded-[10px] text-white transition-all bg-[#6c63ff] hover:bg-[#5b52e5] "
               >
                 Registrarse
               </Link>
