@@ -1,17 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  sendPasswordResetEmail,
-  confirmPasswordReset,
-  verifyPasswordResetCode,
-} from "firebase/auth";
-import { auth } from "@/firebase/db";
+import { sendOtpCode, verifyOtpCode, changePassword } from "@/firebase/auth";
 import Image from "next/image";
 
-/* ── Step indicator (igual al diseño original) ── */
 const Steps = ({ current }) => {
   const steps = [
     { id: 1, label: "Correo" },
@@ -245,10 +238,7 @@ const StepEmail = ({ onNext }) => {
     }
     setLoading("Enviando...");
     try {
-      // Con Firebase real:
-      // await sendPasswordResetEmail(auth, email);
-      // Para demo, simulamos:
-      await new Promise((r) => setTimeout(r, 1200));
+      await sendOtpCode(email);
       onNext(email);
     } catch (err) {
       const msgs = {
@@ -299,9 +289,7 @@ const StepEmail = ({ onNext }) => {
   );
 };
 
-/* ═══════════════════════════════
-   STEP 2 — OTP
-═══════════════════════════════ */
+/* OTP*/
 const DEMO_CODE = "123456";
 
 const StepOtp = ({ email, onNext, onBack }) => {
@@ -367,22 +355,28 @@ const StepOtp = ({ email, onNext, onBack }) => {
       return;
     }
     setLoading("Verificando...");
-    await new Promise((r) => setTimeout(r, 900));
-    setLoading("");
-    if (code === DEMO_CODE) {
+    try {
+      await verifyOtpCode(email, code);
       onNext();
-    } else {
-      setError("Código incorrecto. Inténtalo de nuevo.");
+    } catch {
+      setError("Código incorrecto o expirado. Inténtalo de nuevo.");
       setDigits(Array(6).fill(""));
       setTimeout(() => refs.current[0]?.focus(), 50);
+    } finally {
+      setLoading("");
     }
   };
 
-  const resend = () => {
+  const resend = async () => {
     setDigits(Array(6).fill(""));
     setError("");
-    startCountdown();
-    refs.current[0]?.focus();
+    try {
+      await sendOtpCode(email);
+      startCountdown();
+      refs.current[0]?.focus();
+    } catch {
+      setError("Error al reenviar el código.");
+    }
   };
 
   return (
@@ -445,10 +439,8 @@ const StepOtp = ({ email, onNext, onBack }) => {
   );
 };
 
-/* ═══════════════════════════════
-   STEP 3 — Nueva contraseña
-═══════════════════════════════ */
-const StepNewPassword = ({ onNext }) => {
+/* Nueva contraseña*/
+const StepNewPassword = ({ email, onNext }) => {
   const [pw1, setPw1] = useState("");
   const [pw2, setPw2] = useState("");
   const [error, setError] = useState("");
@@ -465,9 +457,14 @@ const StepNewPassword = ({ onNext }) => {
       return;
     }
     setLoading("Guardando...");
-    await new Promise((r) => setTimeout(r, 1000));
-    setLoading("");
-    onNext();
+    try {
+      await changePassword(email, pw1);
+      onNext();
+    } catch {
+      setError("Error al cambiar la contraseña. Intenta de nuevo.");
+    } finally {
+      setLoading("");
+    }
   };
 
   return (
@@ -558,7 +555,12 @@ export default function ForgotPasswordPage() {
               onBack={() => setStep(1)}
             />
           )}
-          {step === 3 && <StepNewPassword onNext={() => setStep(4)} />}
+          {step === 3 && (
+            <StepNewPassword 
+              email={email} 
+              onNext={() => setStep(4)} 
+            />
+          )}
           {step === 4 && <StepSuccess />}
         </div>
       </div>
