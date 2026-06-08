@@ -106,11 +106,10 @@ export default function Header() {
                   )}
                 </div>
 
-                  <span className="text-sm text-zinc-400">
-                    Hola,{" "}
-                    <span className="text-white font-semibold">
-                      {user.name || user.email}
-                    </span>
+                <span className="text-sm text-zinc-400">
+                  Hola,{" "}
+                  <span className="text-white font-semibold">
+                    {user.name || user.email}
                   </span>
                 </span>
                 <ArrowIcon />
@@ -124,31 +123,8 @@ export default function Header() {
                   <LogoutIcon />
                   Cerrar sesión
                 </button>
-
-                {/* DROPDOWN */}
-                <div className="absolute right-0 mt-2 w-44 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden bg-[#121212] border border-zinc-800">
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-4 py-3 text-sm transition-all text-white hover:text-red-400"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-                      <polyline points="16 17 21 12 16 7" />
-                      <line x1="21" y1="12" x2="9" y2="12" />
-                    </svg>
-                    Cerrar sesión
-                  </button>
-                </div>
               </div>
-            </>
+            </div>
           ) : (
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Link
