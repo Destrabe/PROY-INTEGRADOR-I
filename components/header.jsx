@@ -26,9 +26,11 @@ const NavLink = ({ href, children, active }) => (
 
 export default function Header() {
   const { user, logout, loading } = useAuth();
+
+  console.log("HEADER USER:", user);
+
   const router = useRouter();
   const pathname = usePathname();
-  const [profilePhoto, setProfilePhoto] = useState(null);
 
   const handleLogout = async () => {
     await logout();
@@ -95,14 +97,18 @@ export default function Header() {
             <div className="relative group">
               <button className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all bg-[#121212] border border-zinc-800 text-white">
                 <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-[#0a0a0a] border border-zinc-800">
-                  {profilePhoto ? (
+                  {user?.photoURL ? (
                     <img
-                      src={profilePhoto}
+                      src={user.photoURL}
                       alt="Foto perfil"
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <img src="./svg/userIcon.svg" alt="User Icon" />
+                    <img
+                      src="/svg/userIcon.svg"
+                      alt="User Icon"
+                      className="w-full h-full object-cover"
+                    />
                   )}
                 </div>
 

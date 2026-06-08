@@ -8,7 +8,7 @@ import {
 } from "firebase/storage";
 import { app } from "@/firebase/client";
  
-const storage = getStorage(app);
+export const storage = getStorage(app);
  
 export const subirImagenesSolicitud = (archivos, userId, onProgress) => {
   return new Promise((resolve, reject) => {

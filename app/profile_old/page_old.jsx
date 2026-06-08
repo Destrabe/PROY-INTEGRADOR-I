@@ -1,8 +1,6 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { useAuth } from "@/components/AuthContext";
-import { uploadProfilePhoto } from "@/firebase/uploadProfilePhoto";
 
 const tabs = ["Trabajos", "Reseñas", "Sobre mí", "Portfolio"];
 
@@ -56,44 +54,7 @@ const reputationItems = [
 ];
 
 export default function NexoraProfile() {
-  const { user } = useAuth();
-
   const [activeTab, setActiveTab] = useState("Trabajos");
-  const [showSettings, setShowSettings] = useState(false);
-  const [settingsTab, setSettingsTab] = useState("perfil");
-  const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState(null);
-
-  const handleImageChange = async (e) => {
-  console.log("HANDLE IMAGE CHANGE");
-
-  const file = e.target.files[0];
-
-  console.log("ARCHIVO:", file);
-
-  if (!file || !user?.uid) {
-    console.log("NO HAY ARCHIVO O USER");
-    return;
-  }
-
-  try {
-    setUploading(true);
-
-    console.log("ANTES DE LLAMAR uploadProfilePhoto");
-
-    const photoURL = await uploadProfilePhoto(user.uid, file);
-
-    console.log("URL DEVUELTA:", photoURL);
-
-    setPreview(photoURL);
-
-    alert("Foto actualizada");
-  } catch (error) {
-    console.error("ERROR:", error);
-  } finally {
-    setUploading(false);
-  }
-};
 
   return (
     <div
@@ -105,25 +66,13 @@ export default function NexoraProfile() {
         <div className="bg-[#1a1a1f] rounded-3xl p-9 border border-white/5">
           <div className="flex items-start gap-8">
             {/* Avatar */}
-            <div className="w-32 h-32 rounded-full overflow-hidden bg-[#6c63ff] flex-shrink-0">
-              {preview || user?.photoURL ? (
-                <img
-                  src={preview || user.photoURL}
-                  alt="perfil"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-4xl font-bold">
-                  JR
-                </div>
-              )}
+            <div className="w-32 h-32 rounded-full bg-[#6c63ff] flex-shrink-0 flex items-center justify-center text-4xl font-bold">
+              JR
             </div>
             {/* Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="text-3xl font-semibold">
-                  {user?.name || "Usuario"}
-                </h1>
+                <h1 className="text-3xl font-semibold">Juan Rodriguez</h1>
                 <span className="flex items-center gap-1.5 bg-[#6c63ff]/20 text-[#6c63ff] text-base px-4 py-1 rounded-full border border-[#6c63ff]/30">
                   <Image
                     src="/svg/checkIcon.svg"
@@ -208,107 +157,6 @@ export default function NexoraProfile() {
             </div>
           </div>
         </div>
-        <button
-          onClick={() => setShowSettings(!showSettings)}
-          className="flex items-center gap-2 px-5 py-2.5 text-base bg-[#252529] hover:bg-[#2e2e34] rounded-xl border border-white/5 transition-colors"
-        >
-          <Image
-            src="/svg/settingsIcon.svg"
-            alt="settings"
-            width={18}
-            height={18}
-          />
-          Configuración
-        </button>
-        {/* Actions */}
-        {showSettings && (
-          <div className="bg-[#1a1a1f] rounded-3xl p-8 border border-white/5">
-            <h2 className="text-2xl font-bold mb-6">Configuración</h2>
-
-            <div className="flex gap-3 mb-6">
-              <button
-                onClick={() => setSettingsTab("perfil")}
-                className={`px-4 py-2 rounded-xl ${
-                  settingsTab === "perfil" ? "bg-[#6c63ff]" : "bg-[#252529]"
-                }`}
-              >
-                Perfil
-              </button>
-
-              <button
-                onClick={() => setSettingsTab("apariencia")}
-                className={`px-4 py-2 rounded-xl ${
-                  settingsTab === "apariencia" ? "bg-[#6c63ff]" : "bg-[#252529]"
-                }`}
-              >
-                Apariencia
-              </button>
-            </div>
-
-            {settingsTab === "perfil" && (
-              <div className="space-y-6">
-                <div className="flex flex-col items-center">
-                  <div className="w-32 h-32 rounded-full bg-[#252529] overflow-hidden border-4 border-[#6c63ff]">
-                    {preview || user?.photoURL ? (
-                      <img
-                        src={preview || user.photoURL}
-                        alt="perfil"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <span className="text-4xl font-bold">JR</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <label className="mt-4 px-5 py-2 rounded-xl bg-[#6c63ff] cursor-pointer hover:bg-[#5a52d5]">
-                    {uploading ? "Subiendo..." : "Cambiar foto"}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageChange}
-                    />
-                  </label>
-                </div>
-
-                <div>
-                  <p className="text-gray-400">Nombre</p>
-                  <h3 className="text-xl font-semibold">
-                    {user?.name || "Usuario"}
-                  </h3>
-                </div>
-
-                <div>
-                  <p className="text-gray-400">Correo</p>
-                  <h3>{user?.email}</h3>
-                </div>
-
-                <div>
-                  <p className="text-gray-400">Rol</p>
-                  <h3>{user?.rol}</h3>
-                </div>
-              </div>
-            )}
-
-            {settingsTab === "apariencia" && (
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Apariencia</h3>
-
-                <div className="flex gap-3">
-                  <button className="px-5 py-3 rounded-xl bg-[#6c63ff]">
-                    Claro
-                  </button>
-
-                  <button className="px-5 py-3 rounded-xl bg-[#252529]">
-                    Oscuro
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Stats Row */}
         <div className="grid grid-cols-5 gap-4">
