@@ -64,8 +64,8 @@ export default function Header() {
             <NavLink href="/FeedTrabajos" active={pathname === "/FeedTrabajos"}>
               Explorar
             </NavLink>
-            <NavLink href="/nosotros" active={pathname === "/nosotros"}>
-              Nosotros
+            <NavLink href="/faq" active={pathname === "/faq"}>
+              FAQ
             </NavLink>
 
             {user && (
