@@ -47,16 +47,15 @@ export default function Header() {
 
   return (
     <div className="font-sans w-full lg:h-[90px] py-3 lg:py-0 transition-all bg-[#0a0a0a] text-white border-b border-zinc-800">
-      {/* Contenedor principal dividido en 3 columnas iguales */}
       <div className="h-full flex flex-col lg:grid lg:grid-cols-3 items-center px-4 sm:px-6 lg:px-[60px] py-4 gap-4">
-        {/* 1. LOGO (Alineado a la izquierda) */}
+        {/* LOGO */}
         <div className="h-full flex items-center justify-center lg:justify-start select-none w-full">
           <Link href="/" className="flex items-center gap-2 text-white">
             <Logo />
           </Link>
         </div>
 
-        {/* 2. NAV (Alineado al centro exacto) */}
+        {/* NAV */}
         <div className="flex justify-center items-center w-full">
           <nav className="flex flex-wrap justify-center gap-4 lg:gap-[30px] text-sm sm:text-base">
             <NavLink href="/" active={pathname === "/"}>
@@ -90,7 +89,7 @@ export default function Header() {
           </nav>
         </div>
 
-        {/* 3. AUTH (Alineado a la derecha) */}
+        {/* AUTH */}
         <div className="flex justify-center lg:justify-end items-center gap-4 w-full">
           {user ? (
             <div className="relative group">
