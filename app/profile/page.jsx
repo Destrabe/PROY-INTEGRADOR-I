@@ -49,50 +49,58 @@ const skills = [
 ];
 
 const reputationItems = [
-  { label: "Calidad", score: 4.9 },
-  { label: "Comunicación", score: 4.8 },
-  { label: "Puntualidad", score: 5.0 },
-  { label: "Precio", score: 4.7 },
+  { label: "Calidad", score: 0 },
+  { label: "Comunicación", score: 0 },
+  { label: "Puntualidad", score: 0 },
+  { label: "Precio", score: 0 },
 ];
 
 export default function NexoraProfile() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
 
   const [activeTab, setActiveTab] = useState("Trabajos");
   const [showSettings, setShowSettings] = useState(false);
   const [settingsTab, setSettingsTab] = useState("perfil");
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [tempPreview, setTempPreview] = useState(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
-  const handleImageChange = async (e) => {
-    console.log("HANDLE IMAGE CHANGE");
+  const [zoom, setZoom] = useState(1);
 
-    const file = e.target.files[0];
-
-    console.log("ARCHIVO:", file);
-
-    if (!file || !user?.uid) {
-      console.log("NO HAY ARCHIVO O USER");
-      return;
-    }
+  const handleApplyImage = async () => {
+    if (!selectedFile || !user?.uid) return;
 
     try {
       setUploading(true);
 
-      console.log("ANTES DE LLAMAR uploadProfilePhoto");
-
-      const photoURL = await uploadProfilePhoto(user.uid, file);
-
-      console.log("URL DEVUELTA:", photoURL);
+      const photoURL = await uploadProfilePhoto(user.uid, selectedFile);
 
       setPreview(photoURL);
 
-      alert("Foto actualizada");
+      updateUser({
+        photoURL,
+      });
+
+      setShowEditModal(false);
+      setSelectedFile(null);
+      setTempPreview(null);
     } catch (error) {
-      console.error("ERROR:", error);
+      console.error(error);
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    setSelectedFile(file);
+    setTempPreview(URL.createObjectURL(file));
   };
 
   return (
@@ -164,9 +172,9 @@ export default function NexoraProfile() {
                     width={18}
                     height={18}
                   />
-                  4.9
+                  0.0
                 </span>
-                <span>31 reseñas</span>
+                <span>0 reseñas</span>
               </div>
               <p className="text-base text-gray-500 mt-4 leading-relaxed">
                 Desarrollador fullstack con experiencia en productos digitales
@@ -275,15 +283,12 @@ export default function NexoraProfile() {
                     )}
                   </div>
 
-                  <label className="mt-4 px-5 py-2 rounded-xl bg-[#6c63ff] cursor-pointer hover:bg-[#5a52d5]">
-                    {uploading ? "Subiendo..." : "Cambiar foto"}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageChange}
-                    />
-                  </label>
+                  <button
+                    onClick={() => setShowUploadModal(true)}
+                    className="mt-4 px-5 py-2 rounded-xl bg-[#6c63ff] hover:bg-[#5a52d5]"
+                  >
+                    Cambiar foto
+                  </button>
                 </div>
 
                 <div>
@@ -326,11 +331,11 @@ export default function NexoraProfile() {
         {/* Stats Row */}
         <div className="grid grid-cols-5 gap-4">
           {[
-            { value: "48", label: "Trabajos" },
-            { value: "4.9", label: "Valoración" },
-            { value: "96%", label: "Éxito" },
-            { value: "3 años", label: "En nexora" },
-            { value: "s/ 85", label: "Tarifa estándar" },
+            { value: "0", label: "Trabajos" },
+            { value: "0.0", label: "Valoración" },
+            { value: "0%", label: "Éxito" },
+            { value: "Nuevo", label: "En Nexora" },
+            { value: "S/ 0", label: "Tarifa estándar" },
           ].map(({ value, label }) => (
             <div
               key={label}
@@ -521,6 +526,119 @@ export default function NexoraProfile() {
           </div>
         </div>
       </div>
+      {showUploadModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]">
+          <div className="w-[600px] bg-[#1a1a1f] rounded-3xl p-8 border border-white/10 relative">
+            {/* Botón cerrar */}
+            <button
+              onClick={() => setShowUploadModal(false)}
+              className="absolute top-5 right-5 text-gray-400 hover:text-white text-2xl"
+            >
+              ✕
+            </button>
+
+            {/* Título */}
+            <h2 className="text-2xl font-semibold text-center mb-8">
+              Selecciona una imagen
+            </h2>
+
+            {/* Área de subida */}
+            <label className="cursor-pointer block">
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  handleImageChange(e);
+                  setShowUploadModal(false);
+                  setShowEditModal(true);
+                }}
+              />
+
+              <div className="h-56 border-2 border-dashed border-[#3a3a42] bg-[#252529] rounded-2xl flex flex-col items-center justify-center hover:border-[#6c63ff] hover:bg-[#2b2b31] transition-all">
+                {/* Icono */}
+                <div className="w-20 h-20 rounded-full bg-[#6c63ff]/20 flex items-center justify-center mb-4">
+                  <span className="text-4xl text-[#6c63ff]">+</span>
+                </div>
+
+                <p className="text-lg font-medium text-white">Subir imagen</p>
+
+                <p className="text-sm text-gray-400 mt-2">PNG, JPG o JPEG</p>
+              </div>
+            </label>
+          </div>
+        </div>
+      )}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]">
+          <div className="w-[650px] bg-[#1a1a1f] rounded-3xl p-8 border border-white/10">
+            <h2 className="text-2xl font-semibold text-center mb-8">
+              Editar Imagen
+            </h2>
+
+            <div className="flex justify-center mb-8">
+              <div className="w-60 h-60 rounded-full overflow-hidden border-4 border-[#6c63ff]">
+                {tempPreview && (
+                  <img
+                    src={tempPreview}
+                    alt="preview"
+                    className="w-full h-full object-cover"
+                    style={{
+                      transform: `scale(${zoom})`,
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <div className="flex justify-between text-sm text-gray-400 mb-2">
+                <span>Pequeño</span>
+                <span>Grande</span>
+              </div>
+
+              <input
+                type="range"
+                min="1"
+                max="3"
+                step="0.1"
+                value={zoom}
+                onChange={(e) => setZoom(Number(e.target.value))}
+                className="w-full accent-[#6c63ff]"
+              />
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                onClick={() => setZoom(1)}
+                className="py-3 rounded-xl bg-[#252529]"
+              >
+                Restablecer
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowEditModal(false);
+                  setSelectedFile(null);
+                  setTempPreview(null);
+                  setZoom(1);
+                }}
+                className="py-3 rounded-xl bg-red-500/20 text-red-400"
+              >
+                Cancelar
+              </button>
+
+              <button
+                onClick={handleApplyImage}
+                disabled={uploading}
+                className="py-3 rounded-xl bg-[#6c63ff]"
+              >
+                {uploading ? "Aplicando..." : "Aplicar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -28,6 +28,7 @@ export default function Header() {
   const { user, logout, loading } = useAuth();
 
   console.log("HEADER USER:", user);
+  console.log("PHOTO:", user?.photoURL);
 
   const router = useRouter();
   const pathname = usePathname();

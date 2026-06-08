@@ -4,12 +4,19 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { auth } from "@/firebase/auth";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { db } from "@/firebase/db";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+
+  const updateUser = (newData) => {
+    setUser((prev) => ({
+      ...prev,
+      ...newData,
+    }));
+  };
 
   const [loading, setLoading] = useState(true);
 
@@ -36,29 +43,28 @@ export function AuthProvider({ children }) {
 
         const savedLastName =
           localStorage.getItem(`lastName_${firebaseUser.uid}`) || "";
-
         const userRef = doc(db, "users", firebaseUser.uid);
-        const userSnap = await getDoc(userRef);
 
-        let firestorePhoto = null;
+        onSnapshot(userRef, (docSnap) => {
+          const data = docSnap.data();
 
-        if (userSnap.exists()) {
-          firestorePhoto = userSnap.data().photoURL || null;
-        }
+          setUser({
+            uid: firebaseUser.uid,
+            first_name: savedFirstName,
+            last_name: savedLastName,
+            name: firebaseUser.displayName || firebaseUser.email,
+            email: firebaseUser.email,
+            rol: data?.rol || savedRole,
+            photoURL: data?.photoURL || null,
+          });
 
-        setUser({
-          uid: firebaseUser.uid,
-          first_name: savedFirstName,
-          last_name: savedLastName,
-          name: firebaseUser.displayName || firebaseUser.email,
-          email: firebaseUser.email,
-          rol: savedRole,
-          photoURL: firestorePhoto,
+          setLoading(false);
         });
-      } else {
-        setUser(null);
+
+        return;
       }
 
+      setUser(null);
       setLoading(false);
     });
 
@@ -84,7 +90,7 @@ export function AuthProvider({ children }) {
       name: `${userData.first_name} ${userData.last_name}`,
       email: userData.email,
       rol: role,
-      photoURL: userData.photoURL || null,
+      photoURL: userData.photoURL ?? user?.photoURL ?? null,
     };
 
     setUser(newUser);
@@ -101,6 +107,7 @@ export function AuthProvider({ children }) {
         user,
         login,
         logout,
+        updateUser,
         loading,
         isAuthenticated: !!user,
         isAdmin: user?.rol === "admin",
