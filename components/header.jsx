@@ -166,7 +166,7 @@ export default function Header() {
               <Link
                 href="/login"
                 style={{
-                  color: textColor[theme],
+                  color: pathname === "/login" ? "#6c63ff" : textColor[theme],
                 }}
                 className="h-[42px] px-4 border border-zinc-500 flex items-center justify-center rounded-[10px] text-center transition-all hover:!text-[#6c63ff] hover:!border-[#6c63ff]"
               >
