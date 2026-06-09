@@ -186,7 +186,7 @@ export default function FeedTrabajos() {
             </p>
           </div>
           <Link
-            href={!authLoading && user ? "/newRequest" : "/login"}
+            href={!authLoading && user ? "/NewRequest" : "/login"}
             style={s.publishBtn}
           >
             <span style={s.publishBtnPlus}>
@@ -254,7 +254,7 @@ export default function FeedTrabajos() {
             </p>
             {!busqueda && filtroActivo === "Todos" && (
               <Link
-                href={!authLoading && user ? "/newRequest" : "/login"}
+                href={!authLoading && user ? "/NewRequest" : "/login"}
                 style={s.emptyBtn}
               >
                 + Publicar la primera solicitud
