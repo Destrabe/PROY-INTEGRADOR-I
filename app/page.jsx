@@ -15,7 +15,13 @@ function HomePage() {
 
   return (
     <main>
-      <div className="w-full min-h-screen bg-[#0A0A0F] flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 py-20 relative overflow-hidden">
+      <div
+        style={{
+          background: background[theme],
+          color: textColor[theme],
+        }}
+        className="mt-12 w-full min-h-screen bg-[#0A0A0F] flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 py-20 relative overflow-hidden"
+      >
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,#6C63FF14_0%,transparent_70%)]" />
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle,#ffffff06_1px,transparent_1px)] bg-[size:32px_32px]" />
 
@@ -26,7 +32,7 @@ function HomePage() {
           </div>
 
           <h1 className="font-syne text-[clamp(36px,5vw,64px)] tracking-[-2px] font-extrabold leading-tight mb-5">
-            <span className="text-white">Encuentra microservicios&nbsp;</span>
+            <span className="">Encuentra microservicios&nbsp;</span>
             <span className="bg-[linear-gradient(135deg,#7c3aed,#6c63ff,#4f8ef7)] bg-clip-text text-transparent">
               rápidos, confiables y al instante
             </span>
@@ -53,7 +59,10 @@ function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-16">
-            <div className="rounded-2xl p-6 text-left bg-[#111118] border border-[#2A2A38]">
+            <div
+              style={{ background: theme === "dark" ? "#111118" : "lightgray" }}
+              className="rounded-2xl p-6 text-left  border border-[#2A2A38]"
+            >
               <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 bg-[linear-gradient(135deg,#7c3aed,#6c63ff)]">
                 <Image
                   src="/svg/lightning.svg"
@@ -62,7 +71,7 @@ function HomePage() {
                   height={22}
                 />
               </div>
-              <h3 className="font-syne font-bold text-[15px] mb-2 text-white">
+              <h3 className="font-syne font-bold text-[15px] mb-2">
                 Respuestas Rápidas
               </h3>
               <p className="font-sans text-sm leading-relaxed text-[#9090a8]">
@@ -70,7 +79,10 @@ function HomePage() {
               </p>
             </div>
 
-            <div className="rounded-2xl p-6 text-left bg-[#111118] border border-[#2A2A38]">
+            <div
+              style={{ background: theme === "dark" ? "#111118" : "lightgray" }}
+              className="rounded-2xl p-6 text-left  border border-[#2A2A38]"
+            >
               <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 bg-[linear-gradient(135deg,#7c3aed,#6c63ff)]">
                 <Image
                   src="/svg/shield.svg"
@@ -79,7 +91,7 @@ function HomePage() {
                   height={22}
                 />
               </div>
-              <h3 className="font-syne font-bold text-[15px] mb-2 text-white">
+              <h3 className="font-syne font-bold text-[15px] mb-2 ">
                 Profesionales Verificados
               </h3>
               <p className="font-sans text-sm leading-relaxed text-[#9090a8]">
@@ -87,7 +99,10 @@ function HomePage() {
               </p>
             </div>
 
-            <div className="rounded-2xl p-6 text-left bg-[#111118] border border-[#2A2A38]">
+            <div
+              style={{ background: theme === "dark" ? "#111118" : "lightgray" }}
+              className="rounded-2xl p-6 text-left  border border-[#2A2A38]"
+            >
               <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 bg-[linear-gradient(135deg,#7c3aed,#6c63ff)]">
                 <Image
                   src="/svg/premium.svg"
@@ -96,7 +111,7 @@ function HomePage() {
                   height={22}
                 />
               </div>
-              <h3 className="font-syne font-bold text-[15px] mb-2 text-white">
+              <h3 className="font-syne font-bold text-[15px] mb-2 ">
                 Calidad Premium
               </h3>
               <p className="font-sans text-sm leading-relaxed text-[#9090a8]">
@@ -105,7 +120,7 @@ function HomePage() {
             </div>
           </div>
 
-          <h2 className="font-syne font-bold text-center mb-6 text-[22px] text-[#F0F0F8]">
+          <h2 className="font-syne font-bold text-center mb-6 text-[22px] ">
             Categorías Populares
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-16">
@@ -120,9 +135,12 @@ function HomePage() {
               "Consultoría",
             ].map((cat) => (
               <button
+                style={{
+                  background: theme === "dark" ? "#111118" : "lightgray",
+                }}
                 key={cat}
                 type="button"
-                className="font-sans rounded-xl px-4 py-3 text-center text-sm font-medium cursor-default bg-[#111118] border border-[#2A2A38] text-[#9090A8] transition-all duration-200 hover:bg-[#6C63FF18] hover:border-[#6C63FF55] hover:text-[#A8A3FF] hover:-translate-y-0.5"
+                className="font-sans rounded-xl px-4 py-3 text-center text-sm font-medium cursor-default  border border-[#2A2A38]  transition-all duration-200 hover:bg-[#6C63FF18] hover:border-[#6C63FF55] hover:text-[#A8A3FF] hover:-translate-y-0.5"
                 onClick={(e) => e.preventDefault()}
               >
                 {cat}
@@ -131,7 +149,10 @@ function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="rounded-2xl p-6 text-center bg-[#111118] border border-[#2A2A38]">
+            <div
+              style={{ background: theme === "dark" ? "#111118" : "lightgray" }}
+              className="rounded-2xl p-6 text-center border border-[#2A2A38]"
+            >
               <div className="font-syne font-extrabold text-3xl mb-1 bg-gradient-to-br from-[#7c3aed] via-[#6c63ff] to-[#4f8ef7] bg-clip-text text-transparent">
                 10,000+
               </div>
@@ -140,7 +161,10 @@ function HomePage() {
               </div>
             </div>
 
-            <div className="rounded-2xl p-6 text-center bg-[#111118] border border-[#2A2A38]">
+            <div
+              style={{ background: theme === "dark" ? "#111118" : "lightgray" }}
+              className="rounded-2xl p-6 text-center  border border-[#2A2A38]"
+            >
               <div className="font-syne font-extrabold text-3xl mb-1 bg-gradient-to-br from-[#7c3aed] via-[#6c63ff] to-[#4f8ef7] bg-clip-text text-transparent">
                 5,000+
               </div>
@@ -149,7 +173,10 @@ function HomePage() {
               </div>
             </div>
 
-            <div className="rounded-2xl p-6 text-center bg-[#111118] border border-[#2A2A38]">
+            <div
+              style={{ background: theme === "dark" ? "#111118" : "lightgray" }}
+              className="rounded-2xl  p-6 text-center border border-[#2A2A38]"
+            >
               <div className="font-syne font-extrabold text-3xl mb-1 bg-gradient-to-br from-[#7c3aed] via-[#6c63ff] to-[#4f8ef7] bg-clip-text text-transparent">
                 98%
               </div>
@@ -160,10 +187,10 @@ function HomePage() {
           </div>
         </div>
 
-        <section className="w-full px-4 sm:px-6 md:px-8 py-16 md:py-20 border-t mt-20">
+        <section className="w-full px-4 sm:px-6 md:px-8 py-16 md:py-20  mt-20">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="font-syne font-bold mb-2 text-[28px] text-[#F0F0F8] tracking-[-0.5px]">
+              <h2 className="font-syne font-bold mb-2 text-[28px] tracking-[-0.5px]">
                 ¿Cómo funciona Nexora?
               </h2>
               <p className="text-[#9090a8] text-sm">
@@ -171,7 +198,12 @@ function HomePage() {
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
-              <div className="relative rounded-2xl p-7 overflow-hidden bg-[#111118] border border-[#2A2A38]">
+              <div
+                style={{
+                  background: theme === "dark" ? "#111118" : "lightgray",
+                }}
+                className="relative rounded-2xl p-7 overflow-hidden  border border-[#2A2A38]"
+              >
                 <div className="font-syne text-[80px] text-[#2A2A38] absolute top-0 right-4 font-extrabold leading-none select-none">
                   01
                 </div>
@@ -184,7 +216,7 @@ function HomePage() {
                       height={22}
                     />
                   </div>
-                  <h3 className="font-syne font-bold mb-2 text-[#F0F0F8] text-base">
+                  <h3 className="font-syne font-bold mb-2  text-base">
                     Publica tu solicitud
                   </h3>
                   <p className="text-sm leading-relaxed text-[#9090a8]">
@@ -194,7 +226,12 @@ function HomePage() {
                 </div>
               </div>
 
-              <div className="relative rounded-2xl p-7 overflow-hidden bg-[#111118] border border-[#2A2A38]">
+              <div
+                style={{
+                  background: theme === "dark" ? "#111118" : "lightgray",
+                }}
+                className="relative rounded-2xl p-7 overflow-hidden border border-[#2A2A38]"
+              >
                 <div className="font-syne text-[80px] text-[#2A2A38] absolute top-0 right-4 font-extrabold leading-none select-none">
                   02
                 </div>
@@ -207,7 +244,7 @@ function HomePage() {
                       height={22}
                     />
                   </div>
-                  <h3 className="font-syne font-bold mb-2 text-[#F0F0F8] text-base">
+                  <h3 className="font-syne font-bold mb-2 text-base">
                     Recibe postulantes
                   </h3>
                   <p className="text-sm leading-relaxed text-[#9090a8]">
@@ -217,7 +254,12 @@ function HomePage() {
                 </div>
               </div>
 
-              <div className="relative rounded-2xl p-7 overflow-hidden bg-[#111118] border border-[#2A2A38]">
+              <div
+                style={{
+                  background: theme === "dark" ? "#111118" : "lightgray",
+                }}
+                className="relative rounded-2xl p-7 overflow-hidden  border border-[#2A2A38]"
+              >
                 <div className="font-syne text-[80px] text-[#2A2A38] absolute top-0 right-4 font-extrabold leading-none select-none">
                   03
                 </div>
@@ -230,7 +272,7 @@ function HomePage() {
                       height={22}
                     />
                   </div>
-                  <h3 className="font-syne font-bold mb-2 text-[#F0F0F8] text-base">
+                  <h3 className="font-syne font-bold mb-2 s text-base">
                     Elige y coordina
                   </h3>
                   <p className="text-sm leading-relaxed text-[#9090a8]">
@@ -245,14 +287,19 @@ function HomePage() {
 
         <section className="w-full px-4 sm:px-6 md:px-8 py-16 md:py-20">
           <div className="max-w-5xl mx-auto">
-            <h2 className="font-syne font-bold mb-1 text-[clamp(22px,4vw,28px)] text-[#F0F0F8] tracking-[-0.5px]">
+            <h2 className="font-syne font-bold mb-1 text-[clamp(22px,4vw,28px)] tracking-[-0.5px]">
               Conectando talento
             </h2>
             <h2 className="font-syne font-bold mb-10 md:mb-12 text-[#6C63FF] text-[clamp(22px,4vw,28px)] tracking-[-0.5px]">
               Construyendo confianza
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
-              <div className="rounded-2xl p-6 bg-[#111118] border border-[#2A2A38]">
+              <div
+                style={{
+                  background: theme === "dark" ? "#111118" : "lightgray",
+                }}
+                className="rounded-2xl p-6   border border-[#2A2A38]"
+              >
                 <div className="bg-[#6C63FF22] w-11 h-11 rounded-xl flex items-center justify-center mb-4">
                   <Image
                     src="/svg/shield.svg"
@@ -261,7 +308,7 @@ function HomePage() {
                     height={22}
                   />
                 </div>
-                <h3 className="font-syne font-bold text-[#F0F0F8] text-sm mb-2">
+                <h3 className="font-syne font-bold text-sm mb-2">
                   Seguridad ante todo
                 </h3>
                 <p className="text-sm leading-relaxed text-[#9090a8]">
@@ -270,7 +317,12 @@ function HomePage() {
                 </p>
               </div>
 
-              <div className="rounded-2xl p-6 bg-[#111118] border border-[#2A2A38]">
+              <div
+                style={{
+                  background: theme === "dark" ? "#111118" : "lightgray",
+                }}
+                className="rounded-2xl p-6 border border-[#2A2A38]"
+              >
                 <div className="bg-[#6C63FF22] w-11 h-11 rounded-xl flex items-center justify-center mb-4">
                   <Image
                     src="/svg/network.svg"
@@ -279,7 +331,7 @@ function HomePage() {
                     height={22}
                   />
                 </div>
-                <h3 className="font-syne font-bold text-[#F0F0F8] text-sm mb-2">
+                <h3 className="font-syne font-bold text-sm mb-2">
                   Impulso local
                 </h3>
                 <p className="text-sm leading-relaxed text-[#9090a8]">
@@ -288,7 +340,12 @@ function HomePage() {
                 </p>
               </div>
 
-              <div className="rounded-2xl p-6 bg-[#111118] border border-[#2A2A38]">
+              <div
+                style={{
+                  background: theme === "dark" ? "#111118" : "lightgray",
+                }}
+                className="rounded-2xl p-6 border border-[#2A2A38]"
+              >
                 <div className="bg-[#6C63FF22] w-11 h-11 rounded-xl flex items-center justify-center mb-4">
                   <Image
                     src="/svg/transparency.svg"
@@ -297,7 +354,7 @@ function HomePage() {
                     height={22}
                   />
                 </div>
-                <h3 className="font-syne font-bold text-[#F0F0F8] text-sm mb-2">
+                <h3 className="font-syne font-bold text-sm mb-2">
                   Transparencia total
                 </h3>
                 <p className="text-sm leading-relaxed text-[#9090a8]">
@@ -345,12 +402,12 @@ function HomePage() {
             />
             <div>
               <p className="text-5xl mb-4 text-[#6C63FF] leading-none">"</p>
-              <p className="font-syne font-bold leading-snug mb-6 text-[#f0f0f8] text-[clamp(18px,3vw,22px)]">
+              <p className="font-syne font-bold leading-snug mb-6 text-[clamp(18px,3vw,22px)]">
                 Nuestra meta es digitalizar el talento de San Juan de
                 Lurigancho, brindando herramientas modernas a los trabajadores y
                 tranquilidad a las familias del distrito.
               </p>
-              <div className="font-bold text-sm text-[#f0f0f8]">El equipo</div>
+              <div className="font-bold text-sm">El equipo</div>
               <p className="text-sm mt-1 text-[#606078]">
                 Estudiantes de la facultad de ingeniería de la Universidad
                 Tecnológica del Perú

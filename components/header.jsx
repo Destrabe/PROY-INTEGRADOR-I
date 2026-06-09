@@ -72,7 +72,7 @@ export default function Header() {
         backgroundColor: background[theme],
         color: textColor[theme],
       }}
-      className="font-sans w-full lg:h-[90px] py-3 lg:py-0 transition-all border-zinc-800"
+      className="fixed z-10 h-12 w-[100vw] font-sans w-full lg:h-[90px] py-3 lg:py-0 transition-all border-zinc-800"
     >
       <div className="h-full flex flex-col lg:grid lg:grid-cols-3 items-center px-4 sm:px-6 lg:px-[60px] py-4 gap-4">
         {/* LOGO */}
