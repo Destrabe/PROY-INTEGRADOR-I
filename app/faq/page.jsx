@@ -45,55 +45,24 @@ export default function FAQPage() {
   ];
 
   return (
-    <main
-      className="min-h-screen w-full px-4 sm:px-6 md:px-8 py-20"
-      style={{ background: "#0A0A0F" }}
-    >
+    <main className="mt-12 min-h-screen w-full px-4 sm:px-6 md:px-8 py-20 bg-[#0A0A0F]">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-6"
-            style={{
-              background: "#6C63FF",
-              color: "#FFFFFF",
-            }}
-          >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-6 bg-[#6C63FF] text-white">
             Centro de Ayuda
           </div>
 
-          <h1
-            className="font-extrabold leading-tight mb-5"
-            style={{
-              fontFamily: "Syne, sans-serif",
-              fontSize: "clamp(38px, 5vw, 64px)",
-              letterSpacing: "-2px",
-              color: "#FFFFFF",
-            }}
-          >
+          <h1 className="font-extrabold leading-tight mb-5 font-['Syne',sans-serif] text-[clamp(38px,5vw,64px)] tracking-[-2px] text-white">
             Preguntas{" "}
-            <span
-              style={{
-                background:
-                  "linear-gradient(135deg, #7c3aed, #6c63ff, #4f8ef7)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
+            <span className="bg-[linear-gradient(135deg,#7c3aed,#6c63ff,#4f8ef7)] bg-clip-text text-transparent">
               Frecuentes
             </span>
           </h1>
 
-          <p
-            className="max-w-2xl mx-auto leading-relaxed"
-            style={{
-              color: "#9090A8",
-              fontSize: "17px",
-              fontFamily: "DM Sans, sans-serif",
-            }}
-          >
-            Encuentra respuestas rápidas sobre cómo funciona Nexora,
-            publicación de proyectos, seguridad, trabajadores y más.
+          <p className="max-w-2xl mx-auto leading-relaxed text-[#9090A8] text-[17px] font-['DM_Sans',sans-serif]">
+            Encuentra respuestas rápidas sobre cómo funciona Nexora, publicación
+            de proyectos, seguridad, trabajadores y más.
           </p>
         </div>
 
@@ -102,21 +71,11 @@ export default function FAQPage() {
           {faqData.map((faq, index) => (
             <div
               key={index}
-              className="rounded-2xl p-6 transition-all duration-300 hover:translate-y-[-2px]"
-              style={{
-                background: "#151520",
-                border: "1px solid #2A2A38",
-              }}
+              className="rounded-2xl p-6 transition-all duration-300 hover:translate-y-[-2px] bg-[#151520] border border-[#2A2A38]"
             >
               <div className="flex items-start gap-4">
                 {/* Icon */}
-                <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #7c3aed, #6c63ff)",
-                  }}
-                >
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 bg-[linear-gradient(135deg,#7c3aed,#6c63ff)]">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -130,25 +89,11 @@ export default function FAQPage() {
 
                 {/* Content */}
                 <div>
-                  <h2
-                    className="font-bold mb-2"
-                    style={{
-                      fontFamily: "Syne, sans-serif",
-                      color: "#FFFFFF",
-                      fontSize: "18px",
-                    }}
-                  >
+                  <h2 className="font-bold mb-2 font-['Syne',sans-serif] text-white text-[18px]">
                     {faq.question}
                   </h2>
 
-                  <p
-                    className="leading-relaxed"
-                    style={{
-                      color: "#9090A8",
-                      fontFamily: "DM Sans, sans-serif",
-                      fontSize: "15px",
-                    }}
-                  >
+                  <p className="leading-relaxed text-[#9090A8] font-['DM_Sans',sans-serif] text-[15px]">
                     {faq.answer}
                   </p>
                 </div>
@@ -158,40 +103,16 @@ export default function FAQPage() {
         </div>
 
         {/* Bottom CTA */}
-        <div
-          className="mt-16 rounded-3xl p-8 text-center"
-          style={{
-            background:
-              "linear-gradient(135deg, #7c3aed, #6c63ff, #4f8ef7)",
-          }}
-        >
-          <h2
-            className="font-extrabold mb-3 text-white"
-            style={{
-              fontFamily: "Syne, sans-serif",
-              fontSize: "30px",
-            }}
-          >
+        <div className="mt-16 rounded-3xl p-8 text-center bg-[linear-gradient(135deg,#7c3aed,#6c63ff,#4f8ef7)]">
+          <h2 className="font-extrabold mb-3 text-white font-['Syne',sans-serif] text-[30px]">
             ¿Aún tienes dudas?
           </h2>
 
-          <p
-            className="mb-6"
-            style={{
-              color: "rgba(255,255,255,0.85)",
-              fontFamily: "DM Sans, sans-serif",
-            }}
-          >
+          <p className="mb-6 text-[rgba(255,255,255,0.85)] font-['DM_Sans',sans-serif]">
             Nuestro equipo está listo para ayudarte a comenzar en Nexora.
           </p>
 
-          <button
-            className="px-6 py-3 rounded-xl font-semibold text-white transition-all hover:scale-[1.03]"
-            style={{
-              background: "rgba(0,0,0,0.25)",
-              border: "1px solid rgba(255,255,255,0.2)",
-            }}
-          >
+          <button className="px-6 py-3 rounded-xl font-semibold text-white transition-all hover:scale-[1.03] bg-black/25 border border-white/20">
             Contactar Soporte
           </button>
         </div>

@@ -14,7 +14,7 @@ function HomePage() {
   const textColor = useThemeStore((state) => state.textColor);
 
   return (
-    <main>
+    <main className="mt-12">
       <div
         style={{
           background: background[theme],

@@ -9,7 +9,7 @@ function TrabajadorPageContent() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white px-6 py-12">
+    <div className="mt-12 min-h-screen bg-[#0A0A0F] text-white px-6 py-12">
       <div className="max-w-3xl mx-auto">
         <h1
           className="text-4xl font-extrabold mb-3"

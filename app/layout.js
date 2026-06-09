@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
       <body className={`${dm_sans.variable} ${syne.variable}`}>
         <AuthProvider>
           <Header />
-          <div className="mt-15">{children}</div>
+          {children}
           <Analytics />
           <SpeedInsights />
         </AuthProvider>

@@ -65,7 +65,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white">
+    <div className="mt-15 min-h-screen bg-[#0A0A0F] text-white">
       {/* Header */}
       <div className="border-b border-white/10 p-6">
         <h1 className="text-4xl font-bold">Panel de Administración</h1>

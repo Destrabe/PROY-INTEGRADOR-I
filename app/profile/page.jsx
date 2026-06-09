@@ -105,7 +105,7 @@ export default function NexoraProfile() {
 
   return (
     <div
-      className="min-h-screen font-sans"
+      className="mt-12 min-h-screen font-sans"
       style={{ background: "#111113", color: "#fff", colorScheme: "dark" }}
     >
       <div className="max-w-7xl mx-auto px-8 py-10 space-y-6">

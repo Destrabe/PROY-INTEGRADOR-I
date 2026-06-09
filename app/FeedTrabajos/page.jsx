@@ -1,5 +1,9 @@
 import FeedTrabajos from "./FeedTrabajos";
 
 export default function FeedPage() {
-  return <FeedTrabajos />;
+  return (
+    <div className="mt-16">
+      <FeedTrabajos />
+    </div>
+  );
 }

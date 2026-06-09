@@ -123,7 +123,7 @@ export default function NexoraProfile() {
               </p>
             </div>
             {/* Actions */}
-            <div className="flex flex-col gap-3 flex-shrink-0">
+            <div className="flex flex-col gap-3 shrink-0">
               <button className="flex items-center gap-2 px-5 py-2.5 text-base bg-[#6c63ff] hover:bg-[#5a52e0] rounded-xl transition-colors font-medium">
                 <Image
                   src="/svg/plusIcon.svg"

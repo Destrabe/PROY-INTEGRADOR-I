@@ -310,7 +310,7 @@ export default function NewRequestPage() {
   if (!loadingAuth && !user) {
     return (
       <div className="min-h-[calc(100vh-90px)] bg-[#0a0a0f] font-dm-sans flex flex-col">
-        <div className="max-w-[760px] mx-auto px-6 py-10 pb-32 w-full">
+        <div className="max-w-190 mx-auto px-6 py-10 pb-32 w-full">
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="text-6xl mb-5">
               <Image
@@ -634,7 +634,14 @@ export default function NewRequestPage() {
                       onClick={obtenerUbicacionActual}
                       className="text-xs font-semibold text-[#a78bfa] bg-[#1e1a3a] border border-[#4a3aaa] rounded-lg px-3 py-1.5 cursor-pointer hover:bg-[#252048] transition-colors"
                     >
-                      <Image src="/svg/locationIcon.svg" width={14} height={14} alt="location" className="inline-block" /> Usar mi ubicación actual
+                      <Image
+                        src="/svg/locationIcon.svg"
+                        width={14}
+                        height={14}
+                        alt="location"
+                        className="inline-block"
+                      />{" "}
+                      Usar mi ubicación actual
                     </button>
                   </div>
 
