@@ -1,10 +1,11 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/auth";
 import { crearSolicitud } from "@/firebase/Solicitudes";
 import { subirImagenesSolicitud } from "@/firebase/Storage";
+import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -86,10 +87,27 @@ const CATEGORIAS = [
 
 const DISTRITOS = ["San Juan de Lurigancho"];
 
-const URGENCIA = [
-  { value: "hoy", label: "Hoy mismo (urgente)" },
-  { value: "mes", label: "Este mes" },
-  { value: "acordar", label: "A coordinar" },
+const MAP_STYLES = [
+  { elementType: "geometry", stylers: [{ color: "#13131f" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#13131f" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#888888" }] },
+  {
+    featureType: "administrative.locality",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#ffffff" }],
+  },
+  {
+    featureType: "poi",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#a78bfa" }],
+  },
+  { featureType: "road", stylers: [{ color: "#1e1e30" }] },
+  {
+    featureType: "road",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#777777" }],
+  },
+  { featureType: "water", stylers: [{ color: "#0a0a0f" }] },
 ];
 
 const PASOS = ["Categoría", "Descripción", "Detalles", "Publicar"];
@@ -99,6 +117,14 @@ export default function NewRequestPage() {
   const router = useRouter();
   const [user, loadingAuth] = useAuthState(auth);
   const fileInputRef = useRef(null);
+
+  const centroSJL = useMemo(() => ({ lat: -11.9902, lng: -77.0142 }), []);
+
+  // CORREGIDO: Ahora usa directamente la variable de entorno NEXT_PUBLIC_
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+  });
 
   const [paso, setPaso] = useState(1);
   const [enviando, setEnviando] = useState(false);
@@ -117,13 +143,15 @@ export default function NewRequestPage() {
     presupuesto: "",
     modalidad: "Presencial",
     distrito: "",
-    urgencia: "acordar",
     urgente: false,
+    fechaRequerida: "",
+    horaRequerida: "",
+    lat: -11.9902,
+    lng: -77.0142,
   });
 
   const setF = (key, val) => setForm((p) => ({ ...p, [key]: val }));
 
-  // Cambiar categoría y validar si reseteamos la modalidad a Presencial
   const cambiarCategoria = (cat) => {
     setForm((p) => ({
       ...p,
@@ -162,6 +190,47 @@ export default function NewRequestPage() {
     agregarArchivos(e.dataTransfer.files);
   };
 
+  const calcularUrgenciaTexto = (fechaStr) => {
+    if (!fechaStr) return "A coordinar";
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const fechaElegida = new Date(fechaStr + "T00:00:00");
+    fechaElegida.setHours(0, 0, 0, 0);
+    const diferenciaDias = Math.floor(
+      (fechaElegida - hoy) / (1000 * 60 * 60 * 24),
+    );
+
+    if (diferenciaDias === 0) return "Hoy mismo (Urgente)";
+    if (diferenciaDias > 0 && diferenciaDias <= 7) return "Esta semana";
+    return "Este mes / Programado";
+  };
+
+  const obtenerUbicacionActual = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setForm((p) => ({
+            ...p,
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          }));
+        },
+        () =>
+          alert(
+            "No pudimos acceder a tu ubicación actual automáticamente. Por favor arrastra el marcador manualmente.",
+          ),
+      );
+    }
+  };
+
+  const manejarFinArrastreMarcador = (e) => {
+    setForm((p) => ({
+      ...p,
+      lat: e.latLng.lat(),
+      lng: e.latLng.lng(),
+    }));
+  };
+
   const validarPaso = () => {
     const e = {};
     if (paso === 1 && !form.categoria) e.categoria = "Selecciona una categoría";
@@ -170,7 +239,11 @@ export default function NewRequestPage() {
       if (!form.descripcion.trim())
         e.descripcion = "La descripción es obligatoria";
     }
-    if (paso === 3 && !form.distrito) e.distrito = "Selecciona un distrito";
+    if (paso === 3) {
+      if (!form.distrito) e.distrito = "Selecciona un distrito";
+      if (!form.fechaRequerida)
+        e.fechaRequerida = "Por favor selecciona una fecha en el calendario";
+    }
     setErrores(e);
     return Object.keys(e).length === 0;
   };
@@ -193,7 +266,9 @@ export default function NewRequestPage() {
         setSubiendoPct(null);
       }
 
-      const urgente = form.urgencia === "hoy" || form.urgente;
+      const urgenciaTexto = calcularUrgenciaTexto(form.fechaRequerida);
+      const esHoymismo = urgenciaTexto.includes("Hoy mismo");
+
       const result = await crearSolicitud(
         {
           titulo: form.titulo.trim(),
@@ -201,9 +276,12 @@ export default function NewRequestPage() {
           tags: [form.categoria.tag],
           precio: form.presupuesto ? `s/ ${form.presupuesto}` : "A coordinar",
           distrito: form.distrito,
-          urgente,
+          urgente: esHoymismo || form.urgente,
           modalidad: form.modalidad,
-          urgencia: form.urgencia,
+          urgencia: urgenciaTexto,
+          fechaRequerida: form.fechaRequerida,
+          horaRequerida: form.horaRequerida || "No especificada",
+          coordenadas: { lat: form.lat, lng: form.lng },
           nombre: user.displayName ?? user.email?.split("@")[0] ?? "Usuario",
           iniciales: obtenerIniciales(user.displayName ?? user.email ?? "U"),
           imageUrls,
@@ -227,10 +305,6 @@ export default function NewRequestPage() {
   function obtenerIniciales(nombre) {
     const p = nombre.trim().split(" ");
     return (p[0][0] + (p[1]?.[0] ?? "")).toUpperCase();
-  }
-
-  function formatUrgencia(u) {
-    return URGENCIA.find((x) => x.value === u)?.label ?? u;
   }
 
   if (!loadingAuth && !user) {
@@ -297,8 +371,11 @@ export default function NewRequestPage() {
                     presupuesto: "",
                     modalidad: "Presencial",
                     distrito: "",
-                    urgencia: "acordar",
                     urgente: false,
+                    fechaRequerida: "",
+                    horaRequerida: "",
+                    lat: -11.9902,
+                    lng: -77.0142,
                   });
                 }}
               >
@@ -355,9 +432,7 @@ export default function NewRequestPage() {
                 </div>
                 {i < 3 && (
                   <div
-                    className={`flex-1 h-[1px] mx-3 min-w-[30px] transition-colors duration-300 ${
-                      done ? "bg-[#500fe9]" : "bg-[#1a1a2e]"
-                    }`}
+                    className={`flex-1 h-[1px] mx-3 min-w-[30px] transition-colors duration-300 ${done ? "bg-[#500fe9]" : "bg-[#1a1a2e]"}`}
                   />
                 )}
               </div>
@@ -467,7 +542,7 @@ export default function NewRequestPage() {
                       Modalidad
                     </label>
                     <select
-                      className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] w-full outline-none cursor-pointer appearance-none bg-no-repeat pr-9 box-border disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] w-full outline-none cursor-pointer appearance-none bg-no-repeat pr-9 box-border disabled:opacity-50 disabled:cursor-not-allowed"
                       style={{
                         backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
                         backgroundPosition: "right 12px center",
@@ -490,7 +565,7 @@ export default function NewRequestPage() {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="flex flex-col gap-1.5 flex-1">
                     <label className="text-[11px] font-bold tracking-wider text-[#555] uppercase">
-                      Ubicación
+                      Ubicación (Distrito)
                     </label>
                     <select
                       className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] w-full outline-none cursor-pointer appearance-none bg-no-repeat pr-9 box-border"
@@ -517,38 +592,98 @@ export default function NewRequestPage() {
                       </p>
                     )}
                   </div>
+
                   <div className="flex flex-col gap-1.5 flex-1">
                     <label className="text-[11px] font-bold tracking-wider text-[#555] uppercase">
-                      ¿Cuándo lo necesitas?
+                      ¿Para cuándo lo necesitas?
                     </label>
-                    <select
-                      className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] w-full outline-none cursor-pointer appearance-none bg-no-repeat pr-9 box-border"
-                      style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
-                        backgroundPosition: "right 12px center",
-                      }}
-                      value={form.urgencia}
-                      onChange={(e) => setF("urgencia", e.target.value)}
-                    >
-                      {URGENCIA.map((u) => (
-                        <option key={u.value} value={u.value}>
-                          {u.label}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex gap-2 w-full box-border">
+                      <input
+                        type="date"
+                        className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] flex-[2] box-border outline-none focus:border-[#500fe9]"
+                        style={{ colorScheme: "dark" }}
+                        value={form.fechaRequerida}
+                        min={new Date().toISOString().split("T")[0]}
+                        onChange={(e) => setF("fechaRequerida", e.target.value)}
+                      />
+                      <input
+                        type="time"
+                        className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] flex-[1] box-border outline-none focus:border-[#500fe9]"
+                        style={{ colorScheme: "dark" }}
+                        value={form.horaRequerida}
+                        onChange={(e) => setF("horaRequerida", e.target.value)}
+                      />
+                    </div>
+                    {form.fechaRequerida && (
+                      <span className="text-[11px] text-[#a78bfa] font-semibold mt-1">
+                        Prioridad detectada:{" "}
+                        {calcularUrgenciaTexto(form.fechaRequerida)}
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-3.5 bg-[#0d0d18] border border-[#2a2a3e] rounded-xl">
+                {/* MÓDULO DE GOOGLE MAPS CON RESISTENCIA A ERRORES */}
+                <div className="flex flex-col gap-2 mt-2 w-full">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-bold tracking-wider text-[#555] uppercase">
+                      Fija tu ubicación exacta en el mapa
+                    </label>
+                    <button
+                      type="button"
+                      onClick={obtenerUbicacionActual}
+                      className="text-xs font-semibold text-[#a78bfa] bg-[#1e1a3a] border border-[#4a3aaa] rounded-lg px-3 py-1.5 cursor-pointer hover:bg-[#252048] transition-colors"
+                    >
+                      <Image src="/svg/locationIcon.svg" width={14} height={14} alt="location" className="inline-block" /> Usar mi ubicación actual
+                    </button>
+                  </div>
+
+                  <div className="w-full h-[260px] rounded-xl overflow-hidden border border-[#2a2a3e] bg-[#13131f]">
+                    {isLoaded && process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? (
+                      <GoogleMap
+                        mapContainerStyle={{ width: "100%", height: "100%" }}
+                        center={{ lat: form.lat, lng: form.lng }}
+                        zoom={14}
+                        options={{
+                          styles: MAP_STYLES,
+                          disableDefaultUI: true,
+                          zoomControl: true,
+                        }}
+                      >
+                        <Marker
+                          position={{ lat: form.lat, lng: form.lng }}
+                          draggable={true}
+                          onDragEnd={manejarFinArrastreMarcador}
+                        />
+                      </GoogleMap>
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center text-sm text-slate-500 gap-1">
+                        <span>📍 Visor de Google Maps no disponible</span>
+                        {!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && (
+                          <span className="text-xs text-amber-500/80">
+                            (Falta configurar la API Key en el archivo
+                            .env.local)
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-[11px] text-[#555]">
+                    Puedes arrastrar el marcador rojo directamente hacia tu
+                    calle o cuadra para guiar al trabajador.
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between p-3.5 bg-[#0d0d18] border border-[#2a2a3e] rounded-xl mt-2">
                   <span className="text-[#ccc] text-sm">
                     Marcar como urgente
                   </span>
                   <div
-                    className={`w-10 h-[22px] rounded-[11px] cursor-pointer relative transition-colors ${form.urgente ? "bg-[#500fe9]" : "bg-[#2a2a3e]"}`}
+                    className={`w-10 h-[22px] rounded-[11px] cursor-pointer relative transition-colors ${form.urgente || (form.fechaRequerida && calcularUrgenciaTexto(form.fechaRequerida).includes("Hoy mismo")) ? "bg-[#500fe9]" : "bg-[#2a2a3e]"}`}
                     onClick={() => setF("urgente", !form.urgente)}
                   >
                     <div
-                      className={`w-4 h-4 rounded-full bg-white absolute top-[3px] transition-all ${form.urgente ? "left-[21px]" : "left-[3px]"}`}
+                      className={`w-4 h-4 rounded-full bg-white absolute top-[3px] transition-all ${form.urgente || (form.fechaRequerida && calcularUrgenciaTexto(form.fechaRequerida).includes("Hoy mismo")) ? "left-[21px]" : "left-[3px]"}`}
                     />
                   </div>
                 </div>
@@ -591,11 +726,7 @@ export default function NewRequestPage() {
             {/* Dropzone */}
             {archivos.length < MAX_IMAGENES && (
               <div
-                className={`border-[1.5px] border-dashed rounded-2xl p-9 text-center cursor-pointer transition-all mb-4 ${
-                  dragging
-                    ? "bg-[#1a1a2e] border-[#500fe9]"
-                    : "bg-[#13131f] border-[#2a2a3e] hover:border-[#3a3a54]"
-                }`}
+                className={`border-[1.5px] border-dashed rounded-2xl p-9 text-center cursor-pointer transition-all mb-4 ${dragging ? "bg-[#1a1a2e] border-[#500fe9]" : "bg-[#13131f] border-[#2a2a3e] hover:border-[#3a3a54]"}`}
                 onClick={() => fileInputRef.current?.click()}
                 onDragOver={(e) => {
                   e.preventDefault();
@@ -665,11 +796,21 @@ export default function NewRequestPage() {
                 },
                 { k: "Modalidad", v: form.modalidad },
                 { k: "Distrito", v: form.distrito },
-                { k: "Cuándo", v: formatUrgencia(form.urgencia) },
+                {
+                  k: "Cuándo",
+                  v: `${form.fechaRequerida} (${form.horaRequerida || "Todo el día"}) — [${calcularUrgenciaTexto(form.fechaRequerida)}]`,
+                },
+                {
+                  k: "Geolocalización",
+                  v: `Lat: ${form.lat.toFixed(4)}, Lng: ${form.lng.toFixed(4)}`,
+                },
                 {
                   k: "Estado",
                   v:
-                    form.urgente || form.urgencia === "hoy" ? (
+                    form.urgente ||
+                    calcularUrgenciaTexto(form.fechaRequerida).includes(
+                      "Hoy mismo",
+                    ) ? (
                       <span className="inline-block bg-[#2d0a0a] text-[#f87171] border border-[#5a1a1a] rounded-[20px] text-[11px] px-2.5 py-0.5">
                         Urgente
                       </span>
@@ -680,7 +821,7 @@ export default function NewRequestPage() {
               ].map(({ k, v }, i) => (
                 <div
                   key={k}
-                  className={`flex justify-between py-2.5 text-sm ${i === 7 ? "border-none" : "border-b border-[#1a1a2e]"}`}
+                  className={`flex justify-between py-2.5 text-sm ${i === 8 ? "border-none" : "border-b border-[#1a1a2e]"}`}
                 >
                   <span className="text-[#555] font-medium shrink-0">{k}</span>
                   <span className="text-[#e0e0f0] text-right max-w-[60%] break-words">
@@ -741,11 +882,7 @@ export default function NewRequestPage() {
           </button>
         ) : (
           <button
-            className={`border-none text-white rounded-xl px-8 py-3 text-sm font-bold font-dm-sans transition-colors ${
-              enviando
-                ? "bg-[#2a2a3e] text-[#555] cursor-not-allowed"
-                : "bg-[#500fe9] cursor-pointer hover:bg-[#400bc4]"
-            }`}
+            className={`border-none text-white rounded-xl px-8 py-3 text-sm font-bold font-dm-sans transition-colors ${enviando ? "bg-[#2a2a3e] text-[#555] cursor-not-allowed" : "bg-[#500fe9] cursor-pointer hover:bg-[#400bc4]"}`}
             onClick={publicar}
             disabled={enviando}
           >
