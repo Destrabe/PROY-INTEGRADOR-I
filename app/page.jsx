@@ -20,12 +20,12 @@ function HomePage() {
           background: background[theme],
           color: textColor[theme],
         }}
-        className="mt-12 w-full min-h-screen bg-[#0A0A0F] flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 py-20 relative overflow-hidden"
+        className=" w-full min-h-screen bg-[#0A0A0F] flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 py-20 relative overflow-hidden"
       >
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,#6C63FF14_0%,transparent_70%)]" />
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle,#ffffff06_1px,transparent_1px)] bg-[size:32px_32px]" />
 
-        <div className="relative max-w-4xl mx-auto w-full">
+        <div className="relative max-w-4xl mx-auto sw-full">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-7 bg-[#6C63FF] border-none text-white">
             <span className="w-1.5 h-1.5 rounded-full animate-pulse bg-white" />
             Conecta con los mejores profesionales
