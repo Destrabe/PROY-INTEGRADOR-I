@@ -1,7 +1,6 @@
 export default function PrivacyPage() {
   return (
-    <main className="min-h-screen px-6 py-12" style={{ background: "#0A0A0F" }}>
-      {" "}
+    <main className="mt-12 min-h-screen px-6 py-12 bg-[#0A0A0F]">
       <div className="max-w-4xl mx-auto">
         {/* HERO */}
         <div className="text-center mb-10">

@@ -122,8 +122,8 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex font-sans justify-center items-center bg-[#0a0a0f] min-h-screen py-10 px-4">
-      <div className="w-full max-w-[552px]">
+    <div className="mt-14 flex font-sans justify-center items-center bg-[#0a0a0f] min-h-screen py-10 px-4">
+      <div className="w-full max-w-138">
         {/* LOGO */}
         <div className="font-syne font-extrabold text-white mb-6">
           <div className="flex text-[36px] leading-none mb-1">
@@ -145,13 +145,13 @@ export default function RegisterPage() {
             </div>
 
             {/* ROL */}
-            <div className="flex gap-[15px] mb-[10px]">
+            <div className="flex gap-3.75 mb-2.5">
               {/* Tarjeta Cliente */}
               <div
                 onClick={() => {
                   setRol("cliente");
                 }}
-                className={`w-[268px] h-[125px] rounded-[20px] border border-[#313141] flex flex-col justify-center items-center bg-[#22222c] cursor-pointer transition-all duration-200 ease-in-out hover:-translate-y-1 hover:border-[rgba(124,92,255,0.6)] hover:shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)]
+                className={`w-67 h-31.25 rounded-[20px] border border-[#313141] flex flex-col justify-center items-center bg-[#22222c] cursor-pointer transition-all duration-200 ease-in-out hover:-translate-y-1 hover:border-[rgba(124,92,255,0.6)] hover:shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)]
       
       ${
         !rol

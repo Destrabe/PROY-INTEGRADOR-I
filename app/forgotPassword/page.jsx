@@ -556,10 +556,7 @@ export default function ForgotPasswordPage() {
             />
           )}
           {step === 3 && (
-            <StepNewPassword 
-              email={email} 
-              onNext={() => setStep(4)} 
-            />
+            <StepNewPassword email={email} onNext={() => setStep(4)} />
           )}
           {step === 4 && <StepSuccess />}
         </div>

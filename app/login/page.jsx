@@ -120,7 +120,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-[#0A0A0F] font-body text-[#f0f0f5] relative overflow-hidden selection:bg-[#635bff]/30">
+    <div className=" min-h-screen flex items-center justify-center px-4 pt-24 pb-4 bg-[#0A0A0F] font-body text-[#f0f0f5] relative overflow-hidden selection:bg-[#635bff]/30">
       {/* Luces de fondo (Efecto Glow) */}
       <div className="absolute top-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full bg-[#635bff]/10 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] rounded-full bg-[#9b59b6]/10 blur-[120px] pointer-events-none" />

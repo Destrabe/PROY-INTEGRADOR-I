@@ -1,11 +1,10 @@
 export default function TermsPage() {
   return (
     <main
-      className="min-h-screen px-6 py-12"
+      className="mt-12 min-h-screen px-6 py-12"
       style={{ background: "#0A0A0F" }}
     >
       <div className="max-w-4xl mx-auto">
-
         {/* HERO */}
         <div className="text-center mb-10">
           <div
@@ -147,9 +146,7 @@ export default function TermsPage() {
                 <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
               </svg>
 
-              <h2 className="text-2xl font-bold text-white">
-                Modificaciones
-              </h2>
+              <h2 className="text-2xl font-bold text-white">Modificaciones</h2>
             </div>
 
             <p className="text-gray-400 leading-7">
