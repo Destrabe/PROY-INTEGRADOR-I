@@ -1,17 +1,13 @@
 export default function TermsPage() {
   return (
     <main
-      className="mt-12 min-h-screen px-6 py-12"
-      style={{ background: "#0A0A0F" }}
+      className="mt-12 min-h-screen px-6 py-12 bg-[#0A0A0F]"
     >
       <div className="max-w-4xl mx-auto">
         {/* HERO */}
         <div className="text-center mb-10">
           <div
-            className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center mb-5"
-            style={{
-              background: "linear-gradient(135deg,#A855F7,#6366F1)",
-            }}
+            className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center bg-[linear-gradient(135deg,#A855F7,#6366F1)] mb-5"
           >
             <svg
               width="40"
@@ -26,8 +22,7 @@ export default function TermsPage() {
           </div>
 
           <h1
-            className="text-5xl font-extrabold text-white mb-3"
-            style={{ fontFamily: "Syne, sans-serif" }}
+            className="font-syne text-5xl font-extrabold text-white mb-3"
           >
             Términos y Condiciones
           </h1>
@@ -39,11 +34,7 @@ export default function TermsPage() {
 
         {/* CARD */}
         <div
-          className="rounded-3xl p-8 md:p-10"
-          style={{
-            background: "#111118",
-            border: "1px solid #2A2A38",
-          }}
+          className="bg-[#111118] border border-[#2A2A38] rounded-3xl p-8 md:p-10"
         >
           {/* INTRO */}
           <p className="text-gray-300 leading-8 mb-8">
@@ -157,11 +148,7 @@ export default function TermsPage() {
 
           {/* ACEPTACIÓN */}
           <div
-            className="rounded-2xl p-6 mt-10"
-            style={{
-              background: "rgba(168,85,247,0.08)",
-              border: "1px solid rgba(168,85,247,0.3)",
-            }}
+            className="bg-purple-500/[0.08] border border-purple-500/30 rounded-2xl p-6 mt-10"
           >
             <div className="flex items-center gap-3 mb-3">
               <svg
