@@ -105,9 +105,17 @@ export default function Header() {
                     Talent Hub
                   </Link>
                 )}
+
+                {user?.rol === "admin" && (
+                  <NavLink href="/admin" active={pathname.startsWith("/admin")}>
+                    Admin
+                  </NavLink>
+                )}
+
                 <NavLink href="/messages" active={pathname === "/messages"}>
                   Mensajes
                 </NavLink>
+
                 <NavLink href="/profile" active={pathname === "/profile"}>
                   Perfil
                 </NavLink>
