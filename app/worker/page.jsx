@@ -1,268 +1,257 @@
-"use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import ProtectedRoute from "@/components/ProtectedRoute";
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/components/AuthContext';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import { db } from '@/firebase/client';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { fileToBase64 } from '@/firebase/uploadWorkerFiles'; // Nueva función de conversión
+
 
 function TrabajadorPageContent() {
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [cv, setCv] = useState(null);
   const [imagenes, setImagenes] = useState([]);
-  const router = useRouter();
+  const [profesion, setProfesion] = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [experiencia, setExperiencia] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  // Limpiar mensajes de error/éxito al cambiar de campo
+  useEffect(() => {
+    setError('');
+    setSuccessMessage('');
+  }, [profesion, descripcion, experiencia, cv, imagenes]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log('handleSubmit ejecutado al inicio.');
+    setError(''); // Limpiar errores previos
+    setSuccessMessage('');
+
+    if (authLoading) {
+      setError('Cargando información de usuario. Por favor, inténtalo de nuevo.');
+      return;
+    }
+
+    if (!user) {
+      setError('Debes iniciar sesión para enviar una solicitud.');
+      return;
+    }
+
+    // Validación de campos requeridos
+    if (!profesion.trim()) {
+      setError('La profesión es un campo requerido.');
+      return;
+    }
+    if (!descripcion.trim()) {
+      setError('La descripción profesional es un campo requerido.');
+      return;
+    }
+    const experienciaNum = parseInt(experiencia);
+    if (isNaN(experienciaNum) || experienciaNum < 0) {
+      setError('Los años de experiencia deben ser un número válido y positivo.');
+      return;
+    }
+    if (!cv) {
+      setError('Debes subir tu Currículum Vitae (PDF).');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      console.log('Procesando archivos a Base64...');
+      
+      // 1. Convertir CV a Base64
+      const cvBase64 = await fileToBase64(cv);
+      
+      // 2. Convertir Imágenes a Base64
+      const imagenesBase64 = await Promise.all(
+        imagenes.map(img => fileToBase64(img))
+      );
+
+      console.log('Archivos procesados. Guardando en Firestore...');
+
+      const solicitudData = {
+        userId: user.uid,
+        nombre: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
+        email: user.email || 'no-email@example.com',
+        profesion,
+        descripcion,
+        experiencia: experienciaNum,
+        estado: 'pendiente',
+        fecha: serverTimestamp(),
+        tipo: 'solicitud_trabajador',
+        cvUrl: cvBase64, // Guardado como Base64
+        imagenesUrls: imagenesBase64, // Array de Base64
+      };
+
+      await addDoc(collection(db, 'solicitudes'), solicitudData);
+      console.log('Solicitud guardada con éxito.');
+      
+      setSuccessMessage("Solicitud enviada con éxito. El administrador revisará tus datos.");
+      
+      // Redirigir después de un breve delay para mostrar el mensaje de éxito
+      setTimeout(() => {
+        router.push('/profile');
+      }, 2000);
+
+    } catch (error) {
+      console.error("Error al enviar solicitud:", error);
+      setError(`Hubo un error al enviar tu solicitud: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length + imagenes.length > 4) {
+      setError('Máximo 4 imágenes permitidas');
+      return;
+    }
+    setImagenes(prev => [...prev, ...files]);
+  };
 
   return (
-    <div className="mt-12 min-h-screen bg-[#0A0A0F] text-white px-6 py-12">
-      <div className="max-w-3xl mx-auto">
-        <h1
-          className="text-4xl font-extrabold mb-3"
-          style={{ fontFamily: "Syne, sans-serif" }}
-        >
-          Únete como Trabajador
-        </h1>
+    <div className="w-full min-h-screen bg-[#0A0A0F] text-white font-sans selection:bg-[#6c63ff]/30">
+      <main className="max-w-3xl mx-auto px-6 pt-28 pb-20">
+        
+        {/* Cabecera */}
+        <div className="mb-12">
+          <h1 className="text-5xl font-black tracking-tighter mb-4">Únete como <span className="text-[#6c63ff]">Trabajador</span></h1>
+          <p className="text-slate-500 text-lg font-bold">Completa tu perfil profesional para que el administrador valide tu cuenta.</p>
+        </div>
 
-        <p className="text-[#9090A8] mb-10">
-          Completa tu perfil profesional para generar confianza.
-        </p>
-
-        <form
-          className="grid gap-6"
-          onSubmit={(e) => {
-            e.preventDefault();
-            router.push("/verificacion-trabajador");
-          }}
-        >
-          <div>
-            <label className="flex items-center gap-2 mb-2 font-semibold">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#A855F7"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M20 21V19a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-              Profesión
-            </label>
-
-            <input
-              type="text"
-              required
-              placeholder="Ej: Técnico de laptops"
-              className="w-full px-4 py-3 rounded-xl bg-[#111118] border border-[#2A2A38] outline-none transition-all duration-300 hover:border-[#A855F7] focus:border-[#A855F7]"
-            />
+        {/* Mensajes de estado */}
+        {error && (
+          <div className="bg-red-500/20 border border-red-500 text-red-300 px-4 py-3 rounded-xl mb-6 text-center animate-pulse">
+            {error}
           </div>
-
-          <div>
-            <label className="flex items-center gap-2 mb-2 font-semibold">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#A855F7"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-              Descripción profesional
-            </label>
-
-            <textarea
-              rows={5}
-              placeholder="Cuéntanos sobre tu experiencia..."
-              className="w-full px-4 py-3 rounded-xl bg-[#111118] border border-[#2A2A38] outline-none resize-none"
-            />
+        )}
+        {successMessage && (
+          <div className="bg-green-500/20 border border-green-500 text-green-300 px-4 py-3 rounded-xl mb-6 text-center">
+            {successMessage}
           </div>
+        )}
 
-          <div>
-            <label className="flex items-center gap-2 mb-2 font-semibold">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#A855F7"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 20V10" />
-                <path d="M18 20V4" />
-                <path d="M6 20v-4" />
-              </svg>
-              Años de experiencia
-            </label>
+        {/* Formulario Premium */}
+        <form onSubmit={handleSubmit} className="space-y-8 bg-[#111118] p-10 rounded-[3rem] border border-white/[0.05] shadow-2xl">
+          
+          <div className="space-y-6">
+            {/* Profesión */}
+            <div className="space-y-3">
+              <label htmlFor="profesion" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-2">Profesión o Especialidad</label>
+              <input 
+                id="profesion"
+                type="text" 
+                required 
+                placeholder="Ej: Técnico de laptops / Desarrollador" 
+                className="w-full bg-[#0A0A0F] border border-white/10 rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-[#6c63ff] outline-none transition-all placeholder:text-slate-700"
+                value={profesion}
+                onChange={(e) => setProfesion(e.target.value)}
+              />
+            </div>
 
-            <input
-              type="number"
-              required
-              placeholder="3"
-              className="w-full px-4 py-3 rounded-xl bg-[#111118] border border-[#2A2A38] outline-none transition-all duration-300 hover:border-[#A855F7] focus:border-[#A855F7]"
-            />
-          </div>
+            {/* Descripción */}
+            <div className="space-y-3">
+              <label htmlFor="descripcion" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-2">Descripción profesional</label>
+              <textarea 
+                id="descripcion"
+                rows={4} 
+                required
+                placeholder="Cuéntanos sobre tu experiencia y habilidades..." 
+                className="w-full bg-[#0A0A0F] border border-white/10 rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-[#6c63ff] outline-none transition-all placeholder:text-slate-700 resize-none"
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+              />
+            </div>
 
-          <div>
-            <label className="flex items-center gap-2 mb-2 font-semibold">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#A855F7"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="17 8 12 3 7 8" />
-                <line x1="12" y1="3" x2="12" y2="15" />
-              </svg>
-              Subir CV
-            </label>
+            {/* Experiencia */}
+            <div className="space-y-3">
+              <label htmlFor="experiencia" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-2">Años de experiencia</label>
+              <input 
+                id="experiencia"
+                type="number" 
+                required 
+                placeholder="3" 
+                className="w-full bg-[#0A0A0F] border border-white/10 rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-[#6c63ff] outline-none transition-all placeholder:text-slate-700"
+                value={experiencia}
+                onChange={(e) => setExperiencia(e.target.value)}
+              />
+            </div>
 
-            <input
-              type="file"
-              required
-              accept=".pdf,application/pdf"
-              onChange={(e) => setCv(e.target.files[0])}
-              className="w-full px-4 py-3 rounded-xl bg-[#111118] border border-[#2A2A38]
-  file:mr-4
-  file:px-4
-  file:py-2
-  file:rounded-lg
-  file:border-0
-  file:bg-[#A855F7]
-  file:text-white
-  file:cursor-pointer
-  file:transition-all
-  file:duration-300
-  hover:file:scale-105
-  hover:file:brightness-110
-  file:content-['Seleccionar_archivo']"
-            />
-
-            <p className="text-sm text-[#9090A8] mt-2">Solo archivos PDF.</p>
-
-            {cv && (
-              <div className="mt-3 flex items-center justify-between bg-[#151520] border border-[#2A2A38] rounded-xl px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#EF4444"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                  </svg>
-
-                  <span className="text-sm">{cv.name}</span>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setCv(null)}
-                  className="text-red-400 text-sm hover:text-red-300"
-                >
-                  Quitar
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div>
-            <label className="flex items-center gap-2 mb-2 font-semibold">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#A855F7"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <circle cx="8.5" cy="8.5" r="1.5" />
-                <polyline points="21 15 16 10 5 21" />
-              </svg>
-              Fotos de trabajos
-            </label>
-
-            <input
-              type="file"
-              required
-              multiple
-              accept="image/png,image/jpeg,image/jpg,image/webp"
-              onChange={(e) => setImagenes(Array.from(e.target.files))}
-              className="w-full px-4 py-3 rounded-xl bg-[#111118] border border-[#2A2A38]
-  file:mr-4
-  file:px-4
-  file:py-2
-  file:rounded-lg
-  file:border-0
-  file:bg-[#6366F1]
-  file:text-white
-  file:cursor-pointer
-  file:transition-all
-  file:duration-300
-  hover:file:scale-105
-  hover:file:brightness-110
-  file:content-['Seleccionar_archivo']"
-            />
-
-            <p className="text-sm text-[#9090A8] mt-2">
-              Solo imágenes JPG, PNG o WEBP.
-            </p>
-
-            {imagenes.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
-                {imagenes.map((img, index) => (
-                  <div
-                    key={index}
-                    className="relative border border-[#2A2A38] rounded-xl overflow-hidden bg-[#151520]"
-                  >
-                    <img
-                      src={URL.createObjectURL(img)}
-                      alt="preview"
-                      className="w-full h-32 object-cover"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setImagenes(imagenes.filter((_, i) => i !== index))
-                      }
-                      className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-lg"
-                    >
-                      X
-                    </button>
+            {/* Subida de CV */}
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-2">Currículum Vitae (PDF)</label>
+              <div className="relative">
+                <input 
+                  type="file" 
+                  accept=".pdf" 
+                  required
+                  onChange={(e) => setCv(e.target.files[0])}
+                  className="hidden" 
+                  id="cv-upload"
+                />
+                <label htmlFor="cv-upload" className="flex items-center justify-center w-full bg-[#0A0A0F] border-2 border-dashed border-white/10 rounded-2xl px-6 py-8 cursor-pointer hover:border-[#6c63ff]/50 transition-all group">
+                  <div className="text-center">
+                    <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform">📄</span>
+                    <p className="text-xs font-black uppercase tracking-widest text-slate-500 group-hover:text-[#6c63ff]">
+                      {cv ? cv.name : "Seleccionar PDF"}
+                    </p>
                   </div>
-                ))}
+                </label>
               </div>
-            )}
+            </div>
+
+            {/* Fotos de Trabajos */}
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-2">Fotos de tus trabajos</label>
+              <input 
+                type="file" 
+                multiple 
+                accept="image/*" 
+                onChange={handleImageChange}
+                className="hidden" 
+                id="img-upload"
+              />
+              <label htmlFor="img-upload" className="flex items-center justify-center w-full bg-[#0A0A0F] border-2 border-dashed border-white/10 rounded-2xl px-6 py-8 cursor-pointer hover:border-[#6c63ff]/50 transition-all group">
+                <div className="text-center">
+                  <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform">📸</span>
+                  <p className="text-xs font-black uppercase tracking-widest text-slate-500 group-hover:text-[#6c63ff]">Subir Imágenes</p>
+                </div>
+              </label>
+              
+              {imagenes.length > 0 && (
+                <div className="grid grid-cols-4 gap-4 mt-4">
+                  {imagenes.map((img, i) => (
+                    <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-white/10 group">
+                      <img src={URL.createObjectURL(img)} alt="preview" className="w-full h-full object-cover" />
+                      <button 
+                        type="button" 
+                        onClick={() => setImagenes(prev => prev.filter((_, idx) => idx !== i))}
+                        className="absolute top-1 right-1 bg-red-500 text-white text-[8px] p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
+                      >✕</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          <button
-            type="submit"
-            className="mt-4 py-3 rounded-xl font-bold transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(168,85,247,0.45)] active:scale-[0.98]"
-            style={{
-              background: "linear-gradient(135deg, #A855F7, #6366F1)",
-            }}
+          <button 
+            type="submit" 
+            disabled={loading || authLoading}
+            className="w-full bg-gradient-to-r from-[#6c63ff] to-[#4b45b2] text-white py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] shadow-xl shadow-[#6c63ff]/20 hover:scale-[1.02] transition-all disabled:opacity-50"
           >
-            Enviar solicitud
+            {loading ? "Procesando archivos..." : "Enviar Solicitud de Verificación"}
           </button>
         </form>
-      </div>
+      </main>
     </div>
   );
 }
