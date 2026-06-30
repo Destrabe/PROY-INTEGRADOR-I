@@ -23,7 +23,7 @@ function HomePage() {
         className=" w-full min-h-screen bg-[#0A0A0F] flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 py-20 relative overflow-hidden"
       >
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,#6C63FF14_0%,transparent_70%)]" />
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle,#ffffff06_1px,transparent_1px)] bg-[size:32px_32px]" />
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle,#ffffff06_1px,transparent_1px)] bg-size[32px_32px]" />
 
         <div className="relative max-w-4xl mx-auto sw-full">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-7 bg-[#6C63FF] border-none text-white">
@@ -153,7 +153,7 @@ function HomePage() {
               style={{ background: theme === "dark" ? "#111118" : "lightgray" }}
               className="rounded-2xl p-6 text-center border border-[#2A2A38]"
             >
-              <div className="font-syne font-extrabold text-3xl mb-1 bg-gradient-to-br from-[#7c3aed] via-[#6c63ff] to-[#4f8ef7] bg-clip-text text-transparent">
+              <div className="font-syne font-extrabold text-3xl mb-1 bg-linear-to-br from-[#7c3aed] via-[#6c63ff] to-[#4f8ef7] bg-clip-text text-transparent">
                 10,000+
               </div>
               <div className="font-sans text-sm text-[#9090a8]">
@@ -165,7 +165,7 @@ function HomePage() {
               style={{ background: theme === "dark" ? "#111118" : "lightgray" }}
               className="rounded-2xl p-6 text-center  border border-[#2A2A38]"
             >
-              <div className="font-syne font-extrabold text-3xl mb-1 bg-gradient-to-br from-[#7c3aed] via-[#6c63ff] to-[#4f8ef7] bg-clip-text text-transparent">
+              <div className="font-syne font-extrabold text-3xl mb-1 bg-linear-to-br from-[#7c3aed] via-[#6c63ff] to-[#4f8ef7] bg-clip-text text-transparent">
                 5,000+
               </div>
               <div className="font-sans text-sm text-[#9090a8]">
@@ -177,7 +177,7 @@ function HomePage() {
               style={{ background: theme === "dark" ? "#111118" : "lightgray" }}
               className="rounded-2xl  p-6 text-center border border-[#2A2A38]"
             >
-              <div className="font-syne font-extrabold text-3xl mb-1 bg-gradient-to-br from-[#7c3aed] via-[#6c63ff] to-[#4f8ef7] bg-clip-text text-transparent">
+              <div className="font-syne font-extrabold text-3xl mb-1 bg-linear-to-br from-[#7c3aed] via-[#6c63ff] to-[#4f8ef7] bg-clip-text text-transparent">
                 98%
               </div>
               <div className="font-sans text-sm text-[#9090a8]">
@@ -371,13 +371,13 @@ function HomePage() {
             <img
               src="/images/persona-1.webp"
               alt="personas"
-              className="h-[200px] rounded-2xl object-cover w-full md:w-72 shrink-0"
+              className="h-50 rounded-2xl object-cover w-full md:w-72 shrink-0"
             />
             <div>
               <h3 className="font-syne font-bold text-lg mb-3 text-white">
                 Un nuevo estándar para SJL
               </h3>
-              <p className="text-sm leading-relaxed mb-5 text-white/[0.85]">
+              <p className="text-sm leading-relaxed mb-5 text-white/85">
                 Estamos dando los primeros pasos para profesionalizar los
                 microservicios en el distrito. Al centralizar la oferta de
                 gasfitería, pintura y electricidad en un solo lugar, facilitamos

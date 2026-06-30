@@ -341,7 +341,7 @@ export default function NewRequestPage() {
   if (publicado) {
     return (
       <div className="min-h-[calc(100vh-90px)] bg-[#0a0a0f] font-dm-sans flex flex-col">
-        <div className="max-w-[760px] mx-auto px-6 py-10 pb-32 w-full">
+        <div className="max-w-190 mx-auto px-6 py-10 pb-32 w-full">
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="text-6xl mb-5">🎉</div>
             <h2 className="font-syne font-extrabold text-2xl md:text-3xl text-white mb-2">
@@ -390,7 +390,7 @@ export default function NewRequestPage() {
 
   return (
     <div className="min-h-[calc(100vh-90px)] bg-[#0a0a0f] font-dm-sans flex flex-col text-slate-200">
-      <div className="max-w-[760px] mx-auto px-6 py-10 pb-32 w-full">
+      <div className="max-w-190 mx-auto px-6 py-10 pb-32 w-full">
         <div className="text-center w-full mb-8">
           <h1 className="font-syne font-extrabold text-3xl md:text-4xl text-white m-0">
             Nueva solicitud
@@ -432,7 +432,7 @@ export default function NewRequestPage() {
                 </div>
                 {i < 3 && (
                   <div
-                    className={`flex-1 h-[1px] mx-3 min-w-[30px] transition-colors duration-300 ${done ? "bg-[#500fe9]" : "bg-[#1a1a2e]"}`}
+                    className={`flex-1 h-px mx-3 min-w-7.5 transition-colors duration-300 ${done ? "bg-[#500fe9]" : "bg-[#1a1a2e]"}`}
                   />
                 )}
               </div>
@@ -458,7 +458,7 @@ export default function NewRequestPage() {
                     className={`rounded-xl p-5 text-sm flex flex-col items-center gap-2 transition-all font-dm-sans cursor-pointer ${
                       sel
                         ? "bg-[#1e1a3a] border border-[#4a3aaa] text-[#a78bfa] font-semibold shadow-[0_0_0_1px_rgba(80,15,233,0.25)]"
-                        : "bg-[#13131f] border border-[#1e1e30] text-[#fff] hover:border-[#2a2a3e]"
+                        : "bg-[#13131f] border border-[#1e1e30] text-white hover:border-[#2a2a3e]"
                     }`}
                     onClick={() => cambiarCategoria(cat)}
                   >
@@ -502,7 +502,7 @@ export default function NewRequestPage() {
                   Descripción detallada
                 </label>
                 <textarea
-                  className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] w-full box-border outline-none transition-all focus:border-[#500fe9] resize-vertical min-h-[120px]"
+                  className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] w-full box-border outline-none transition-all focus:border-[#500fe9] resize-vertical min-h-30"
                   placeholder="Cuéntanos qué necesitas exactamente, cuándo, dónde y cualquier detalle relevante..."
                   value={form.descripcion}
                   onChange={(e) => setF("descripcion", e.target.value)}
@@ -600,7 +600,7 @@ export default function NewRequestPage() {
                     <div className="flex gap-2 w-full box-border">
                       <input
                         type="date"
-                        className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] flex-[2] box-border outline-none focus:border-[#500fe9]"
+                        className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] flex-2 box-border outline-none focus:border-[#500fe9]"
                         style={{ colorScheme: "dark" }}
                         value={form.fechaRequerida}
                         min={new Date().toISOString().split("T")[0]}
@@ -608,7 +608,7 @@ export default function NewRequestPage() {
                       />
                       <input
                         type="time"
-                        className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] flex-[1] box-border outline-none focus:border-[#500fe9]"
+                        className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] flex-1 box-border outline-none focus:border-[#500fe9]"
                         style={{ colorScheme: "dark" }}
                         value={form.horaRequerida}
                         onChange={(e) => setF("horaRequerida", e.target.value)}
@@ -645,7 +645,7 @@ export default function NewRequestPage() {
                     </button>
                   </div>
 
-                  <div className="w-full h-[260px] rounded-xl overflow-hidden border border-[#2a2a3e] bg-[#13131f]">
+                  <div className="w-full h-65 rounded-xl overflow-hidden border border-[#2a2a3e] bg-[#13131f]">
                     {isLoaded && process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? (
                       <GoogleMap
                         mapContainerStyle={{ width: "100%", height: "100%" }}
@@ -686,11 +686,11 @@ export default function NewRequestPage() {
                     Marcar como urgente
                   </span>
                   <div
-                    className={`w-10 h-[22px] rounded-[11px] cursor-pointer relative transition-colors ${form.urgente || (form.fechaRequerida && calcularUrgenciaTexto(form.fechaRequerida).includes("Hoy mismo")) ? "bg-[#500fe9]" : "bg-[#2a2a3e]"}`}
+                    className={`w-10 h-5.5 rounded-[11px] cursor-pointer relative transition-colors ${form.urgente || (form.fechaRequerida && calcularUrgenciaTexto(form.fechaRequerida).includes("Hoy mismo")) ? "bg-[#500fe9]" : "bg-[#2a2a3e]"}`}
                     onClick={() => setF("urgente", !form.urgente)}
                   >
                     <div
-                      className={`w-4 h-4 rounded-full bg-white absolute top-[3px] transition-all ${form.urgente || (form.fechaRequerida && calcularUrgenciaTexto(form.fechaRequerida).includes("Hoy mismo")) ? "left-[21px]" : "left-[3px]"}`}
+                      className={`w-4 h-4 rounded-full bg-white absolute top-0.75 transition-all ${form.urgente || (form.fechaRequerida && calcularUrgenciaTexto(form.fechaRequerida).includes("Hoy mismo")) ? "left-5.25" : "left-0.75"}`}
                     />
                   </div>
                 </div>
@@ -831,7 +831,7 @@ export default function NewRequestPage() {
                   className={`flex justify-between py-2.5 text-sm ${i === 8 ? "border-none" : "border-b border-[#1a1a2e]"}`}
                 >
                   <span className="text-[#555] font-medium shrink-0">{k}</span>
-                  <span className="text-[#e0e0f0] text-right max-w-[60%] break-words">
+                  <span className="text-[#e0e0f0] text-right max-w-[60%] wrap-break-word">
                     {v}
                   </span>
                 </div>
@@ -848,7 +848,7 @@ export default function NewRequestPage() {
                         key={i}
                         src={src}
                         alt=""
-                        className="w-[60px] h-[60px] object-cover rounded-md border border-[#2a2a3e]"
+                        className="w-15 h-15 object-cover rounded-md border border-[#2a2a3e]"
                       />
                     ))}
                   </div>

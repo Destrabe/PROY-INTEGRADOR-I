@@ -57,16 +57,13 @@ export default function NexoraProfile() {
   const [activeTab, setActiveTab] = useState("Trabajos");
 
   return (
-    <div
-      className="min-h-screen font-sans"
-      style={{ background: "#111113", color: "#fff", colorScheme: "dark" }}
-    >
+    <div className="min-h-screen font-sans bg-[#111113] text-white [colorScheme: dark]">
       <div className="max-w-7xl mx-auto px-8 py-10 space-y-6">
         {/* Profile Header Card */}
         <div className="bg-[#1a1a1f] rounded-3xl p-9 border border-white/5">
           <div className="flex items-start gap-8">
             {/* Avatar */}
-            <div className="w-32 h-32 rounded-full bg-[#6c63ff] flex-shrink-0 flex items-center justify-center text-4xl font-bold">
+            <div className="w-32 h-32 rounded-full bg-[#6c63ff] shrink-0 flex items-center justify-center text-4xl font-bold">
               JR
             </div>
             {/* Info */}

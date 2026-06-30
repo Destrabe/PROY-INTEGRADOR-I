@@ -18,7 +18,7 @@ export default function ThemeToggle({ onChange }) {
           toggleTheme(theme === "dark" ? "light" : "dark");
           console.log(theme);
         }}
-        className="relative flex items-center gap-2 w-fit h-[42px] p-2 rounded-lg border"
+        className="relative flex items-center gap-2 w-fit h-10.5 p-2 rounded-lg border"
       >
         <div
           style={{

@@ -102,18 +102,13 @@ export default function MensajesPage() {
 
   return (
     <ProtectedRoute>
-      <div className="fixed top-[90px] inset-x-0 bottom-0 flex bg-[#0A0A0F] text-white font-sans overflow-hidden">
+      <div className="fixed top-22.5 inset-x-0 bottom-0 flex bg-[#0A0A0F] text-white font-sans overflow-hidden">
         {/* Lista izquierda */}
         <div
           className={`${mostrarChat ? "hidden" : "flex"} md:flex w-full md:w-80 border-r border-[#2A2A38] flex-col`}
         >
           <div className="p-5 border-b border-[#0c0c3e]">
-            <h2
-              className="text-xl font-extrabold mb-3"
-              style={{ fontFamily: "Syne, sans-serif" }}
-            >
-              Mensajes
-            </h2>
+            <h2 className="text-xl font-extrabold mb-3 font-syne">Mensajes</h2>
             <input
               className="w-full px-3 py-2 rounded-lg bg-[#111118] border border-[#2A2A38] text-white text-sm outline-none focus:border-[#6C63FF] transition-all"
               placeholder="Buscar conversación..."

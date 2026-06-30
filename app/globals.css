@@ -33,23 +33,3 @@ textarea,
 select {
   font: inherit;
 }
-
-/* :root {
-  --bg-main: #0a0a0f;
-  --bg-card: #111118;
-  --text-main: #ffffff;
-  --text-secondary: #9090a8;
-  --border-color: #2a2a38;
-}
-
-:root {
-  --bg-main: #0A0A0F;
-  --bg-card: #111118;
-  --border-color: #2A2A38;
-
-  --text-main: #F0F0F8;
-  --text-secondary: #9090A8;
-
-  --accent: #6C63FF;
-} 
-*/

@@ -1,5 +1,4 @@
-
-'use client';
+"use client";
 
 import { useAuth } from "@/components/AuthContext";
 import { useRouter } from "next/navigation";
@@ -33,14 +32,14 @@ function SolicitudModal({ solicitud, onClose, onApprove, onReject, users }) {
 
   if (!solicitud) return null;
 
-  const userRequest = users.find(u => u.id === solicitud.userId);
+  const userRequest = users.find((u) => u.id === solicitud.userId);
 
   // Función para descargar el PDF Base64 con un nombre específico
   const downloadPDF = () => {
     if (!solicitud.cvUrl) return;
     const link = document.createElement("a");
     link.href = solicitud.cvUrl;
-    link.download = `CV_${solicitud.nombre.replace(/\s+/g, '_')}.pdf`;
+    link.download = `CV_${solicitud.nombre.replace(/\s+/g, "_")}.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -60,53 +59,74 @@ function SolicitudModal({ solicitud, onClose, onApprove, onReject, users }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-6 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
       <div className="bg-[#111118] border border-white/10 w-full max-w-5xl max-h-[95vh] rounded-[3rem] overflow-hidden flex flex-col shadow-2xl animate-in zoom-in-95 duration-300">
-        
         {/* Header del Modal */}
-        <div className="p-8 border-b border-white/[0.05] flex items-center justify-between bg-white/[0.02]">
+        <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/2">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-[#6c63ff] flex items-center justify-center font-black text-white uppercase overflow-hidden">
               {userRequest?.photoURL ? (
-                <img src={userRequest.photoURL} alt="avatar" className="w-full h-full object-cover" />
+                <img
+                  src={userRequest.photoURL}
+                  alt="avatar"
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 <span>{solicitud.nombre?.[0]}</span>
               )}
             </div>
             <div>
-              <h2 className="text-xl font-black text-white">{solicitud.nombre}</h2>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{solicitud.email}</p>
+              <h2 className="text-xl font-black text-white">
+                {solicitud.nombre}
+              </h2>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                {solicitud.email}
+              </p>
             </div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-white/10 hover:text-white transition-all"
-          >✕</button>
+          >
+            ✕
+          </button>
         </div>
 
         {/* Contenido del Modal */}
         <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
-          
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            
             {/* Columna Izquierda: Info y CV */}
             <div className="lg:col-span-7 space-y-8">
               <section>
-                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6c63ff] mb-4">Perfil Profesional</h3>
-                <div className="bg-[#0A0A0F] p-8 rounded-[2rem] border border-white/5 space-y-6">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6c63ff] mb-4">
+                  Perfil Profesional
+                </h3>
+                <div className="bg-[#0A0A0F] p-8 rounded-4xl border border-white/5 space-y-6">
                   <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Profesión</p>
-                      <p className="text-white font-bold">{solicitud.profesion}</p>
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">
+                        Profesión
+                      </p>
+                      <p className="text-white font-bold">
+                        {solicitud.profesion}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Experiencia</p>
-                      <p className="text-white font-bold">{solicitud.experiencia} Años</p>
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">
+                        Experiencia
+                      </p>
+                      <p className="text-white font-bold">
+                        {solicitud.experiencia} Años
+                      </p>
                     </div>
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2">Descripción</p>
-                    <p className="text-slate-300 text-sm leading-relaxed bg-white/[0.02] p-4 rounded-xl border border-white/[0.03]">"{solicitud.descripcion}"</p>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2">
+                      Descripción
+                    </p>
+                    <p className="text-slate-300 text-sm leading-relaxed bg-white/2 p-4 rounded-xl border border-white/3">
+                      "{solicitud.descripcion}"
+                    </p>
                   </div>
                 </div>
               </section>
@@ -114,15 +134,17 @@ function SolicitudModal({ solicitud, onClose, onApprove, onReject, users }) {
               {/* Visor de CV */}
               <section>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6c63ff]">Currículum Vitae</h3>
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6c63ff]">
+                    Currículum Vitae
+                  </h3>
                   <div className="flex gap-3">
-                    <button 
+                    <button
                       onClick={() => setShowPdf(!showPdf)}
                       className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors"
                     >
                       {showPdf ? "Ocultar Vista Previa" : "Ver Vista Previa"}
                     </button>
-                    <button 
+                    <button
                       onClick={downloadPDF}
                       className="text-[10px] font-black uppercase tracking-widest text-[#6c63ff] hover:underline"
                     >
@@ -135,8 +157,8 @@ function SolicitudModal({ solicitud, onClose, onApprove, onReject, users }) {
                   <div className="space-y-4">
                     {showPdf ? (
                       <div className="w-full aspect-[1/1.4] bg-white rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-                        <iframe 
-                          src={`${solicitud.cvUrl}#toolbar=0`} 
+                        <iframe
+                          src={`${solicitud.cvUrl}#toolbar=0`}
                           className="w-full h-full border-none"
                           title="CV Viewer"
                         ></iframe>
@@ -144,16 +166,24 @@ function SolicitudModal({ solicitud, onClose, onApprove, onReject, users }) {
                     ) : (
                       <div className="bg-[#0A0A0F] border border-white/5 rounded-2xl p-6 flex items-center justify-between group">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center text-red-500 text-xl">PDF</div>
+                          <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center text-red-500 text-xl">
+                            PDF
+                          </div>
                           <div>
-                            <p className="text-xs font-bold text-white">Currículum_Vitae.pdf</p>
-                            <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Documento Adjunto</p>
+                            <p className="text-xs font-bold text-white">
+                              Currículum_Vitae.pdf
+                            </p>
+                            <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">
+                              Documento Adjunto
+                            </p>
                           </div>
                         </div>
-                        <button 
+                        <button
                           onClick={() => setShowPdf(true)}
                           className="bg-white/5 text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
-                        >Abrir Visor</button>
+                        >
+                          Abrir Visor
+                        </button>
                       </div>
                     )}
                   </div>
@@ -168,21 +198,30 @@ function SolicitudModal({ solicitud, onClose, onApprove, onReject, users }) {
             {/* Columna Derecha: Galería */}
             <div className="lg:col-span-5 space-y-8">
               <section>
-                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6c63ff] mb-4">Fotos de Trabajos</h3>
-                <div className="bg-[#0A0A0F] p-8 rounded-[2rem] border border-white/5 min-h-[300px]">
-                  {solicitud.imagenesUrls && solicitud.imagenesUrls.length > 0 ? (
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6c63ff] mb-4">
+                  Fotos de Trabajos
+                </h3>
+                <div className="bg-[#0A0A0F] p-8 rounded-4xl border border-white/5 min-h-75">
+                  {solicitud.imagenesUrls &&
+                  solicitud.imagenesUrls.length > 0 ? (
                     <div className="grid grid-cols-2 gap-4">
                       {solicitud.imagenesUrls.map((img, i) => (
-                        <div 
-                          key={i} 
+                        <div
+                          key={i}
                           onClick={() => openImage(img, i)}
                           className="relative aspect-square rounded-2xl overflow-hidden border border-white/10 hover:border-[#6c63ff]/50 transition-all group cursor-pointer shadow-lg"
                         >
-                          <img src={img} alt={`Trabajo ${i+1}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                          <img
+                            src={img}
+                            alt={`Trabajo ${i + 1}`}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
                           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                             <div className="text-center">
                               <span className="text-2xl mb-1 block">🔍</span>
-                              <span className="text-white text-[8px] font-black uppercase tracking-widest">Ampliar</span>
+                              <span className="text-white text-[8px] font-black uppercase tracking-widest">
+                                Ampliar
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -200,15 +239,25 @@ function SolicitudModal({ solicitud, onClose, onApprove, onReject, users }) {
         </div>
 
         {/* Footer del Modal (Acciones) */}
-        <div className="p-8 border-t border-white/[0.05] bg-white/[0.02] flex gap-4">
-          <button 
-            onClick={() => { onApprove(solicitud); onClose(); }}
+        <div className="p-8 border-t border-white5 bg-white/2 flex gap-4">
+          <button
+            onClick={() => {
+              onApprove(solicitud);
+              onClose();
+            }}
             className="flex-1 bg-emerald-500 text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:scale-[1.01] active:scale-[0.98] transition-all"
-          >Aprobar Trabajador</button>
-          <button 
-            onClick={() => { onReject(solicitud); onClose(); }}
+          >
+            Aprobar Trabajador
+          </button>
+          <button
+            onClick={() => {
+              onReject(solicitud);
+              onClose();
+            }}
             className="flex-1 bg-red-500/10 text-red-500 border border-red-500/20 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all"
-          >Rechazar Solicitud</button>
+          >
+            Rechazar Solicitud
+          </button>
         </div>
       </div>
     </div>
@@ -225,7 +274,7 @@ export default function AdminPage() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("todos");
   const [loading, setLoading] = useState(true);
-  
+
   // Estado para el modal
   const [selectedSolicitud, setSelectedSolicitud] = useState(null);
 
@@ -248,7 +297,7 @@ export default function AdminPage() {
 
     const qSolicitudes = query(
       collection(db, "solicitudes"),
-      orderBy("fecha", "desc")
+      orderBy("fecha", "desc"),
     );
     const unsubSolicitudes = onSnapshot(qSolicitudes, (snapshot) => {
       const data = snapshot.docs.map((doc) => ({
@@ -276,7 +325,9 @@ export default function AdminPage() {
 
   const handleApproveWorker = async (solicitud) => {
     try {
-      await updateDoc(doc(db, "users", solicitud.userId), { rol: "trabajador" });
+      await updateDoc(doc(db, "users", solicitud.userId), {
+        rol: "trabajador",
+      });
       await updateDoc(doc(db, "solicitudes", solicitud.id), {
         estado: "Aprobado",
       });
@@ -293,7 +344,10 @@ export default function AdminPage() {
       await updateDoc(doc(db, "solicitudes", solicitud.id), {
         estado: "Rechazado",
       });
-      registrarActividad(`Solicitud de ${solicitud.nombre} RECHAZADA`, "delete");
+      registrarActividad(
+        `Solicitud de ${solicitud.nombre} RECHAZADA`,
+        "delete",
+      );
       alert(`Solicitud de ${solicitud.nombre} ha sido rechazada.`);
     } catch (error) {
       console.error("Error al rechazar:", error);
@@ -304,7 +358,10 @@ export default function AdminPage() {
   const handleRoleChange = async (userId, userName, newRole) => {
     try {
       await updateDoc(doc(db, "users", userId), { rol: newRole });
-      registrarActividad(`Rol de ${userName} actualizado a ${newRole}`, "update");
+      registrarActividad(
+        `Rol de ${userName} actualizado a ${newRole}`,
+        "update",
+      );
     } catch (error) {
       console.error("Error al cambiar rol:", error);
     }
@@ -342,7 +399,7 @@ export default function AdminPage() {
       trabajadores: users.filter((u) => u.rol === "trabajador").length,
       pendientes: solicitudes.filter((s) => s.estado === "pendiente").length,
     }),
-    [users, solicitudes]
+    [users, solicitudes],
   );
 
   if (authLoading || loading) {
@@ -355,10 +412,9 @@ export default function AdminPage() {
 
   return (
     <div className="w-full min-h-screen bg-[#0A0A0F] text-slate-300 font-sans selection:bg-[#6c63ff]/30">
-      
       {/* Modal de Detalles */}
-      <SolicitudModal 
-        solicitud={selectedSolicitud} 
+      <SolicitudModal
+        solicitud={selectedSolicitud}
         onClose={() => setSelectedSolicitud(null)}
         onApprove={handleApproveWorker}
         onReject={handleRejectWorker}
@@ -381,24 +437,25 @@ export default function AdminPage() {
 
         {/* Estadísticas */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[{
-            label: "Usuarios Totales",
-            value: stats.totalUsers,
-            sub: `${stats.clientes} Clientes / ${stats.trabajadores} Trab.`,
-            color: "border-blue-500/20 bg-blue-500/5",
-          },
-          {
-            label: "Solicitudes",
-            value: stats.totalSolicitudes,
-            sub: "Historial completo",
-            color: "border-purple-500/20 bg-purple-500/5",
-          },
-          {
-            label: "Pendientes",
-            value: stats.pendientes,
-            sub: "Por verificar trabajador",
-            color: "border-amber-500/20 bg-amber-500/5",
-          },
+          {[
+            {
+              label: "Usuarios Totales",
+              value: stats.totalUsers,
+              sub: `${stats.clientes} Clientes / ${stats.trabajadores} Trab.`,
+              color: "border-blue-500/20 bg-blue-500/5",
+            },
+            {
+              label: "Solicitudes",
+              value: stats.totalSolicitudes,
+              sub: "Historial completo",
+              color: "border-purple-500/20 bg-purple-500/5",
+            },
+            {
+              label: "Pendientes",
+              value: stats.pendientes,
+              sub: "Por verificar trabajador",
+              color: "border-amber-500/20 bg-amber-500/5",
+            },
           ].map((item, i) => (
             <div
               key={i}
@@ -420,8 +477,8 @@ export default function AdminPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-8 space-y-12">
             {/* SOLICITUDES DE TRABAJADOR PENDIENTES */}
-            <section className="bg-[#111118] border border-white/[0.05] rounded-[3rem] overflow-hidden shadow-2xl">
-              <div className="p-10 border-b border-white/[0.05]">
+            <section className="bg-[#111118] border border-white/5 rounded-[3rem] overflow-hidden shadow-2xl">
+              <div className="p-10 border-b border-white/5">
                 <h2 className="text-2xl font-black text-white">
                   Solicitudes de Verificación
                 </h2>
@@ -429,9 +486,9 @@ export default function AdminPage() {
                   Clientes que desean ser trabajadores
                 </p>
               </div>
-              <div className="divide-y divide-white/[0.03]">
+              <div className="divide-y divide-white/3">
                 {solicitudes.filter((s) => s.estado === "pendiente").length ===
-                  0 ? (
+                0 ? (
                   <div className="p-20 text-center text-slate-600 font-bold uppercase tracking-widest text-[10px]">
                     No hay solicitudes pendientes
                   </div>
@@ -441,9 +498,9 @@ export default function AdminPage() {
                     .map((s) => (
                       <div
                         key={s.id}
-                        className="p-10 flex flex-col md:flex-row md:items-center justify-between hover:bg-white/[0.01] transition-all gap-4 group/item"
+                        className="p-10 flex flex-col md:flex-row md:items-center justify-between hover:bg-white/1 transition-all gap-4 group/item"
                       >
-                        <div 
+                        <div
                           className="flex items-center gap-6 cursor-pointer"
                           onClick={() => setSelectedSolicitud(s)}
                         >
@@ -451,7 +508,9 @@ export default function AdminPage() {
                           <div className="w-14 h-14 rounded-2xl bg-[#6c63ff] flex items-center justify-center font-black text-white uppercase overflow-hidden group-hover/item:scale-105 transition-transform">
                             {users.find((u) => u.id === s.userId)?.photoURL ? (
                               <img
-                                src={users.find((u) => u.id === s.userId).photoURL}
+                                src={
+                                  users.find((u) => u.id === s.userId).photoURL
+                                }
                                 alt="avatar"
                                 className="w-full h-full object-cover"
                               />
@@ -471,7 +530,7 @@ export default function AdminPage() {
                             </p>
                           </div>
                         </div>
-                        <div className="flex gap-4 flex-shrink-0">
+                        <div className="flex gap-4 shrink-0">
                           <button
                             onClick={() => setSelectedSolicitud(s)}
                             className="bg-white/5 text-white border border-white/10 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
@@ -492,8 +551,8 @@ export default function AdminPage() {
             </section>
 
             {/* Gestión de Usuarios */}
-            <section className="bg-[#111118] border border-white/[0.05] rounded-[3rem] overflow-hidden shadow-2xl">
-              <div className="p-10 border-b border-white/[0.05] flex flex-col md:flex-row md:items-center justify-between gap-8">
+            <section className="bg-[#111118] border border-white/5 rounded-[3rem] overflow-hidden shadow-2xl">
+              <div className="p-10 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-8">
                 <div>
                   <h2 className="text-2xl font-black text-white">
                     Gestión de Usuarios
@@ -512,18 +571,18 @@ export default function AdminPage() {
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
-                  <thead className="text-slate-600 text-[10px] uppercase tracking-[0.3em] font-black bg-white/[0.02]">
+                  <thead className="text-slate-600 text-[10px] uppercase tracking-[0.3em] font-black bg-white/2">
                     <tr>
                       <th className="px-10 py-8">Identidad</th>
                       <th className="px-10 py-8">Privilegios</th>
                       <th className="px-10 py-8 text-right">Acciones</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/[0.03]">
+                  <tbody className="divide-y divide-white/3">
                     {filteredUsers.map((u) => (
                       <tr
                         key={u.id}
-                        className="hover:bg-white/[0.02] transition-colors group"
+                        className="hover:bg-white/2 transition-colors group"
                       >
                         <td className="px-10 py-8">
                           <div className="flex items-center gap-5">
@@ -537,7 +596,8 @@ export default function AdminPage() {
                                 />
                               ) : (
                                 <span>
-                                  {u.first_name?.[0]}{u.last_name?.[0]}
+                                  {u.first_name?.[0]}
+                                  {u.last_name?.[0]}
                                 </span>
                               )}
                             </div>
@@ -564,7 +624,11 @@ export default function AdminPage() {
                               className="bg-[#0A0A0F] border border-white/10 rounded-xl text-[10px] px-4 py-2 text-white font-black cursor-pointer"
                               value={u.rol}
                               onChange={(e) =>
-                                handleRoleChange(u.id, u.first_name, e.target.value)
+                                handleRoleChange(
+                                  u.id,
+                                  u.first_name,
+                                  e.target.value,
+                                )
                               }
                             >
                               <option value="cliente">Cliente</option>
@@ -589,11 +653,11 @@ export default function AdminPage() {
 
           {/* ACTIVIDAD LIVE MANTENIDA */}
           <div className="lg:col-span-4">
-            <section className="bg-[#111118] border border-white/[0.05] rounded-[3rem] p-10 sticky top-32 shadow-2xl">
+            <section className="bg-[#111118] border border-white/5 rounded-[3rem] p-10 sticky top-32 shadow-2xl">
               <h2 className="text-2xl font-black text-white mb-10">
                 Actividad Live
               </h2>
-              <div className="space-y-10 relative before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-[2px] before:bg-white/[0.03]">
+              <div className="space-y-10 relative before:absolute before:left-4.75 before:top-2 before:bottom-2 before:w-0.5 before:bg-white/3">
                 {actividades.length === 0 ? (
                   <div className="text-center py-10 opacity-30 text-[10px] font-black uppercase tracking-widest">
                     Esperando eventos...
@@ -602,10 +666,9 @@ export default function AdminPage() {
                   actividades.map((act) => (
                     <div key={act.id} className="relative pl-14 group">
                       <div
-                        className={`absolute left-0 top-1 w-10 h-10 rounded-2xl border-4 border-[#111118] flex items-center justify-center text-[11px] shadow-2xl z-10 ${act.tipo === "delete"
-                            ? "bg-red-500"
-                            : "bg-[#6c63ff]"
-                          }`}
+                        className={`absolute left-0 top-1 w-10 h-10 rounded-2xl border-4 border-[#111118] flex items-center justify-center text-[11px] shadow-2xl z-10 ${
+                          act.tipo === "delete" ? "bg-red-500" : "bg-[#6c63ff]"
+                        }`}
                       ></div>
                       <p className="text-sm font-bold text-slate-300 leading-relaxed">
                         {act.mensaje}
@@ -621,7 +684,7 @@ export default function AdminPage() {
           </div>
         </div>
       </main>
-      
+
       {/* Estilos adicionales para scrollbar personalizada */}
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {

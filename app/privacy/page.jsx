@@ -23,10 +23,7 @@ export default function PrivacyPage() {
             </svg>
           </div>
 
-          <h1
-            className="text-5xl font-extrabold text-white mb-3"
-            style={{ fontFamily: "Syne, sans-serif" }}
-          >
+          <h1 className="font-syne text-5xl font-extrabold text-white mb-3">
             Política de Privacidad
           </h1>
 

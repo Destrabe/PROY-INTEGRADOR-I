@@ -214,18 +214,9 @@ export default function SolicitudCard({
       <div style={s.cardTop}>
         <div style={s.meta}>
           <div
+            className="w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-semibold text-white shrink-0"
             style={{
-              width: "36px",
-              height: "36px",
-              borderRadius: "50%",
               backgroundColor: colorAvatar(iniciales),
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "12px",
-              fontWeight: 600,
-              color: "#fff",
-              flexShrink: 0,
             }}
           >
             {iniciales}
@@ -289,18 +280,7 @@ export default function SolicitudCard({
           <a
             href="/login"
             onClick={(e) => e.stopPropagation()}
-            style={{
-              backgroundColor: "#500fe9",
-              color: "#fff",
-              borderRadius: "8px",
-              padding: "8px 18px",
-              fontSize: "13px",
-              fontWeight: 500,
-              textDecoration: "none",
-              fontFamily: "var(--font-dm-sans), sans-serif",
-              whiteSpace: "nowrap",
-              display: "inline-block",
-            }}
+            className="font-sans bg-[#500fe9] text-white rounded-lg py-2 px-4.5 text-[13px] font-medium no-underline whitespace-nowrap inline-block"
           >
             Iniciar sesión
           </a>
@@ -308,18 +288,7 @@ export default function SolicitudCard({
           <a
             href="/worker"
             onClick={(e) => e.stopPropagation()}
-            style={{
-              backgroundColor: "#500fe9",
-              color: "#fff",
-              borderRadius: "8px",
-              padding: "8px 18px",
-              fontSize: "13px",
-              fontWeight: 500,
-              textDecoration: "none",
-              fontFamily: "var(--font-dm-sans), sans-serif",
-              whiteSpace: "nowrap",
-              display: "inline-block",
-            }}
+            className="font-sans bg-[#500fe9] text-white rounded-lg py-2 px-4.5 font-medium no-underline whitespace-nowrap inline-block"
           >
             Únete como trabajador
           </a>

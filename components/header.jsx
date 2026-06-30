@@ -16,7 +16,7 @@ const Logo = (color) => (
     className="flex items-end font-extrabold text-2xl leading-none  font-syne select-none"
   >
     <div className="logo-header-name">Nexora</div>
-    <div className="text-[32px] text-[#6c63ff] relative top-[3px]">.</div>
+    <div className="text-[32px] text-[#6c63ff] relative top-0.75">.</div>
   </div>
 );
 
@@ -58,8 +58,8 @@ export default function Header() {
 
   if (loading) {
     return (
-      <div className="font-sans w-full h-[90px] text-white bg-[#0a0a0a]">
-        <div className="h-full flex items-center px-[60px]">
+      <div className="font-sans w-full h-22.5 text-white bg-[#0a0a0a]">
+        <div className="h-full flex items-center px-15">
           <Logo />
         </div>
       </div>
@@ -72,9 +72,9 @@ export default function Header() {
         backgroundColor: background[theme],
         color: textColor[theme],
       }}
-      className="fixed z-10 h-12 w-[100vw] font-sans w-full lg:h-[90px] py-3 lg:py-0 transition-all border-zinc-800"
+      className="fixed z-10 h-12 font-sans w-full lg:h-22.5 py-3 lg:py-0 transition-all border-zinc-800"
     >
-      <div className="h-full flex flex-col lg:grid lg:grid-cols-3 items-center px-4 sm:px-6 lg:px-[60px] py-4 gap-4">
+      <div className="h-full flex flex-col lg:grid lg:grid-cols-3 items-center px-4 sm:px-6 lg:px-15 py-4 gap-4">
         {/* LOGO */}
         <div className="h-full flex items-center justify-center lg:justify-start select-none w-full">
           <Link href="/" className="flex items-center gap-2 text-white">
@@ -84,7 +84,7 @@ export default function Header() {
 
         {/* NAV */}
         <div className="flex justify-center items-center w-full">
-          <nav className="flex flex-wrap justify-center gap-4 lg:gap-[30px] text-sm sm:text-base">
+          <nav className="flex flex-wrap justify-center gap-4 lg:gap-7.5 text-sm sm:text-base">
             <NavLink href="/" active={pathname === "/"}>
               Inicio
             </NavLink>
@@ -176,13 +176,13 @@ export default function Header() {
                 style={{
                   color: pathname === "/login" ? "#6c63ff" : textColor[theme],
                 }}
-                className="h-[42px] px-4 border border-zinc-500 flex items-center justify-center rounded-[10px] text-center transition-all hover:!text-[#6c63ff] hover:!border-[#6c63ff]"
+                className="h-10.5 px-4 border border-zinc-500 flex items-center justify-center rounded-[10px] text-center transition-all hover:text-[#6c63ff]! hover:border-[#6c63ff]!"
               >
                 Iniciar Sesión
               </Link>
               <Link
                 href="/register"
-                className="h-[42px] px-4 flex items-center justify-center rounded-[10px] text-white transition-all bg-[#6c63ff] hover:bg-[#5b52e5] "
+                className="h-10.5 px-4 flex items-center justify-center rounded-[10px] text-white transition-all bg-[#6c63ff] hover:bg-[#5b52e5] "
               >
                 Registrarse
               </Link>
