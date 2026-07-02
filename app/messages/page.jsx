@@ -1,11 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Syne } from "next/font/google";
-import ProtectedRoute from "@/components/ProtectedRoute";
-
-const syne = Syne({
-  subsets: ["latin"],
-});
+import FirebaseAuthWatcher from "../authWatcher";
 
 const conversaciones = [
   {
@@ -101,7 +96,7 @@ export default function MensajesPage() {
   const [mostrarChat, setMostrarChat] = useState(false);
 
   return (
-    <ProtectedRoute>
+    <FirebaseAuthWatcher>
       <div className="fixed top-22.5 inset-x-0 bottom-0 flex bg-[#0A0A0F] text-white font-sans overflow-hidden">
         {/* Lista izquierda */}
         <div
@@ -125,7 +120,7 @@ export default function MensajesPage() {
                 className={`flex items-center gap-3 px-5 py-4 cursor-pointer border-b border-[#1a1a24] transition-all ${seleccionado.id === conv.id ? "bg-[#111118] border-l-4 border-l-[#6C63FF]" : "hover:bg-[#111118]"}`}
               >
                 <div
-                  className={`relative w-10 h-10 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-xs font-bold shrink-0 ${syne.className}`}
+                  className={`relative w-10 h-10 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-xs font-bold shrink-0 font-syne`}
                 >
                   {conv.iniciales}
                   {conv.online && (
@@ -179,7 +174,7 @@ export default function MensajesPage() {
               </svg>
             </button>
             <div
-              className={`relative w-10 h-10 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-xs font-bold shrink-0 ${syne.className}`}
+              className={`relative w-10 h-10 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-xs font-bold shrink-0 font-syne`}
             >
               {seleccionado.iniciales}
               {seleccionado.online && (
@@ -221,7 +216,7 @@ export default function MensajesPage() {
                 className={`flex items-end gap-2 ${msg.de === "yo" ? "flex-row-reverse" : ""}`}
               >
                 <div
-                  className={`w-7 h-7 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-[9px] font-semibold shrink-0 ${syne.className}`}
+                  className={`w-7 h-7 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-[9px] font-semibold shrink-0 font-syne`}
                 >
                   {msg.de === "yo" ? "LR" : seleccionado.iniciales}
                 </div>
@@ -255,6 +250,6 @@ export default function MensajesPage() {
           </div>
         </div>
       </div>
-    </ProtectedRoute>
+    </FirebaseAuthWatcher>
   );
 }
