@@ -63,6 +63,23 @@ const ROLE_COLORS = {
   admin: "text-amber-400 bg-amber-400/10 border-amber-400/20",
 };
 
+// --- COMPONENTE TOAST (mismo diseño que profile/page.jsx) ---
+function Toast({ message, type, onClose }) {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 4000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  const styles = type === "success" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-red-500/10 border-red-500/20 text-red-400";
+
+  return (
+    <div className={`fixed bottom-8 right-8 ${styles} border p-5 rounded-2xl flex items-center gap-4 z-[200] animate-in fade-in slide-in-from-bottom-4 duration-300 shadow-2xl backdrop-blur-md`}>
+      <div className="w-2 h-2 rounded-full bg-current animate-pulse"></div>
+      <p className="text-sm font-black uppercase tracking-widest">{message}</p>
+    </div>
+  );
+}
+
 // Componente Modal de Detalles
 function SolicitudModal({ solicitud, onClose, onApprove, onReject, users }) {
   const [showPdf, setShowPdf] = useState(false);
@@ -230,6 +247,9 @@ export default function AdminPage() {
   const [roleFilter, setRoleFilter] = useState("todos");
   const [loading, setLoading] = useState(true);
   const [selectedSolicitud, setSelectedSolicitud] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "success") => setToast({ message, type });
 
   useEffect(() => {
     if (!authLoading) {
@@ -274,16 +294,16 @@ export default function AdminPage() {
       await updateDoc(doc(db, "users", solicitud.userId), { rol: "trabajador" });
       await updateDoc(doc(db, "solicitudes", solicitud.id), { estado: "Aprobado" });
       await registrarActividad(`Aprobación: ${solicitud.nombre} es ahora Trabajador`, "update");
-      alert(`${solicitud.nombre} aprobado.`);
-    } catch (error) { alert("Error al aprobar."); }
+      showToast(`${solicitud.nombre} aprobado.`);
+    } catch (error) { showToast("Error al aprobar.", "error"); }
   };
 
   const handleRejectWorker = async (solicitud) => {
     try {
       await updateDoc(doc(db, "solicitudes", solicitud.id), { estado: "Rechazado" });
       await registrarActividad(`Rechazo: Solicitud de ${solicitud.nombre}`, "delete");
-      alert("Solicitud rechazada.");
-    } catch (error) { alert("Error al rechazar."); }
+      showToast("Solicitud rechazada.");
+    } catch (error) { showToast("Error al rechazar.", "error"); }
   };
 
   const handleRoleChange = async (userId, userName, newRole) => {
@@ -327,6 +347,8 @@ export default function AdminPage() {
 
   return (
     <div className="w-full min-h-screen bg-[#0A0A0F] text-slate-300 font-sans selection:bg-[#6c63ff]/30">
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+
       <SolicitudModal solicitud={selectedSolicitud} onClose={() => setSelectedSolicitud(null)} onApprove={handleApproveWorker} onReject={handleRejectWorker} users={users} />
 
       <main className="max-w-7xl mx-auto px-6 pt-28 pb-20 space-y-12">

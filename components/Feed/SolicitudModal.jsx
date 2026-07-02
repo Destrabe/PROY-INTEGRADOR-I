@@ -239,6 +239,33 @@ const s = {
     fontWeight: 700,
     fontFamily: "var(--font-dm-sans), sans-serif",
   },
+  btnEliminarAdmin: {
+    flex: 1,
+    backgroundColor: "#2d1a0a",
+    color: "#fbbf24",
+    border: "1px solid #5a3a1a",
+    borderRadius: "12px",
+    padding: "14px",
+    fontSize: "15px",
+    cursor: "pointer",
+    fontWeight: 700,
+    fontFamily: "var(--font-dm-sans), sans-serif",
+  },
+  btnUnete: {
+    flex: 1,
+    backgroundColor: "#500fe9",
+    color: "#fff",
+    border: "none",
+    borderRadius: "12px",
+    padding: "14px",
+    fontSize: "15px",
+    cursor: "pointer",
+    fontWeight: 700,
+    fontFamily: "var(--font-dm-sans), sans-serif",
+    textAlign: "center",
+    textDecoration: "none",
+    display: "block",
+  },
   btnPropietario: {
     flex: 1,
     backgroundColor: "#1a1a2e",
@@ -264,10 +291,11 @@ export default function SolicitudModal({
   solicitud,
   onClose,
   currentUserId,    // UID del usuario autenticado
+  currentUserRole,  // "cliente" | "trabajador" | "admin"
   estaPostulado,
   onToggle,
   loading,
-  onCancelar,       // callback para eliminar la solicitud (propietario)
+  onCancelar,       // callback para eliminar la solicitud (propietario o admin)
 }) {
   const [imgIdx, setImgIdx] = useState(0);
   const [confirmando, setConfirmando] = useState(false);
@@ -279,6 +307,8 @@ export default function SolicitudModal({
   const postulado      = estaPostulado(solicitud.postulantes ?? []);
   const totalPostulantes = solicitud.postulantes?.length ?? 0;
   const esPropietario  = currentUserId && currentUserId === solicitud.userId;
+  const esTrabajador   = currentUserRole === "trabajador";
+  const esAdmin        = currentUserRole === "admin";
   const sinSesion      = !currentUserId;
 
   const prevImg = (e) => {
@@ -306,6 +336,11 @@ export default function SolicitudModal({
     mes: "Este mes",
     acordar: "A coordinar",
   }[solicitud.urgencia] ?? "A coordinar";
+
+  // Solo se muestra el resumen de "X personas ya se postularon" cuando el botón
+  // visible es realmente el de postularse (trabajador, no propietario, no admin)
+  const mostrarNotaPostulantes =
+    !esPropietario && !sinSesion && !esAdmin && esTrabajador;
 
   return (
     <div style={s.overlay} onClick={onClose}>
@@ -391,7 +426,17 @@ export default function SolicitudModal({
                 Inicia sesión para postularte
               </a>
             )}
-            {esPropietario && (
+
+            {/* El admin siempre puede eliminar, publique quien publique */}
+            {!sinSesion && esAdmin && (
+              <button style={s.btnEliminarAdmin} onClick={handleCancelar}>
+                {confirmando
+                  ? "¿Confirmar eliminación? (clic de nuevo)"
+                  : "🛡 Eliminar solicitud (admin)"}
+              </button>
+            )}
+
+            {!sinSesion && !esAdmin && esPropietario && (
               <button
                 style={s.btnCancelarSolicitud}
                 onClick={handleCancelar}
@@ -401,7 +446,14 @@ export default function SolicitudModal({
                   : "Cancelar esta solicitud"}
               </button>
             )}
-            {!esPropietario && !sinSesion && (
+
+            {!sinSesion && !esAdmin && !esPropietario && !esTrabajador && (
+              <a href="/worker" style={s.btnUnete}>
+                Únete como trabajador para postularte
+              </a>
+            )}
+
+            {!sinSesion && !esAdmin && !esPropietario && esTrabajador && (
               <button
                 style={loading ? s.btnLoading : postulado ? s.btnPostulado : s.btnPostular}
                 onClick={() => onToggle(solicitud.id, solicitud.postulantes ?? [])}
@@ -415,7 +467,8 @@ export default function SolicitudModal({
               </button>
             )}
           </div>
-          {!esPropietario && !sinSesion && (
+
+          {mostrarNotaPostulantes && (
             <p style={s.nota}>
               {postulado
                 ? "Ya estás postulado. El cliente verá tu perfil y te contactará."

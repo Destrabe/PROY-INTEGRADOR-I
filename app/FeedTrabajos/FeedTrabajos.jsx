@@ -1,7 +1,7 @@
 "use client";
-import { useState, useMemo } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/firebase/auth";
+import { useState, useMemo, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/AuthContext";
 import { useSolicitudes } from "./Hooks/useSolicitudes";
 import { usePostulacion } from "./Hooks/usePostulacion";
 import { eliminarSolicitud } from "@/firebase/Solicitudes";
@@ -11,7 +11,6 @@ import FiltrosTags from "@/components/Feed/FiltrosTags";
 import SolicitudCard from "@/components/Feed/SolicitudCard";
 import SolicitudModal from "@/components/Feed/SolicitudModal";
 import Link from "next/link";
-import { useAuth } from "@/components/AuthContext";
 
 const s = {
   layout: {
@@ -99,7 +98,15 @@ const s = {
     fontSize: "14px",
     marginBottom: "16px",
   },
-  loginBanner: {
+  loadingPage: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: "calc(100vh - 90px)",
+    color: "#888",
+    fontSize: "14px",
+  },
+  restrictedBanner: {
     backgroundColor: "#1e1a3a",
     border: "1px solid #4a3aaa",
     borderRadius: "10px",
@@ -107,10 +114,6 @@ const s = {
     color: "#a78bfa",
     fontSize: "13px",
     marginBottom: "16px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "12px",
   },
 };
 
@@ -134,13 +137,22 @@ function filtrar(solicitudes, filtroActivo, busqueda) {
 }
 
 export default function FeedTrabajos() {
-  const [user, authLoading] = useAuthState(auth);
-  const { user: appUser } = useAuth();
-  console.log("USER:", user);
+  const { user: appUser, loading } = useAuth();
+  const router = useRouter();
 
-  const { solicitudes, loading, error } = useSolicitudes();
+  // Explorar requiere sesión iniciada: si no hay usuario, se redirige a login
+  useEffect(() => {
+    if (!loading && !appUser) {
+      router.push("/login");
+    }
+  }, [loading, appUser, router]);
+
+  const esTrabajador = appUser?.rol === "trabajador";
+  const esCliente = appUser?.rol === "cliente";
+
+  const { solicitudes, loading: loadingSolicitudes, error } = useSolicitudes();
   const { estaPostulado, togglePostulacion, loadingId } = usePostulacion(
-    user?.uid,
+    appUser?.uid,
   );
 
   const [filtroActivo, setFiltroActivo] = useState("Todos");
@@ -152,9 +164,19 @@ export default function FeedTrabajos() {
     [solicitudes, filtroActivo, busqueda],
   );
 
+  const esAdmin = appUser?.rol === "admin";
+
   const handleCancelar = async (solicitudId) => {
     const sol = solicitudes.find((s) => s.id === solicitudId);
-    if (sol?.imageUrls?.length > 0) {
+    if (!sol) return;
+
+    const esPropietario = appUser?.uid === sol.userId;
+    if (!esPropietario && !esAdmin) {
+      alert("No tienes permiso para eliminar esta solicitud.");
+      return;
+    }
+
+    if (sol.imageUrls?.length > 0) {
       await eliminarImagenesSolicitud(sol.imageUrls);
     }
 
@@ -162,16 +184,32 @@ export default function FeedTrabajos() {
   };
 
   const handleToggle = async (solicitudId, postulantesActuales) => {
+    // Solo los usuarios con rol "trabajador" pueden postularse
+    if (!esTrabajador) {
+      alert("Solo los trabajadores pueden postularse a una solicitud.");
+      return;
+    }
+
     await togglePostulacion(solicitudId, postulantesActuales);
     if (modalSolicitud?.id === solicitudId) {
       const actualizado = solicitudes.find((s) => s.id === solicitudId);
       if (actualizado) setModalSolicitud(actualizado);
     }
   };
+
   const abrirModal = (solicitud) => {
     const actual = solicitudes.find((s) => s.id === solicitud.id) ?? solicitud;
     setModalSolicitud(actual);
   };
+
+  // Mientras se resuelve la sesión, o si aún no hay usuario (a punto de redirigir), no mostramos nada
+  if (loading) {
+    return <div style={s.loadingPage}>Cargando...</div>;
+  }
+
+  if (!appUser) {
+    return null;
+  }
 
   return (
     <div style={s.layout}>
@@ -185,10 +223,7 @@ export default function FeedTrabajos() {
               Encuentra solicitudes que coincidan con tus habilidades
             </p>
           </div>
-          <Link
-            href={!authLoading && user ? "/NewRequest" : "/login"}
-            style={s.publishBtn}
-          >
+          <Link href="/NewRequest" style={s.publishBtn}>
             <span style={s.publishBtnPlus}>
               <svg
                 width="10"
@@ -205,21 +240,14 @@ export default function FeedTrabajos() {
                 <path d="M5 12H19" />
               </svg>
             </span>
-
-            <span style={{ fontWeight: 700 }}>
-              {!authLoading && user
-                ? "Publicar solicitud"
-                : "¡Únete como Cliente!"}
-            </span>
+            <span style={{ fontWeight: 700 }}>Publicar solicitud</span>
           </Link>
         </div>
 
-        {!authLoading && !user && (
-          <div style={s.loginBanner}>
-            <span>Inicia sesión para postularte o publicar trabajos</span>
-            <a href="/login" style={{ color: "#a78bfa", fontWeight: 600 }}>
-              Ingresar →
-            </a>
+        {esCliente && (
+          <div style={s.restrictedBanner}>
+            Estás registrado como cliente: puedes publicar solicitudes, pero
+            no postularte a trabajos.
           </div>
         )}
 
@@ -242,8 +270,10 @@ export default function FeedTrabajos() {
           <div style={s.errorBox}>Error al cargar solicitudes: {error}</div>
         )}
 
-        {loading && [1, 2, 3].map((i) => <div key={i} style={s.skeleton} />)}
-        {!loading && solicitudesFiltradas.length === 0 && (
+        {loadingSolicitudes &&
+          [1, 2, 3].map((i) => <div key={i} style={s.skeleton} />)}
+
+        {!loadingSolicitudes && solicitudesFiltradas.length === 0 && (
           <div style={s.emptyState}>
             <div style={s.emptyIcon}>🔍</div>
             <p style={s.emptyText}>No se encontraron solicitudes</p>
@@ -253,22 +283,20 @@ export default function FeedTrabajos() {
                 : "Sé el primero en publicar una solicitud en tu zona"}
             </p>
             {!busqueda && filtroActivo === "Todos" && (
-              <Link
-                href={!authLoading && user ? "/NewRequest" : "/login"}
-                style={s.emptyBtn}
-              >
+              <Link href="/NewRequest" style={s.emptyBtn}>
                 + Publicar la primera solicitud
               </Link>
             )}
           </div>
         )}
 
-        {!loading &&
+        {!loadingSolicitudes &&
           solicitudesFiltradas.map((sol) => (
             <SolicitudCard
               key={sol.id}
               solicitud={sol}
-              currentUserId={!authLoading && user ? user.uid : null}
+              currentUserId={appUser.uid}
+              currentUserRole={appUser?.rol}
               estaPostulado={estaPostulado}
               onToggle={handleToggle}
               loading={loadingId === sol.id}
@@ -281,7 +309,8 @@ export default function FeedTrabajos() {
       <SolicitudModal
         solicitud={modalSolicitud}
         onClose={() => setModalSolicitud(null)}
-        currentUserId={user?.uid ?? null}
+        currentUserId={appUser.uid}
+        currentUserRole={appUser?.rol}
         estaPostulado={estaPostulado}
         onToggle={handleToggle}
         loading={loadingId === modalSolicitud?.id}
