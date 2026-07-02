@@ -61,6 +61,17 @@ const s = {
     marginBottom: "4px",
     marginLeft: "6px",
   },
+  badgeAdmin: {
+    display: "inline-block",
+    backgroundColor: "#2d1a0a",
+    color: "#fbbf24",
+    border: "1px solid #5a3a1a",
+    borderRadius: "20px",
+    fontSize: "11px",
+    padding: "3px 10px",
+    marginBottom: "4px",
+    marginLeft: "6px",
+  },
   price: {
     display: "block",
     color: "#a78bfa",
@@ -117,8 +128,10 @@ const s = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    gap: "8px",
   },
   stats: { display: "flex", gap: "16px", color: "#555", fontSize: "13px" },
+  acciones: { display: "flex", gap: "8px", alignItems: "center" },
 
   btnPostular: {
     backgroundColor: "#500fe9",
@@ -168,19 +181,30 @@ const s = {
     fontFamily: "var(--font-dm-sans), sans-serif",
     whiteSpace: "nowrap",
   },
+  btnEliminarAdmin: {
+    backgroundColor: "#2d1a0a",
+    color: "#fbbf24",
+    border: "1px solid #5a3a1a",
+    borderRadius: "8px",
+    padding: "8px 14px",
+    fontSize: "12px",
+    cursor: "pointer",
+    fontWeight: 500,
+    fontFamily: "var(--font-dm-sans), sans-serif",
+    whiteSpace: "nowrap",
+  },
 };
 
 export default function SolicitudCard({
   solicitud,
   currentUserId, // UID del usuario autenticado (null si no hay sesión)
-  currentUserRole,
+  currentUserRole, // "cliente" | "trabajador" | "admin"
   estaPostulado,
   onToggle,
   loading,
   onVerDetalle,
   onCancelar, // callback para cancelar/eliminar la solicitud
 }) {
-  console.log(currentUserId);
   const iniciales =
     solicitud.iniciales ??
     `${solicitud.nombre?.charAt(0) ?? ""}${solicitud.nombre?.split(" ")[1]?.charAt(0) ?? ""}`.toUpperCase();
@@ -196,6 +220,7 @@ export default function SolicitudCard({
   const totalPostulantes = solicitud.postulantes?.length ?? 0;
   const esPropietario = currentUserId && currentUserId === solicitud.userId;
   const esTrabajador = currentUserRole === "trabajador";
+  const esAdmin = currentUserRole === "admin";
   const descLarga = (solicitud.descripcion ?? "").length > 120;
   const primerImagen = solicitud.imageUrls?.[0] ?? null;
 
@@ -266,54 +291,69 @@ export default function SolicitudCard({
           {solicitud.modalidad && <span>{solicitud.modalidad}</span>}
         </div>
 
-        {esPropietario ? (
-          <button
-            style={s.btnCancelar}
-            onClick={(e) => {
-              e.stopPropagation();
-              onCancelar(solicitud.id);
-            }}
-          >
-            Cancelar solicitud
-          </button>
-        ) : !currentUserId ? (
-          <a
-            href="/login"
-            onClick={(e) => e.stopPropagation()}
-            className="font-sans bg-[#500fe9] text-white rounded-lg py-2 px-4.5 text-[13px] font-medium no-underline whitespace-nowrap inline-block"
-          >
-            Iniciar sesión
-          </a>
-        ) : !esTrabajador ? (
-          <a
-            href="/worker"
-            onClick={(e) => e.stopPropagation()}
-            className="font-sans bg-[#500fe9] text-white rounded-lg py-2 px-4.5 font-medium no-underline whitespace-nowrap inline-block"
-          >
-            Únete como trabajador
-          </a>
-        ) : (
-          <button
-            style={
-              loading
-                ? s.btnLoading
+        <div style={s.acciones}>
+          {/* El admin siempre puede eliminar, sin importar quién publicó */}
+          {esAdmin && (
+            <button
+              style={s.btnEliminarAdmin}
+              onClick={(e) => {
+                e.stopPropagation();
+                onCancelar(solicitud.id);
+              }}
+            >
+              🛡 Eliminar
+            </button>
+          )}
+
+          {esPropietario ? (
+            <button
+              style={s.btnCancelar}
+              onClick={(e) => {
+                e.stopPropagation();
+                onCancelar(solicitud.id);
+              }}
+            >
+              Cancelar solicitud
+            </button>
+          ) : !currentUserId ? (
+            <a
+              href="/login"
+              onClick={(e) => e.stopPropagation()}
+              className="font-sans bg-[#500fe9] text-white rounded-lg py-2 px-4.5 text-[13px] font-medium no-underline whitespace-nowrap inline-block"
+            >
+              Iniciar sesión
+            </a>
+          ) : esAdmin ? null : !esTrabajador ? (
+            <a
+              href="/worker"
+              onClick={(e) => e.stopPropagation()}
+              className="font-sans bg-[#500fe9] text-white rounded-lg py-2 px-4.5 font-medium no-underline whitespace-nowrap inline-block"
+            >
+              Únete como trabajador
+            </a>
+          ) : (
+            <button
+              style={
+                loading
+                  ? s.btnLoading
+                  : postulado
+                    ? s.btnPostulado
+                    : s.btnPostular
+              }
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggle(solicitud.id, solicitud.postulantes ?? []);
+              }}
+              disabled={loading}
+            >
+              {loading
+                ? "..."
                 : postulado
-                  ? s.btnPostulado
-                  : s.btnPostular
-            }
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle(solicitud.id, solicitud.postulantes ?? []);
-            }}
-            disabled={loading}
-          >
-            {loading
-              ? "..."
-              : postulado
-                ? "✓ Postulado — Cancelar"
-                : "Postularme"}
-          </button>
-        )}
+                  ? "✓ Postulado — Cancelar"
+                  : "Postularme"}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
