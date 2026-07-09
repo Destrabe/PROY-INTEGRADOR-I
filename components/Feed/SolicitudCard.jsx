@@ -1,4 +1,6 @@
 "use client";
+
+import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -16,310 +18,357 @@ function colorAvatar(iniciales = "") {
   for (const c of iniciales) hash = (hash * 31 + c.charCodeAt(0)) & 0xffffffff;
   return colores[Math.abs(hash) % colores.length];
 }
-function truncar(texto = "", max = 120) {
+
+function titleCaseName(value = "") {
+  const noEmail = String(value).includes("@")
+    ? String(value).split("@")[0]
+    : String(value);
+  return noEmail
+    .replace(/[._-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(" ")
+    .filter(Boolean)
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase())
+    .join(" ");
+}
+
+function truncar(texto = "", max = 130) {
   return texto.length > max ? texto.slice(0, max).trimEnd() + "..." : texto;
 }
 
-const s = {
-  card: {
-    backgroundColor: "#13131f",
-    border: "1px solid #1e1e30",
-    borderRadius: "14px",
-    padding: "20px 22px",
-    marginBottom: "14px",
-    transition: "border-color 0.2s, box-shadow 0.2s",
-    cursor: "pointer",
-  },
-  cardTop: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "12px",
-  },
-  meta: { display: "flex", alignItems: "center", gap: "10px" },
-  metaName: { color: "#aaa", fontSize: "13px" },
-  metaTime: { color: "#555" },
-  cardRight: { textAlign: "right", flexShrink: 0, marginLeft: "12px" },
-  badgeUrgente: {
-    display: "inline-block",
-    backgroundColor: "#2d0a0a",
-    color: "#f87171",
-    border: "1px solid #5a1a1a",
-    borderRadius: "20px",
-    fontSize: "11px",
-    padding: "3px 10px",
-    marginBottom: "4px",
-  },
-  badgeMio: {
-    display: "inline-block",
-    backgroundColor: "#1a1a2e",
-    color: "#a78bfa",
-    border: "1px solid #4a3aaa",
-    borderRadius: "20px",
-    fontSize: "11px",
-    padding: "3px 10px",
-    marginBottom: "4px",
-    marginLeft: "6px",
-  },
-  badgeAdmin: {
-    display: "inline-block",
-    backgroundColor: "#2d1a0a",
-    color: "#fbbf24",
-    border: "1px solid #5a3a1a",
-    borderRadius: "20px",
-    fontSize: "11px",
-    padding: "3px 10px",
-    marginBottom: "4px",
-    marginLeft: "6px",
-  },
-  price: {
-    display: "block",
-    color: "#a78bfa",
-    fontSize: "14px",
-    fontWeight: 600,
-    marginTop: "2px",
-  },
-  title: {
-    color: "#f0f0ff",
-    fontSize: "16px",
-    fontWeight: 600,
-    marginBottom: "6px",
-    fontFamily: "var(--font-syne), sans-serif",
-  },
-  desc: {
-    color: "#777",
-    fontSize: "13px",
-    lineHeight: 1.6,
-    marginBottom: "14px",
-    display: "-webkit-box",
-    WebkitLineClamp: 2,
-    WebkitBoxOrient: "vertical",
-    overflow: "hidden",
-  },
-  verMas: {
-    color: "#500fe9",
-    fontSize: "12px",
-    marginTop: "-10px",
-    marginBottom: "12px",
-    display: "block",
-  },
-  imgThumb: {
-    width: "100%",
-    height: "120px",
-    objectFit: "cover",
-    borderRadius: "8px",
-    marginBottom: "12px",
-    border: "1px solid #1e1e30",
-  },
-  chips: {
-    display: "flex",
-    gap: "8px",
-    marginBottom: "16px",
-    flexWrap: "wrap",
-  },
-  chip: {
-    backgroundColor: "#1a1a2e",
-    color: "#9a9ab0",
-    borderRadius: "6px",
-    fontSize: "12px",
-    padding: "4px 10px",
-  },
-  bottom: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "8px",
-  },
-  stats: { display: "flex", gap: "16px", color: "#555", fontSize: "13px" },
-  acciones: { display: "flex", gap: "8px", alignItems: "center" },
+function normalizarRol(rol) {
+  return String(rol || "")
+    .toLowerCase()
+    .trim();
+}
 
-  btnPostular: {
-    backgroundColor: "#500fe9",
-    color: "#fff",
-    border: "none",
-    borderRadius: "8px",
-    padding: "8px 18px",
-    fontSize: "13px",
-    cursor: "pointer",
-    fontWeight: 500,
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    transition: "background-color 0.2s",
-    whiteSpace: "nowrap",
-  },
-  btnPostulado: {
-    backgroundColor: "#1a2d1a",
-    color: "#4ade80",
-    border: "1px solid #166534",
-    borderRadius: "8px",
-    padding: "8px 18px",
-    fontSize: "13px",
-    cursor: "pointer",
-    fontWeight: 500,
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    whiteSpace: "nowrap",
-  },
-  btnLoading: {
-    opacity: 0.6,
-    pointerEvents: "none",
-    backgroundColor: "#2a2a3e",
-    color: "#888",
-    border: "none",
-    borderRadius: "8px",
-    padding: "8px 18px",
-    fontSize: "13px",
-    fontFamily: "var(--font-dm-sans), sans-serif",
-  },
-  btnCancelar: {
-    backgroundColor: "transparent",
-    color: "#f87171",
-    border: "1px solid #5a1a1a",
-    borderRadius: "8px",
-    padding: "8px 14px",
-    fontSize: "12px",
-    cursor: "pointer",
-    fontWeight: 500,
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    whiteSpace: "nowrap",
-  },
-  btnEliminarAdmin: {
-    backgroundColor: "#2d1a0a",
-    color: "#fbbf24",
-    border: "1px solid #5a3a1a",
-    borderRadius: "8px",
-    padding: "8px 14px",
-    fontSize: "12px",
-    cursor: "pointer",
-    fontWeight: 500,
-    fontFamily: "var(--font-dm-sans), sans-serif",
-    whiteSpace: "nowrap",
-  },
-};
+function getPostulanteId(p) {
+  return typeof p === "object" ? p.workerId || p.uid || p.userId : p;
+}
+
+function getPostulanteEstado(p) {
+  return typeof p === "object" ? p.estado || "postulado" : "postulado";
+}
+
+function getMiPostulacion(postulantes = [], uid) {
+  if (!uid) return null;
+  return postulantes.find((p) => getPostulanteId(p) === uid) || null;
+}
+
+function getAceptado(postulantes = []) {
+  return (
+    postulantes.find(
+      (p) =>
+        typeof p === "object" &&
+        ["pago", "en_proceso", "finalizado"].includes(p.estado),
+    ) || null
+  );
+}
+
+function getEstadoSolicitud(solicitud) {
+  const aceptado = getAceptado(solicitud.postulantes || []);
+
+  if (aceptado?.estado === "finalizado") return "finalizado";
+  if (aceptado?.estado === "en_proceso") return "en_proceso";
+  if (aceptado?.estado === "pago") return "pago";
+  if ((solicitud.postulantes || []).length > 0) return "postulado";
+
+  return "abierto";
+}
+
+function toSafeDate(value) {
+  if (!value) return null;
+  if (typeof value?.toDate === "function") return value.toDate();
+  if (typeof value?.seconds === "number") return new Date(value.seconds * 1000);
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function getStatusConfig(estado) {
+  const map = {
+    abierto: {
+      label: "Abierto",
+      className: "border-[#6c63ff]/25 bg-[#6c63ff]/10 text-[#aaa5ff]",
+      dot: "bg-[#6c63ff]",
+    },
+    postulado: {
+      label: "Recibiendo propuestas",
+      className: "border-blue-500/20 bg-blue-500/10 text-blue-400",
+      dot: "bg-blue-400",
+    },
+    pago: {
+      label: "Pendiente de pago",
+      className: "border-amber-500/20 bg-amber-500/10 text-amber-400",
+      dot: "bg-amber-400",
+    },
+    en_proceso: {
+      label: "En desarrollo",
+      className: "border-cyan-500/20 bg-cyan-500/10 text-cyan-400",
+      dot: "bg-cyan-400",
+    },
+    finalizado: {
+      label: "Finalizado",
+      className: "border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
+      dot: "bg-emerald-400",
+    },
+  };
+
+  return map[estado] || map.abierto;
+}
+
+function IconShield() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  );
+}
+
+function IconArrow() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M5 12h14" />
+      <path d="m12 5 7 7-7 7" />
+    </svg>
+  );
+}
 
 export default function SolicitudCard({
   solicitud,
-  currentUserId, // UID del usuario autenticado (null si no hay sesión)
-  currentUserRole, // "cliente" | "trabajador" | "admin"
+  ownerInfo,
+  currentUserId,
+  currentUserRole,
   estaPostulado,
   onToggle,
   loading,
   onVerDetalle,
-  onCancelar, // callback para cancelar/eliminar la solicitud
+  onCancelar,
 }) {
-  const iniciales =
-    solicitud.iniciales ??
-    `${solicitud.nombre?.charAt(0) ?? ""}${solicitud.nombre?.split(" ")[1]?.charAt(0) ?? ""}`.toUpperCase();
+  const router = useRouter();
 
-  const tiempoRelativo = solicitud.creadoEn
-    ? formatDistanceToNow(new Date(solicitud.creadoEn), {
-        addSuffix: true,
-        locale: es,
-      })
+  const rol = normalizarRol(currentUserRole);
+  const esTrabajador = rol === "trabajador" || rol === "worker";
+  const esAdmin = rol === "admin" || rol === "administrador";
+  const esPropietario = currentUserId && currentUserId === solicitud.userId;
+
+  const postulantes = solicitud.postulantes || [];
+  const miPostulacion = getMiPostulacion(postulantes, currentUserId);
+  const aceptado = getAceptado(postulantes);
+  const estado = getEstadoSolicitud(solicitud);
+  const status = getStatusConfig(estado);
+
+  const postulado = !!miPostulacion || estaPostulado?.(postulantes);
+  const miEstado = miPostulacion ? getPostulanteEstado(miPostulacion) : null;
+  const soyAceptado = aceptado && getPostulanteId(aceptado) === currentUserId;
+
+  const totalPostulantes = postulantes.length;
+  const primerImagen = solicitud.imageUrls?.[0] || null;
+  const nombreCliente = titleCaseName(solicitud.nombre || "Cliente");
+  const iniciales =
+    solicitud.iniciales ||
+    `${nombreCliente?.charAt(0) || ""}${nombreCliente?.split(" ")[1]?.charAt(0) || ""}`.toUpperCase() ||
+    "NX";
+
+  const creadoEnDate = toSafeDate(
+    solicitud.creadoEn || solicitud.fecha || solicitud.createdAt,
+  );
+  const tiempoRelativo = creadoEnDate
+    ? formatDistanceToNow(creadoEnDate, { addSuffix: true, locale: es })
     : "hace un momento";
 
-  const postulado = estaPostulado(solicitud.postulantes ?? []);
-  const totalPostulantes = solicitud.postulantes?.length ?? 0;
-  const esPropietario = currentUserId && currentUserId === solicitud.userId;
-  const esTrabajador = currentUserRole === "trabajador";
-  const esAdmin = currentUserRole === "admin";
-  const descLarga = (solicitud.descripcion ?? "").length > 120;
-  const primerImagen = solicitud.imageUrls?.[0] ?? null;
+  const puedeCancelar =
+    (esPropietario || esAdmin) &&
+    !["pago", "en_proceso", "finalizado"].includes(estado);
+
+  const irAFlujo = (e) => {
+    e.stopPropagation();
+    router.push(`/job-flow?jobId=${solicitud.id}`);
+  };
+
+  const textoPrincipal = (() => {
+    if (esPropietario) {
+      if (estado === "finalizado") return "Ver cierre y reseñas";
+      if (estado === "en_proceso") return "Revisar progreso";
+      if (estado === "pago") return "Confirmar pago";
+      return `Gestionar (${totalPostulantes})`;
+    }
+
+    if (soyAceptado) {
+      if (estado === "finalizado") return "Ver cierre y reseñar";
+      if (estado === "en_proceso") return "Ver proyecto";
+      if (estado === "pago") return "Esperando pago";
+      return "Ver estado";
+    }
+
+    if (postulado) {
+      if (miEstado === "postulado") return "Ver postulación";
+      return "Ver estado";
+    }
+
+    return "Postularme";
+  })();
 
   return (
-    <div
-      style={{
-        ...s.card,
-        borderColor: postulado
-          ? "#166534"
-          : esPropietario
-            ? "#2e1a5e"
-            : "#1e1e30",
-      }}
+    <article
       onClick={() => onVerDetalle(solicitud)}
+      className={`group relative cursor-pointer overflow-hidden rounded-[2rem] border bg-[#111118] p-5 shadow-xl transition duration-200 hover:-translate-y-0.5 hover:border-[#6c63ff]/40 hover:shadow-[#6c63ff]/10 md:p-6 ${
+        estado === "finalizado"
+          ? "border-emerald-500/20"
+          : postulado || soyAceptado
+            ? "border-[#6c63ff]/35"
+            : "border-white/10"
+      }`}
     >
-      <div style={s.cardTop}>
-        <div style={s.meta}>
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#6c63ff]/60 to-transparent opacity-0 transition group-hover:opacity-100" />
+
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+        <div className="flex min-w-0 items-start gap-4">
           <div
-            className="w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-semibold text-white shrink-0"
-            style={{
-              backgroundColor: colorAvatar(iniciales),
-            }}
+            className="h-12 w-12 shrink-0 overflow-hidden rounded-2xl shadow-lg"
+            style={{ backgroundColor: colorAvatar(iniciales) }}
           >
-            {iniciales}
+            {ownerInfo?.photoURL ? (
+              <img
+                src={ownerInfo.photoURL}
+                alt={nombreCliente}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="grid h-full w-full place-items-center text-sm font-black uppercase text-white">
+                {iniciales}
+              </div>
+            )}
           </div>
-          <div>
-            <span style={s.metaName}>
-              {solicitud.nombre} · {solicitud.distrito}
-            </span>
-            <br />
-            <span style={s.metaTime}>{tiempoRelativo}</span>
+
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-sm font-black text-white">{nombreCliente}</p>
+              <span className="text-xs font-bold text-slate-600">·</span>
+              <p className="text-xs font-bold text-slate-500">
+                {solicitud.distrito || "Sin distrito"}
+              </p>
+              <span className="text-xs font-bold text-slate-600">·</span>
+              <p className="text-xs font-bold text-slate-600">
+                {tiempoRelativo}
+              </p>
+            </div>
+
+            <h2 className="mt-3 text-xl font-black tracking-tight text-white transition group-hover:text-[#aaa5ff]">
+              {solicitud.titulo || "Solicitud sin título"}
+            </h2>
+
+            <p className="mt-2 max-w-3xl text-sm font-medium leading-relaxed text-slate-400">
+              {truncar(solicitud.descripcion || "Sin descripción")}
+            </p>
           </div>
         </div>
 
-        <div style={s.cardRight}>
-          {solicitud.urgente && <span style={s.badgeUrgente}>Urgente</span>}
-          {esPropietario && <span style={s.badgeMio}>Mi solicitud</span>}
-          <span style={s.price}>{solicitud.precio}</span>
+        <div className="flex shrink-0 flex-col items-start gap-2 lg:items-end">
+          <div
+            className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] ${status.className}`}
+          >
+            <span className={`h-2 w-2 rounded-full ${status.dot}`} />
+            {status.label}
+          </div>
+
+          {solicitud.urgente && (
+            <span className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-red-400">
+              Urgente
+            </span>
+          )}
+
+          {esPropietario && (
+            <span className="rounded-full border border-[#6c63ff]/20 bg-[#6c63ff]/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#aaa5ff]">
+              Mi solicitud
+            </span>
+          )}
+
+          <p className="text-2xl font-black text-white">
+            {solicitud.precio || "A convenir"}
+          </p>
         </div>
       </div>
 
       {primerImagen && (
-        <img
-          src={primerImagen}
-          alt="Foto de la solicitud"
-          style={s.imgThumb}
-          onClick={(e) => e.stopPropagation()}
-        />
+        <div className="mt-5 overflow-hidden rounded-3xl border border-white/10 bg-[#0A0A0F]">
+          <img
+            src={primerImagen}
+            alt="Foto de la solicitud"
+            onClick={(e) => e.stopPropagation()}
+            className="h-44 w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+          />
+        </div>
       )}
 
-      <h2 style={s.title}>{solicitud.titulo}</h2>
-
-      <p style={s.desc}>{solicitud.descripcion}</p>
-      {descLarga && <span style={s.verMas}>Ver descripción completa →</span>}
-
-      <div style={s.chips}>
-        {(solicitud.tags ?? []).map((t) => (
-          <span key={t} style={s.chip}>
-            {t}
+      <div className="mt-5 flex flex-wrap gap-2">
+        {(solicitud.tags || []).slice(0, 6).map((tag) => (
+          <span
+            key={tag}
+            className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-bold text-slate-300"
+          >
+            {tag}
           </span>
         ))}
+
+        {solicitud.modalidad && (
+          <span className="rounded-xl border border-blue-500/20 bg-blue-500/10 px-3 py-2 text-xs font-bold text-blue-400">
+            {solicitud.modalidad}
+          </span>
+        )}
       </div>
 
-      <div style={s.bottom}>
-        <div style={s.stats}>
-          <span> {totalPostulantes} postulantes</span>
-          <span> {solicitud.distrito}</span>
-          {solicitud.modalidad && <span>{solicitud.modalidad}</span>}
+      <div className="mt-6 flex flex-col gap-4 border-t border-white/5 pt-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-wrap items-center gap-4 text-xs font-black uppercase tracking-[0.16em] text-slate-600">
+          <span>{totalPostulantes} postulantes</span>
+          <span>{solicitud.distrito || "Sin ubicación"}</span>
+          {["pago", "en_proceso", "finalizado"].includes(estado) && (
+            <span className="inline-flex items-center gap-1.5 text-emerald-400">
+              <IconShield /> Escrow activo
+            </span>
+          )}
         </div>
 
-        <div style={s.acciones}>
-          {/* El admin siempre puede eliminar, sin importar quién publicó */}
+        <div className="flex flex-wrap items-center gap-2">
           {esAdmin && (
             <button
-              style={s.btnEliminarAdmin}
               onClick={(e) => {
                 e.stopPropagation();
                 onCancelar(solicitud.id);
               }}
+              className="rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-amber-400 transition hover:bg-amber-500 hover:text-white"
             >
-              🛡 Eliminar
+              Eliminar
             </button>
           )}
 
-          {esPropietario ? (
+          {esPropietario || soyAceptado || postulado ? (
             <button
-              style={s.btnCancelar}
-              onClick={(e) => {
-                e.stopPropagation();
-                onCancelar(solicitud.id);
-              }}
+              onClick={irAFlujo}
+              className="inline-flex items-center gap-2 rounded-xl bg-[#6c63ff] px-5 py-3 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-[#6c63ff]/20 transition hover:scale-[1.01]"
             >
-              Cancelar solicitud
+              {textoPrincipal}
+              <IconArrow />
             </button>
           ) : !currentUserId ? (
             <a
               href="/login"
               onClick={(e) => e.stopPropagation()}
-              className="font-sans bg-[#500fe9] text-white rounded-lg py-2 px-4.5 text-[13px] font-medium no-underline whitespace-nowrap inline-block"
+              className="rounded-xl bg-[#6c63ff] px-5 py-3 text-[10px] font-black uppercase tracking-widest text-white no-underline"
             >
               Iniciar sesión
             </a>
@@ -327,34 +376,38 @@ export default function SolicitudCard({
             <a
               href="/worker"
               onClick={(e) => e.stopPropagation()}
-              className="font-sans bg-[#500fe9] text-white rounded-lg py-2 px-4.5 font-medium no-underline whitespace-nowrap inline-block"
+              className="rounded-xl bg-[#6c63ff] px-5 py-3 text-[10px] font-black uppercase tracking-widest text-white no-underline"
             >
               Únete como trabajador
             </a>
           ) : (
             <button
-              style={
-                loading
-                  ? s.btnLoading
-                  : postulado
-                    ? s.btnPostulado
-                    : s.btnPostular
-              }
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggle(solicitud.id, solicitud.postulantes ?? []);
-              }}
-              disabled={loading}
+              onClick={irAFlujo}
+              disabled={loading || estado === "finalizado"}
+              className="inline-flex items-center gap-2 rounded-xl bg-[#6c63ff] px-5 py-3 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-[#6c63ff]/20 transition hover:scale-[1.01] disabled:bg-white/10 disabled:text-slate-600 disabled:shadow-none"
             >
               {loading
-                ? "..."
-                : postulado
-                  ? "✓ Postulado — Cancelar"
+                ? "Cargando..."
+                : estado === "finalizado"
+                  ? "Finalizado"
                   : "Postularme"}
+              {!loading && estado !== "finalizado" && <IconArrow />}
+            </button>
+          )}
+
+          {puedeCancelar && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onCancelar(solicitud.id);
+              }}
+              className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-red-400 transition hover:bg-red-500 hover:text-white"
+            >
+              Cancelar
             </button>
           )}
         </div>
       </div>
-    </div>
+    </article>
   );
 }
