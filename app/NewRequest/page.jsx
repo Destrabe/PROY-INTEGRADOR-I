@@ -9,7 +9,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useThemeStore } from "@/store/themeStore";
 
-
 const CATEGORIAS = [
   {
     id: "tecnologia",
@@ -117,6 +116,7 @@ const encontrarPalabraProhibida = (texto) => {
   }
   return null;
 };
+
 const MAP_STYLES = [
   { elementType: "geometry", stylers: [{ color: "#13131f" }] },
   { elementType: "labels.text.stroke", stylers: [{ color: "#13131f" }] },
@@ -140,7 +140,6 @@ const MAP_STYLES = [
   { featureType: "water", stylers: [{ color: "#0a0a0f" }] },
 ];
 
-// Variante clara del mapa, misma paleta de acento morado que el resto de la app
 const MAP_STYLES_LIGHT = [
   { elementType: "geometry", stylers: [{ color: "#f4f4f7" }] },
   { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
@@ -171,9 +170,6 @@ const MAX_TITULO = 70;
 const MAX_DESCRIPCION = 500;
 const MAX_PRESUPUESTO_DIGITS = 6;
 
-// Convierte y comprime una imagen a Base64 directamente en el navegador.
-// Así se guarda en el mismo documento de Firestore, sin necesitar
-// Firebase Storage (que actualmente exige plan de facturación Blaze).
 const resizeImageToBase64 = (file, maxDim = 1600, quality = 0.85) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -207,14 +203,11 @@ export default function NewRequestPage() {
   const [user, loadingAuth] = useAuthState(auth);
   const fileInputRef = useRef(null);
 
-  // --- TEMA: mismo patrón que HomePage, controlado por el themeStore global ---
   const theme = useThemeStore((state) => state.theme);
   const background = useThemeStore((state) => state.background);
   const textColor = useThemeStore((state) => state.textColor);
   const isDark = theme === "dark";
 
-  // Paleta neutra derivada del theme. Los colores de acento (morado #500fe9,
-  // #a78bfa, rojo de error, etc.) se mantienen iguales en ambos modos.
   const T = {
     pageBg: background?.[theme] ?? (isDark ? "#0a0a0f" : "#ffffff"),
     pageText: textColor?.[theme] ?? (isDark ? "#e2e8f0" : "#1a1a2e"),
@@ -248,8 +241,7 @@ export default function NewRequestPage() {
   };
 
   const centroSJL = useMemo(() => ({ lat: -11.9902, lng: -77.0142 }), []);
-
-  // CORREGIDO: Ahora usa directamente la variable de entorno NEXT_PUBLIC_
+  
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
@@ -302,12 +294,10 @@ export default function NewRequestPage() {
     const candidatos = Array.from(nuevos)
       .filter((f) => f.type.startsWith("image/"))
       .slice(0, disponibles);
-
     if (candidatos.length === 0) return;
 
     const oversized = candidatos.filter((f) => f.size / (1024 * 1024) > MAX_IMAGE_MB);
     const validos = candidatos.filter((f) => f.size / (1024 * 1024) <= MAX_IMAGE_MB);
-
     if (oversized.length > 0) {
       alert(
         `${oversized.length} imagen${oversized.length > 1 ? "es" : ""} supera${oversized.length > 1 ? "n" : ""} el límite de ${MAX_IMAGE_MB}MB y no se agregó: ${oversized.map((f) => f.name).join(", ")}`,
@@ -348,7 +338,6 @@ export default function NewRequestPage() {
     const diferenciaDias = Math.floor(
       (fechaElegida - hoy) / (1000 * 60 * 60 * 24),
     );
-
     if (diferenciaDias === 0) return "Hoy mismo (Urgente)";
     if (diferenciaDias > 0 && diferenciaDias <= 7) return "Esta semana";
     return "Este mes / Programado";
@@ -380,7 +369,7 @@ export default function NewRequestPage() {
     }));
   };
 
-const validarPaso = () => {
+  const validarPaso = () => {
     const e = {};
     if (paso === 1 && !form.categoria) e.categoria = "Selecciona una categoría";
     if (paso === 2) {
@@ -415,11 +404,9 @@ const validarPaso = () => {
   const publicar = async () => {
     if (!user) return;
     setEnviando(true);
-
     try {
       const urgenciaTexto = calcularUrgenciaTexto(form.fechaRequerida);
       const esHoymismo = urgenciaTexto.includes("Hoy mismo");
-
       const result = await crearSolicitud(
         {
           titulo: form.titulo.trim(),
@@ -435,13 +422,10 @@ const validarPaso = () => {
           coordenadas: { lat: form.lat, lng: form.lng },
           nombre: user.displayName ?? user.email?.split("@")[0] ?? "Usuario",
           iniciales: obtenerIniciales(user.displayName ?? user.email ?? "U"),
-          // Imágenes ya comprimidas y en Base64: se guardan directo en el
-          // documento de Firestore, sin pasar por Firebase Storage.
           imageUrls: previews,
         },
         user.uid,
       );
-
       if (result.success) {
         setPublicado(true);
       } else {
@@ -466,7 +450,7 @@ const validarPaso = () => {
   if (!loadingAuth && !user) {
     return (
       <div
-        className="min-h-[calc(100vh-90px)] bg-[#0a0a0f] font-dm-sans flex flex-col"
+        className="min-h-screen pt-22.5 font-dm-sans flex flex-col"
         style={{ background: T.pageBg }}
       >
         <div className="max-w-190 mx-auto px-6 py-10 pb-32 w-full">
@@ -506,12 +490,19 @@ const validarPaso = () => {
   if (publicado) {
     return (
       <div
-        className="min-h-[calc(100vh-90px)] bg-[#0a0a0f] font-dm-sans flex flex-col"
+        className="min-h-screen pt-22.5 font-dm-sans flex flex-col"
         style={{ background: T.pageBg }}
       >
         <div className="max-w-190 mx-auto px-6 py-10 pb-32 w-full">
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="text-6xl mb-5">🎉</div>
+            <div className="text-6xl mb-5">
+              <Image
+                src="/svg/checkIcon.svg"
+                alt="Solicitud publicada"
+                width={100}
+                height={100}
+              />
+            </div>
             <h2
               className="font-syne font-extrabold text-2xl md:text-3xl text-white mb-2"
               style={{ color: T.heading }}
@@ -565,7 +556,7 @@ const validarPaso = () => {
 
   return (
     <div
-      className="min-h-[calc(100vh-90px)] bg-[#0a0a0f] font-dm-sans flex flex-col text-slate-200"
+      className="min-h-screen pt-22.5 font-dm-sans flex flex-col text-slate-200"
       style={{ background: T.pageBg, color: T.pageText }}
     >
       <div className="max-w-190 mx-auto px-6 py-10 pb-32 w-full">
@@ -712,6 +703,7 @@ const validarPaso = () => {
                   </p>
                 )}
               </div>
+
               <div className="flex flex-col gap-1.5 flex-1">
                 <div className="flex items-center justify-between">
                   <label
@@ -883,7 +875,7 @@ const validarPaso = () => {
                     {form.fechaRequerida && (
                       <span className="text-[11px] text-[#a78bfa] font-semibold mt-1">
                         Prioridad detectada:{" "}
-                        {calcularUrgenciaTexto(form.fechaRequerida)}
+                        {calcularUergenciaTexto ? calcularUrgenciaTexto(form.fechaRequerida) : calcularUrgenciaTexto(form.fechaRequerida)}
                       </span>
                     )}
                   </div>
@@ -940,16 +932,14 @@ const validarPaso = () => {
                         <span>📍 Visor de Google Maps no disponible</span>
                         {!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && (
                           <span className="text-xs text-amber-500/80">
-                            (Falta configurar la API Key en el archivo
-                            .env.local)
+                            (Falta configurar la API Key en el archivo .env.local)
                           </span>
                         )}
                       </div>
                     )}
                   </div>
                   <span className="text-[11px] text-[#555]" style={{ color: T.muted }}>
-                    Puedes arrastrar el marcador rojo directamente hacia tu
-                    calle o cuadra para guiar al trabajador.
+                    Puedes arrastrar el marcador rojo directamente hacia tu calle o cuadra para guiar al trabajador.
                   </span>
                 </div>
 
@@ -1036,10 +1026,7 @@ const validarPaso = () => {
                 </p>
                 {!procesandoImagenes && (
                   <p className="text-[#666] text-sm m-0" style={{ color: T.mutedLight }}>
-                    o{" "}
-                    <span className="text-[#500fe9] font-semibold">
-                      selecciona archivos
-                    </span>
+                    o <span className="text-[#500fe9] font-semibold">selecciona archivos</span>
                   </p>
                 )}
                 <p className="text-[#444] text-xs mt-1.5 m-0" style={{ color: T.faint }}>
@@ -1080,9 +1067,7 @@ const validarPaso = () => {
                 { k: "Descripción", v: form.descripcion },
                 {
                   k: "Presupuesto",
-                  v: form.presupuesto
-                    ? `s/ ${form.presupuesto}`
-                    : "A coordinar",
+                  v: form.presupuesto ? `s/ ${form.presupuesto}` : "A coordinar",
                 },
                 { k: "Modalidad", v: form.modalidad },
                 { k: "Distrito", v: form.distrito },
@@ -1096,21 +1081,17 @@ const validarPaso = () => {
                 },
                 {
                   k: "Estado",
-                  v:
-                    form.urgente ||
-                    calcularUrgenciaTexto(form.fechaRequerida).includes(
-                      "Hoy mismo",
-                    ) ? (
-                      <span
-                        className="inline-block rounded-[20px] text-[11px] px-2.5 py-0.5 border"
-                        style={{
-                          background: T.urgentBg,
-                          borderColor: T.urgentBorder,
-                          color: T.urgentText,
+                  v: form.urgente || calcularUrgenciaTexto(form.fechaRequerida).includes("Hoy mismo") ? (
+                    <span
+                      className="inline-block rounded-[20px] text-[11px] px-2.5 py-0.5 border"
+                      style={{
+                        background: T.urgentBg,
+                        borderColor: T.urgentBorder,
+                        color: T.urgentText,
                         }}
-                      >
-                        Urgente
-                      </span>
+                    >
+                      Urgente
+                    </span>
                     ) : (
                       <span style={{ color: T.muted }}>Normal</span>
                     ),
@@ -1154,52 +1135,53 @@ const validarPaso = () => {
             </div>
 
             <p className="text-[#555] text-xs text-center" style={{ color: T.muted }}>
-              Al publicar, tu solicitud estará visible para los trabajadores de
-              tu zona inmediatamente.
+              Al publicar, tu solicitud estará visible para los trabajadores de tu zona inmediatamente.
             </p>
           </>
         )}
       </div>
 
       {/* Navegación Bottom Bar */}
-      <div
-        className="fixed bottom-0 left-0 right-0 bg-[#0a0a0f]/95 border-t border-[#1a1a2e] backdrop-blur-md px-6 py-4 flex justify-center gap-3 z-40"
-        style={{ background: T.bottomBarBg, borderColor: T.cardBorder }}
-      >
-        <button
-          className="bg-transparent border border-[#2a2a3e] text-[#888] rounded-xl px-7 py-3 text-sm font-medium cursor-pointer font-dm-sans hover:text-white hover:border-[#3a3a54] transition-colors"
-          style={{ borderColor: T.inputBorder, color: T.mutedLight }}
-          onClick={() => router.push("/FeedTrabajos")}
+      {!publicado && (
+        <div
+          className="fixed bottom-0 left-0 right-0 bg-[#0a0a0f]/95 border-t border-[#1a1a2e] backdrop-blur-md px-6 py-4 flex justify-center gap-3 z-40"
+          style={{ background: T.bottomBarBg, borderColor: T.cardBorder }}
         >
-          Cancelar
-        </button>
-        {paso > 1 && (
           <button
-            className="bg-transparent border border-[#2a2a3e] text-[#ccc] rounded-xl px-7 py-3 text-sm font-medium cursor-pointer font-dm-sans hover:border-[#3a3a54] transition-colors"
-            style={{ borderColor: T.inputBorder, color: T.inputText }}
-            onClick={() => setPaso((p) => p - 1)}
+            className="bg-transparent border border-[#2a2a3e] text-[#888] rounded-xl px-7 py-3 text-sm font-medium cursor-pointer font-dm-sans hover:text-white hover:border-[#3a3a54] transition-colors"
+            style={{ borderColor: T.inputBorder, color: T.mutedLight }}
+            onClick={() => router.push("/FeedTrabajos")}
           >
-            Atrás
+            Cancelar
           </button>
-        )}
-        {paso < 4 ? (
-          <button
-            className="bg-[#500fe9] border-none text-white rounded-xl px-8 py-3 text-sm font-bold cursor-pointer font-dm-sans hover:bg-[#400bc4] transition-colors"
-            onClick={avanzar}
-          >
-            Continuar
-          </button>
-        ) : (
-          <button
-            className={`border-none rounded-xl px-8 py-3 text-sm font-bold font-dm-sans transition-colors ${enviando ? "cursor-not-allowed" : "text-white cursor-pointer bg-[#500fe9] hover:bg-[#400bc4]"}`}
-            style={enviando ? { background: T.disabledBg, color: T.disabledText } : undefined}
-            onClick={publicar}
-            disabled={enviando}
-          >
-            {enviando ? "Publicando..." : "Publicar solicitud"}
-          </button>
-        )}
-      </div>
+          {paso > 1 && (
+            <button
+              className="bg-transparent border border-[#2a2a3e] text-[#ccc] rounded-xl px-7 py-3 text-sm font-medium cursor-pointer font-dm-sans hover:border-[#3a3a54] transition-colors"
+              style={{ borderColor: T.inputBorder, color: T.inputText }}
+              onClick={() => setPaso((p) => p - 1)}
+            >
+              Atrás
+            </button>
+          )}
+          {paso < 4 ? (
+            <button
+              className="bg-[#500fe9] border-none text-white rounded-xl px-8 py-3 text-sm font-bold cursor-pointer font-dm-sans hover:bg-[#400bc4] transition-colors"
+              onClick={avanzar}
+            >
+              Continuar
+            </button>
+          ) : (
+            <button
+              className={`border-none rounded-xl px-8 py-3 text-sm font-bold font-dm-sans transition-colors ${enviando ? "cursor-not-allowed" : "text-white cursor-pointer bg-[#500fe9] hover:bg-[#400bc4]"}`}
+              style={enviando ? { background: T.disabledBg, color: T.disabledText } : undefined}
+              onClick={publicar}
+              disabled={enviando}
+            >
+              {enviando ? "Publicando..." : "Publicar solicitud"}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
