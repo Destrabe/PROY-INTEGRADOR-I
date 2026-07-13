@@ -85,7 +85,36 @@ const CATEGORIAS = [
 ];
 
 const DISTRITOS = ["San Juan de Lurigancho"];
+const PALABRAS_PROHIBIDAS = [
+  "mierda", "cabron", "cabrona", "pendejo", "pendeja", "idiota", "imbecil",
+  "estupido", "estupida", "carajo", "coño", "joder", "gilipollas",
+  "huevon", "webon", "conchesumadre", "ctm", "hijo de puta", "hdp",
+  "malparido", "malparida", "puta", "puto",
+  "porno", "pornografia", "follar", "verga", "polla", "pito",
+  "zorra", "ramera", "prostituta", "orgasmo", "semen", "masturbar",
+  "masturbacion",
+  "maricon", "marica", "tortillera", "bollera", "feminazi", "sudaca",
+  "panchito", "retrasado", "retrasada", "mongolico", "mongolo", "sidoso",
+  "onlyfans", "gana dinero facil", "seguidores gratis",
+];
 
+const normalizarTexto = (str) =>
+  str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+const encontrarPalabraProhibida = (texto) => {
+  const textoNormalizado = normalizarTexto(texto);
+  for (const palabra of PALABRAS_PROHIBIDAS) {
+    const palabraNormalizada = normalizarTexto(palabra);
+    const regex = new RegExp(`\\b${palabraNormalizada}\\b`, "i");
+    if (regex.test(textoNormalizado)) {
+      return palabra;
+    }
+  }
+  return null;
+};
 const MAP_STYLES = [
   { elementType: "geometry", stylers: [{ color: "#13131f" }] },
   { elementType: "labels.text.stroke", stylers: [{ color: "#13131f" }] },
@@ -285,13 +314,24 @@ export default function NewRequestPage() {
     }));
   };
 
-  const validarPaso = () => {
+const validarPaso = () => {
     const e = {};
     if (paso === 1 && !form.categoria) e.categoria = "Selecciona una categoría";
     if (paso === 2) {
-      if (!form.titulo.trim()) e.titulo = "El título es obligatorio";
-      if (!form.descripcion.trim())
+      if (!form.titulo.trim()) {
+        e.titulo = "El título es obligatorio";
+      } else {
+        const malaPalabra = encontrarPalabraProhibida(form.titulo);
+        if (malaPalabra) e.titulo = "El título contiene lenguaje no permitido";
+      }
+
+      if (!form.descripcion.trim()) {
         e.descripcion = "La descripción es obligatoria";
+      } else {
+        const malaPalabra = encontrarPalabraProhibida(form.descripcion);
+        if (malaPalabra)
+          e.descripcion = "La descripción contiene lenguaje no permitido";
+      }
     }
     if (paso === 3) {
       if (!form.distrito) e.distrito = "Selecciona un distrito";

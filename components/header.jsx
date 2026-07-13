@@ -1,9 +1,9 @@
 "use client";
 
+import { useVerificationStore } from "@/store/verificationStore";
 import Link from "next/link";
 import { useAuth } from "./AuthContext";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useThemeStore } from "@/store/themeStore";
 import ThemeToggle from "./themeToogle";
@@ -20,10 +20,20 @@ const Logo = (color) => (
   </div>
 );
 
-const NavLink = ({ href, children, active }) => {
+const NavLink = ({ href, children, active, disabled }) => {
   const theme = useThemeStore((state) => state.theme);
-  const background = useThemeStore((state) => state.background);
   const textColor = useThemeStore((state) => state.textColor);
+
+  if (disabled) {
+    return (
+      <span
+        style={{ color: textColor[theme] }}
+        className="flex items-center opacity-30 cursor-not-allowed select-none"
+      >
+        {children}
+      </span>
+    );
+  }
 
   return (
     <Link
@@ -42,9 +52,7 @@ const NavLink = ({ href, children, active }) => {
 
 export default function Header() {
   const { user, logout, loading } = useAuth();
-
-  console.log("HEADER USER:", user);
-  console.log("PHOTO:", user?.photoURL);
+  const isVerifying = useVerificationStore((state) => state.isVerifying);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -77,46 +85,69 @@ export default function Header() {
       <div className="h-full flex flex-col lg:grid lg:grid-cols-3 items-center px-4 sm:px-6 lg:px-15 py-4 gap-4">
         {/* LOGO */}
         <div className="h-full flex items-center justify-center lg:justify-start select-none w-full">
-          <Link href="/" className="flex items-center gap-2 text-white">
-            <Logo color={textColor[theme]} />
-          </Link>
+          {isVerifying ? (
+            <span className="flex items-center gap-2 text-white opacity-30 cursor-not-allowed select-none">
+              <Logo color={textColor[theme]} />
+            </span>
+          ) : (
+            <Link href="/" className="flex items-center gap-2 text-white">
+              <Logo color={textColor[theme]} />
+            </Link>
+          )}
         </div>
 
         {/* NAV */}
         <div className="flex justify-center items-center w-full">
           <nav className="flex flex-wrap justify-center gap-4 lg:gap-7.5 text-sm sm:text-base">
-            <NavLink href="/" active={pathname === "/"}>
+            <NavLink href="/" active={pathname === "/"} disabled={isVerifying}>
               Inicio
             </NavLink>
-            <NavLink href="/FeedTrabajos" active={pathname === "/FeedTrabajos"}>
+            <NavLink
+              href="/FeedTrabajos"
+              active={pathname === "/FeedTrabajos"}
+              disabled={isVerifying}
+            >
               Explorar
             </NavLink>
-            <NavLink href="/faq" active={pathname === "/faq"}>
+            <NavLink href="/faq" active={pathname === "/faq"} disabled={isVerifying}>
               FAQ
             </NavLink>
 
             {user && (
               <>
                 {pathname.startsWith("/trabajador") && (
-                  <Link
+                  <NavLink
                     href="/trabajador/panel"
-                    className="flex items-center text-[#6c63ff] transition-colors hover:text-[#8b7cff]"
+                    active={false}
+                    disabled={isVerifying}
                   >
                     Talent Hub
-                  </Link>
+                  </NavLink>
                 )}
 
                 {user?.rol === "admin" && (
-                  <NavLink href="/admin" active={pathname.startsWith("/admin")}>
+                  <NavLink
+                    href="/admin"
+                    active={pathname.startsWith("/admin")}
+                    disabled={isVerifying}
+                  >
                     Admin
                   </NavLink>
                 )}
 
-                <NavLink href="/messages" active={pathname === "/messages"}>
+                <NavLink
+                  href="/messages"
+                  active={pathname === "/messages"}
+                  disabled={isVerifying}
+                >
                   Mensajes
                 </NavLink>
 
-                <NavLink href="/profile" active={pathname === "/profile"}>
+                <NavLink
+                  href="/profile"
+                  active={pathname === "/profile"}
+                  disabled={isVerifying}
+                >
                   Perfil
                 </NavLink>
               </>
