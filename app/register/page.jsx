@@ -1,5 +1,6 @@
 "use client";
 
+import { useVerificationStore } from "@/store/verificationStore";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -16,6 +17,7 @@ import { useThemeStore } from "@/store/themeStore"; // <-- Importamos tu store
 export default function RegisterPage() {
   const router = useRouter();
   const { login } = useAuth();
+  const setIsVerifying = useVerificationStore((state) => state.setIsVerifying);
 
   // --- VARIABLES DEL TEMA ---
   const theme = useThemeStore((state) => state.theme);
@@ -39,7 +41,14 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [sended, setSended] = useState(false);
 
-  // --- FUNCIONES ORIGINALES ---
+  // --- Verificación por código ---
+  const [step, setStep] = useState(1); // 1 = formulario, 2 = código
+  const [code, setCode] = useState("");
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [verifyError, setVerifyError] = useState("");
+  const [resending, setResending] = useState(false);
+  const [resendMsg, setResendMsg] = useState("");
+
   const handleGoogleRegister = async () => {
     try {
       const user = await loginWithGoogle();
@@ -76,6 +85,18 @@ export default function RegisterPage() {
     }
   };
 
+  const sendCode = async (targetEmail) => {
+    const res = await fetch("/api/send-verification-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: targetEmail }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || "Error al enviar el código");
+    }
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
 
@@ -97,7 +118,12 @@ export default function RegisterPage() {
       return;
     }
 
+    if (password.length < 8) {
+      return;
+    }
+
     setLoading(true);
+    setIsVerifying(true);
 
     try {
       const result = await registerUser(
@@ -109,18 +135,20 @@ export default function RegisterPage() {
       );
 
       if (result.success) {
-        const firebaseUser = await loginUser(email, password);
-
-        login({
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          first_name: firstName,
-          last_name: lastName,
-          rol: rol,
-        });
-
-        router.push("/");
+        try {
+          await sendCode(email);
+          setIsVerifying(true);
+          setStep(2);
+        } catch (err) {
+          console.error(err);
+          alert(
+            "Tu cuenta se creó, pero no pudimos enviarte el código. Intenta reenviarlo en el siguiente paso.",
+          );
+          setIsVerifying(true);
+          setStep(2);
+        }
       } else {
+        setIsVerifying(false);
         if (result.error?.code === "auth/email-already-in-use") {
           alert("El correo ya está registrado");
         } else {
@@ -129,12 +157,151 @@ export default function RegisterPage() {
       }
     } catch (error) {
       console.error(error);
+      setIsVerifying(false);
       alert("Error inesperado");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleVerifyCode = async (e) => {
+    e.preventDefault();
+    setVerifyError("");
+
+    if (!code.trim()) {
+      setVerifyError("Ingresa el código que enviamos a tu correo");
+      return;
+    }
+
+    setVerifyLoading(true);
+
+    try {
+      const res = await fetch("/api/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setVerifyError(data.error || "Código incorrecto");
+        return;
+      }
+
+      // Código válido: ahora sí iniciamos sesión
+      const firebaseUser = await loginUser(email, password);
+
+      login({
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        first_name: firstName,
+        last_name: lastName,
+        rol: rol,
+      });
+
+      setIsVerifying(false);
+      router.push("/");
+    } catch (error) {
+      console.error(error);
+      setVerifyError("Error inesperado al verificar el código");
+    } finally {
+      setVerifyLoading(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    setResending(true);
+    setResendMsg("");
+    setVerifyError("");
+    try {
+      await sendCode(email);
+      setResendMsg("Código reenviado. Revisa tu bandeja de entrada.");
+    } catch (error) {
+      console.error(error);
+      setVerifyError("No se pudo reenviar el código, intenta de nuevo");
+    } finally {
+      setResending(false);
+    }
+  };
+
+  // ---------------------------------------------------------
+  // PASO 2: Verificación de código
+  // ---------------------------------------------------------
+  if (step === 2) {
+    return (
+      <div className="mt-14 flex font-sans justify-center items-center bg-[#0a0a0f] min-h-screen py-10 px-4">
+        <div className="w-full max-w-138">
+          <div className="font-syne font-extrabold text-white mb-6">
+            <div className="flex text-[36px] leading-none mb-1">
+              Nexora<span className="text-[#6c63ff]">.</span>
+            </div>
+            <div className="text-[36px] leading-tight">Verifica tu correo</div>
+          </div>
+
+          <form onSubmit={handleVerifyCode}>
+            <div className="font-sans text-[#9090a8] flex flex-col gap-4">
+              <p className="font-normal text-[15px]">
+                Enviamos un código de 6 dígitos a{" "}
+                <span className="text-white font-semibold">{email}</span>.
+                Ingrésalo para activar tu cuenta.
+              </p>
+
+              <div>
+                <label className="block text-[11px] font-bold text-[#9090A8] tracking-wider mb-1.5 uppercase">
+                  Código de verificación
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  placeholder="000000"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+                  className="w-full px-4 h-[54px] rounded-[10px] outline-none transition-colors text-[22px] tracking-[8px] text-center bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
+                />
+                {verifyError && (
+                  <p className="text-red-400 text-xs mt-1.5">{verifyError}</p>
+                )}
+                {resendMsg && (
+                  <p className="text-green-400 text-xs mt-1.5">{resendMsg}</p>
+                )}
+              </div>
+            </div>
+
+            <button
+              disabled={verifyLoading}
+              type="submit"
+              className={`font-bold text-[15px] mt-4 h-[48px] w-full rounded-[10px] bg-[#6c63ff] text-white cursor-pointer flex justify-center items-center transition-all hover:opacity-90 ${
+                verifyLoading && "opacity-50"
+              }`}
+            >
+              {verifyLoading ? (
+                <div className="h-6 w-6 border-4 border-white/20 rounded-full border-t-white animate-spin" />
+              ) : (
+                <span>Verificar y crear cuenta</span>
+              )}
+            </button>
+
+            <p className="text-center text-[13px] mt-4 text-[#9090A8]">
+              ¿No recibiste el código?{" "}
+              <button
+                type="button"
+                onClick={handleResendCode}
+                disabled={resending}
+                className="text-[#6c63ff] font-bold hover:underline disabled:opacity-50"
+              >
+                {resending ? "Reenviando..." : "Reenviar código"}
+              </button>
+            </p>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // ---------------------------------------------------------
+  // PASO 1: Formulario de registro (igual que antes)
+  // ---------------------------------------------------------
   return (
     <div 
       className="mt-14 flex font-sans justify-center items-center min-h-screen py-10 px-4 transition-colors duration-300"

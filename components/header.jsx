@@ -1,9 +1,9 @@
 "use client";
 
+import { useVerificationStore } from "@/store/verificationStore";
 import Link from "next/link";
 import { useAuth } from "./AuthContext";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useThemeStore } from "@/store/themeStore";
 import ThemeToggle from "./themeToogle";
@@ -18,9 +18,20 @@ const Logo = ({ color }) => (
   </div>
 );
 
-const NavLink = ({ href, children, active }) => {
+const NavLink = ({ href, children, active, disabled }) => {
   const theme = useThemeStore((state) => state.theme);
   const textColor = useThemeStore((state) => state.textColor);
+
+  if (disabled) {
+    return (
+      <span
+        style={{ color: textColor[theme] }}
+        className="flex items-center opacity-30 cursor-not-allowed select-none"
+      >
+        {children}
+      </span>
+    );
+  }
 
   return (
     <Link
@@ -83,38 +94,55 @@ export default function Header() {
         {/* NAV */}
         <div className="flex justify-center items-center w-full">
           <nav className="flex flex-wrap justify-center gap-4 lg:gap-7.5 text-sm sm:text-base">
-            <NavLink href="/" active={pathname === "/"}>
+            <NavLink href="/" active={pathname === "/"} disabled={isVerifying}>
               Inicio
             </NavLink>
-            <NavLink href="/FeedTrabajos" active={pathname === "/FeedTrabajos"}>
+            <NavLink
+              href="/FeedTrabajos"
+              active={pathname === "/FeedTrabajos"}
+              disabled={isVerifying}
+            >
               Explorar
             </NavLink>
-            <NavLink href="/faq" active={pathname === "/faq"}>
+            <NavLink href="/faq" active={pathname === "/faq"} disabled={isVerifying}>
               FAQ
             </NavLink>
 
             {user && (
               <>
                 {pathname.startsWith("/trabajador") && (
-                  <Link
+                  <NavLink
                     href="/trabajador/panel"
-                    className="flex items-center text-[#6c63ff] transition-colors hover:text-[#8b7cff]"
+                    active={false}
+                    disabled={isVerifying}
                   >
                     Talent Hub
-                  </Link>
+                  </NavLink>
                 )}
 
                 {user?.rol === "admin" && (
-                  <NavLink href="/admin" active={pathname.startsWith("/admin")}>
+                  <NavLink
+                    href="/admin"
+                    active={pathname.startsWith("/admin")}
+                    disabled={isVerifying}
+                  >
                     Admin
                   </NavLink>
                 )}
 
-                <NavLink href="/messages" active={pathname === "/messages"}>
+                <NavLink
+                  href="/messages"
+                  active={pathname === "/messages"}
+                  disabled={isVerifying}
+                >
                   Mensajes
                 </NavLink>
 
-                <NavLink href="/profile" active={pathname === "/profile"}>
+                <NavLink
+                  href="/profile"
+                  active={pathname === "/profile"}
+                  disabled={isVerifying}
+                >
                   Perfil
                 </NavLink>
               </>

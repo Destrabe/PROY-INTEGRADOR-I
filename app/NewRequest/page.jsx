@@ -9,6 +9,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useThemeStore } from "@/store/themeStore";
 
+
 const CATEGORIAS = [
   {
     id: "tecnologia",
@@ -86,8 +87,37 @@ const CATEGORIAS = [
 ];
 
 const DISTRITOS = ["San Juan de Lurigancho"];
+const PALABRAS_PROHIBIDAS = [
+  "mierda", "cabron", "cabrona", "pendejo", "pendeja", "idiota", "imbecil",
+  "estupido", "estupida", "carajo", "coño", "joder", "gilipollas",
+  "huevon", "webon", "conchesumadre", "ctm", "hijo de puta", "hdp",
+  "malparido", "malparida", "puta", "puto",
+  "porno", "pornografia", "follar", "verga", "polla", "pito",
+  "zorra", "ramera", "prostituta", "orgasmo", "semen", "masturbar",
+  "masturbacion",
+  "maricon", "marica", "tortillera", "bollera", "feminazi", "sudaca",
+  "panchito", "retrasado", "retrasada", "mongolico", "mongolo", "sidoso",
+  "onlyfans", "gana dinero facil", "seguidores gratis",
+];
 
-const MAP_STYLES_DARK = [
+const normalizarTexto = (str) =>
+  str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+const encontrarPalabraProhibida = (texto) => {
+  const textoNormalizado = normalizarTexto(texto);
+  for (const palabra of PALABRAS_PROHIBIDAS) {
+    const palabraNormalizada = normalizarTexto(palabra);
+    const regex = new RegExp(`\\b${palabraNormalizada}\\b`, "i");
+    if (regex.test(textoNormalizado)) {
+      return palabra;
+    }
+  }
+  return null;
+};
+const MAP_STYLES = [
   { elementType: "geometry", stylers: [{ color: "#13131f" }] },
   { elementType: "labels.text.stroke", stylers: [{ color: "#13131f" }] },
   { elementType: "labels.text.fill", stylers: [{ color: "#888888" }] },
@@ -214,7 +244,7 @@ export default function NewRequestPage() {
     urgentText: isDark ? "#f87171" : "#b91c1c",
     disabledBg: isDark ? "#2a2a3e" : "#e4e4e7",
     disabledText: isDark ? "#555555" : "#9ca3af",
-    mapStyles: isDark ? MAP_STYLES_DARK : MAP_STYLES_LIGHT,
+    mapStyles: isDark ? MAP_STYLES : MAP_STYLES_LIGHT,
   };
 
   const centroSJL = useMemo(() => ({ lat: -11.9902, lng: -77.0142 }), []);
@@ -350,13 +380,24 @@ export default function NewRequestPage() {
     }));
   };
 
-  const validarPaso = () => {
+const validarPaso = () => {
     const e = {};
     if (paso === 1 && !form.categoria) e.categoria = "Selecciona una categoría";
     if (paso === 2) {
-      if (!form.titulo.trim()) e.titulo = "El título es obligatorio";
-      if (!form.descripcion.trim())
+      if (!form.titulo.trim()) {
+        e.titulo = "El título es obligatorio";
+      } else {
+        const malaPalabra = encontrarPalabraProhibida(form.titulo);
+        if (malaPalabra) e.titulo = "El título contiene lenguaje no permitido";
+      }
+
+      if (!form.descripcion.trim()) {
         e.descripcion = "La descripción es obligatoria";
+      } else {
+        const malaPalabra = encontrarPalabraProhibida(form.descripcion);
+        if (malaPalabra)
+          e.descripcion = "La descripción contiene lenguaje no permitido";
+      }
     }
     if (paso === 3) {
       if (!form.distrito) e.distrito = "Selecciona un distrito";

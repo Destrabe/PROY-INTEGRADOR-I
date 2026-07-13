@@ -541,27 +541,7 @@ function SettingsModal({ user, userData, editData, setEditData, avatarInitials, 
                 <button onClick={handleChangePassword} disabled={isChangingPassword} className="w-full bg-[#6c63ff] text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-[#6c63ff]/20 disabled:opacity-50">
                   {isChangingPassword ? "Actualizando..." : "Cambiar contraseña"}
                 </button>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between border rounded-2xl p-5 transition-colors" style={{ backgroundColor: inputBg, borderColor }}>
-                    <div><p className="font-black" style={{ color: textColor[theme] }}>Autenticación 2FA</p><p className={`text-xs font-bold mt-1 ${mutedText}`}>Recomendado para mayor seguridad</p></div>
-                    <Toggle checked={securitySettings.twoFactor} onChange={(v) => handleToggleSecuritySetting("twoFactor", v)} />
-                  </div>
-                  <div className="flex items-center justify-between border rounded-2xl p-5 transition-colors" style={{ backgroundColor: inputBg, borderColor }}>
-                    <div><p className="font-black" style={{ color: textColor[theme] }}>Alertas de sesión</p><p className={`text-xs font-bold mt-1 ${mutedText}`}>Notificar al iniciar sesión desde nuevo dispositivo</p></div>
-                    <Toggle checked={securitySettings.sessionAlerts} onChange={(v) => handleToggleSecuritySetting("sessionAlerts", v)} />
-                  </div>
-                </div>
-                <div>
-                  <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-4 ${mutedText}`}>Sesiones activas ({sessions.length})</p>
-                  {sessions.length > 0 ? (
-                    sessions.map((s) => (
-                      <div key={s.id} className="flex items-center justify-between py-4 border-b last:border-0 transition-colors" style={{ borderColor }}>
-                        <div><p className="font-bold" style={{ color: textColor[theme] }}>{s.device || "Dispositivo desconocido"}</p><p className={`text-xs font-bold ${mutedText}`}>{s.location || "Ubicación desconocida"} · {toDateTimeLabel(s.lastActive)}</p></div>
-                        {s.isCurrent ? <span className={`text-[10px] font-black uppercase tracking-widest ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}>Actual</span> : <button onClick={() => handleCloseSession(s.id)} className={`text-[10px] font-black uppercase tracking-widest ${theme === "dark" ? "text-red-400" : "text-red-600"}`}>Cerrar</button>}
-                      </div>
-                    ))
-                  ) : <p className={`text-xs font-bold py-4 ${mutedText}`}>No hay sesiones registradas</p>}
-                </div>
+
                 <div className="flex gap-4 pt-2">
                   <button onClick={onClose} className="flex-1 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] border transition-colors" style={{ backgroundColor: subtleBg, borderColor, color: textColor[theme] }}>Cerrar</button>
                 </div>
