@@ -412,7 +412,7 @@ function Toast({ message, type, onClose }) {
 
   return (
     <div
-      className={`fixed bottom-8 right-8 ${styles} border p-5 rounded-2xl flex items-center gap-4 z-[200] shadow-2xl backdrop-blur-md max-w-sm`}
+      className={`fixed bottom-8 right-8 ${styles} border p-5 rounded-2xl flex items-center gap-4 z-200 shadow-2xl backdrop-blur-md max-w-sm`}
     >
       <div className="w-2 h-2 rounded-full bg-current animate-pulse shrink-0" />
       <p className="text-sm font-black uppercase tracking-widest">{message}</p>
@@ -742,7 +742,7 @@ function SettingsModal({
   );
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-[100] p-6">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-100 p-6">
       <style>{`
         .custom-scrollbar::-webkit-scrollbar { width: 8px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -1198,7 +1198,7 @@ function SettingsModal({
       </div>
 
       {showDeactivateConfirm && (
-        <div className="fixed inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-[300] p-6">
+        <div className="fixed inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-300 p-6">
           <div className="bg-[#111118] w-full max-w-md rounded-[2.5rem] p-10 border border-amber-500/20 shadow-2xl text-center space-y-6">
             <div className="w-16 h-16 mx-auto rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
               <Icons.Shield />
@@ -1717,7 +1717,7 @@ function NexoraProfileContent() {
           {stats.map(({ value, label, icon }) => (
             <div
               key={label}
-              className="bg-[#111118] rounded-[2rem] p-8 text-center border border-white/5 hover:border-[#6c63ff]/30 transition-all"
+              className="bg-[#111118] rounded-4xl p-8 text-center border border-white/5 hover:border-[#6c63ff]/30 transition-all"
             >
               <p
                 className="text-4xl font-black text-white tracking-tighter truncate"
@@ -1757,7 +1757,7 @@ function NexoraProfileContent() {
 
                 <div className="flex justify-between text-slate-400 border-b border-white/5 pb-4">
                   <span>Email</span>
-                  <span className="text-white font-black truncate max-w-[160px]">
+                  <span className="text-white font-black truncate max-w-40">
                     {userData.email || user?.email || "No especificado"}
                   </span>
                 </div>
@@ -1773,7 +1773,7 @@ function NexoraProfileContent() {
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#6c63ff] font-black truncate max-w-[160px] hover:underline"
+                      className="text-[#6c63ff] font-black truncate max-w-40 hover:underline"
                     >
                       {userData.website.replace(/^https?:\/\//, "")}
                     </a>
@@ -1832,7 +1832,7 @@ function NexoraProfileContent() {
               ))}
             </div>
 
-            <div className="min-h-[300px]">
+            <div className="min-h-75">
               {(activeTab === "Trabajos" ||
                 activeTab === "Servicios" ||
                 activeTab === "Solicitudes") && (
@@ -1850,7 +1850,7 @@ function NexoraProfileContent() {
                           className="bg-[#111118] rounded-[2.5rem] p-8 border border-white/5 hover:border-[#6c63ff]/30 transition-all group"
                         >
                           <div className="flex justify-between items-start gap-4 mb-4">
-                            <h3 className="text-xl font-black text-white group-hover:text-[#6c63ff] transition-colors min-w-0 break-words">
+                            <h3 className="text-xl font-black text-white group-hover:text-[#6c63ff] transition-colors min-w-0 wrap-break-word">
                               {getRequestTitle(item)}
                             </h3>
                             <span className="shrink-0 text-emerald-400 text-[9px] font-black uppercase tracking-widest border border-emerald-400/20 px-4 py-1.5 rounded-full bg-emerald-400/5">
@@ -2003,7 +2003,7 @@ function NexoraProfileContent() {
 
       <button
         onClick={() => setShowSettings(true)}
-        className="fixed bottom-10 right-10 bg-[#6c63ff] p-5 rounded-[2rem] shadow-2xl hover:scale-110 transition-all z-50 group"
+        className="fixed bottom-10 right-10 bg-[#6c63ff] p-5 rounded-4xl shadow-2xl hover:scale-110 transition-all z-50 group"
       >
         <Icons.Settings />
       </button>
@@ -2031,7 +2031,7 @@ function NexoraProfileContent() {
       )}
 
       {showEditModal && tempPreview && (
-        <div className="fixed inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-[200] p-6">
+        <div className="fixed inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-200 p-6">
           <div className="bg-[#111118] w-full max-w-lg rounded-[3rem] p-10 border border-white/5 relative shadow-2xl">
             <h2 className="text-xl font-black mb-8 uppercase tracking-widest text-center">
               Ajustar Foto

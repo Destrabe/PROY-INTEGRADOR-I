@@ -248,7 +248,7 @@ export default function SolicitudModal({
       onClick={onClose}
     >
       <div
-        className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[#111118] shadow-2xl"
+        className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-4xl border border-white/10 bg-[#111118] shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -299,7 +299,7 @@ export default function SolicitudModal({
             )}
           </div>
         ) : (
-          <div className="h-28 bg-gradient-to-r from-[#6c63ff]/20 via-[#111118] to-emerald-500/10" />
+          <div className="h-28 bg-linear-to-r from-[#6c63ff]/20 via-[#111118] to-emerald-500/10" />
         )}
 
         <div className="overflow-y-auto p-6 md:p-8">
@@ -404,7 +404,7 @@ export default function SolicitudModal({
               ].map(([label, value]) => (
                 <div
                   key={label}
-                  className="rounded-2xl border border-white/5 bg-white/[0.03] p-4"
+                  className="rounded-2xl border border-white/5 bg-white/3 p-4"
                 >
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">
                     {label}
@@ -429,7 +429,7 @@ export default function SolicitudModal({
               {(solicitud.tags || []).map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-bold text-slate-300"
+                  className="rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-xs font-bold text-slate-300"
                 >
                   {tag}
                 </span>

@@ -122,10 +122,10 @@ export default function LoginPage() {
   return (
     <div className=" min-h-screen flex items-center justify-center px-4 pt-24 pb-4 bg-[#0A0A0F] font-body text-[#f0f0f5] relative overflow-hidden selection:bg-[#635bff]/30">
       {/* Luces de fondo (Efecto Glow) */}
-      <div className="absolute top-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full bg-[#635bff]/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] rounded-full bg-[#9b59b6]/10 blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-75 h-75 rounded-full bg-[#635bff]/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-75 h-75 rounded-full bg-[#9b59b6]/10 blur-[120px] pointer-events-none" />
 
-      <div className="w-full max-w-[480px] animate-[cardIn_0.5s_cubic-bezier(0.22,1,0.36,1)_both] z-10">
+      <div className="w-full max-w-120 animate-[cardIn_0.5s_cubic-bezier(0.22,1,0.36,1)_both] z-10">
         {/* Card Principal */}
         <div className="rounded-2xl p-6 sm:p-8 bg-[#111118] border border-[#2A2A38] shadow-[0_24px_64px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.05)]">
           <h1 className="font-extrabold text-2xl sm:text-3xl mb-1 text-center font-display text-[#F0F0F8] tracking-tight">
@@ -160,7 +160,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                className="w-full h-[52px] pl-9 pr-4 py-3 bg-[#22222C] border-2 border-white/10 rounded-xl text-sm font-light text-[#F0F0F8] outline-none placeholder:text-[#5a5a6a] transition-all duration-200 focus:border-[#635bff]/60 focus:bg-[#1a1a22] focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body"
+                className="w-full h-13 pl-9 pr-4 py-3 bg-[#22222C] border-2 border-white/10 rounded-xl text-sm font-light text-[#F0F0F8] outline-none placeholder:text-[#5a5a6a] transition-all duration-200 focus:border-[#635bff]/60 focus:bg-[#1a1a22] focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body"
               />
             </div>
           </div>
@@ -190,7 +190,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                className="w-full h-[52px] pl-9 pr-4 py-3 bg-[#22222C] border-2 border-white/10 rounded-xl text-sm font-light text-[#F0F0F8] outline-none placeholder:text-[#5a5a6a] transition-all duration-200 focus:border-[#635bff]/60 focus:bg-[#1a1a22] focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body"
+                className="w-full h-13 pl-9 pr-4 py-3 bg-[#22222C] border-2 border-white/10 rounded-xl text-sm font-light text-[#F0F0F8] outline-none placeholder:text-[#5a5a6a] transition-all duration-200 focus:border-[#635bff]/60 focus:bg-[#1a1a22] focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body"
               />
             </div>
           </div>
@@ -228,7 +228,7 @@ export default function LoginPage() {
             type="button"
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full h-[52px] rounded-xl text-sm font-bold text-white transition-all duration-200 bg-gradient-to-br from-[#6C63FF] to-[#9B59B6] hover:shadow-[0_0_32px_rgba(99,91,255,0.4)] hover:-translate-y-[1px] active:translate-y-0 disabled:pointer-events-none disabled:opacity-70 flex items-center justify-center gap-2 cursor-pointer font-body"
+            className="w-full h-13 rounded-xl text-sm font-bold text-white transition-all duration-200 bg-linear-to-br from-[#6C63FF] to-[#9B59B6] hover:shadow-[0_0_32px_rgba(99,91,255,0.4)] hover:-translate-y-px active:translate-y-0 disabled:pointer-events-none disabled:opacity-70 flex items-center justify-center gap-2 cursor-pointer font-body"
           >
             {loading ? (
               <>

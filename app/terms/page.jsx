@@ -1,14 +1,10 @@
 export default function TermsPage() {
   return (
-    <main
-      className="mt-12 min-h-screen px-6 py-12 bg-[#0A0A0F]"
-    >
+    <main className="mt-12 min-h-screen px-6 py-12 bg-[#0A0A0F]">
       <div className="max-w-4xl mx-auto">
         {/* HERO */}
         <div className="text-center mb-10">
-          <div
-            className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center bg-[linear-gradient(135deg,#A855F7,#6366F1)] mb-5"
-          >
+          <div className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center bg-[linear-gradient(135deg,#A855F7,#6366F1)] mb-5">
             <svg
               width="40"
               height="40"
@@ -21,9 +17,7 @@ export default function TermsPage() {
             </svg>
           </div>
 
-          <h1
-            className="font-syne text-5xl font-extrabold text-white mb-3"
-          >
+          <h1 className="font-syne text-5xl font-extrabold text-white mb-3">
             Términos y Condiciones
           </h1>
 
@@ -33,9 +27,7 @@ export default function TermsPage() {
         </div>
 
         {/* CARD */}
-        <div
-          className="bg-[#111118] border border-[#2A2A38] rounded-3xl p-8 md:p-10"
-        >
+        <div className="bg-[#111118] border border-[#2A2A38] rounded-3xl p-8 md:p-10">
           {/* INTRO */}
           <p className="text-gray-300 leading-8 mb-8">
             Bienvenido a Nexora. Al crear una cuenta y utilizar nuestra
@@ -147,9 +139,7 @@ export default function TermsPage() {
           </div>
 
           {/* ACEPTACIÓN */}
-          <div
-            className="bg-purple-500/[0.08] border border-purple-500/30 rounded-2xl p-6 mt-10"
-          >
+          <div className="bg-purple-500/8 border border-purple-500/30 rounded-2xl p-6 mt-10">
             <div className="flex items-center gap-3 mb-3">
               <svg
                 width="24"
