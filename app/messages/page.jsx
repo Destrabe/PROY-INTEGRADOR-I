@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import FirebaseAuthWatcher from "../authWatcher";
+import { useThemeStore } from "@/store/themeStore"; // 1. Importamos el store del tema
 
 export default function MensajesPage() {
   const [conversaciones, setConversaciones] = useState([]);
@@ -10,6 +11,17 @@ export default function MensajesPage() {
   const [mostrarChat, setMostrarChat] = useState(false);
   const [socket, setSocket] = useState(null);
   const [cargando, setCargando] = useState(true);
+
+  // 2. Variables de tu ThemeStore
+  const theme = useThemeStore((state) => state.theme);
+  const background = useThemeStore((state) => state.background);
+  const textColor = useThemeStore((state) => state.textColor);
+
+  // Definición de bordes condicionales dinámicos
+  const borderColor = theme === "dark" ? "border-[#2A2A38]" : "border-gray-200";
+  const itemHoverBg = theme === "dark" ? "hover:bg-[#111118]" : "hover:bg-gray-100";
+  const itemActiveBg = theme === "dark" ? "bg-[#111118]" : "bg-gray-50";
+  const inputBg = theme === "dark" ? "bg-[#111118]" : "bg-white";
 
   useEffect(() => {
     const nuevoSocket = io("http://localhost:3001");
@@ -42,7 +54,6 @@ export default function MensajesPage() {
       const existeNexora = historialFirebase.find(
         (c) => c.id === "nexora-bienvenida",
       );
-
       let historialFinal = historialFirebase;
 
       if (!existeNexora) {
@@ -84,20 +95,17 @@ export default function MensajesPage() {
         hour: "2-digit",
         minute: "2-digit",
       });
-
       const nuevoMsg = {
         de: "yo",
         texto: mensaje,
         hora: horaActual,
       };
-
       const conversacionActualizada = {
         ...seleccionado,
         preview: mensaje,
         hora: horaActual,
         mensajes: [...seleccionado.mensajes, nuevoMsg],
       };
-
       setSeleccionado(conversacionActualizada);
       setConversaciones((prev) => {
         const nuevas = [...prev];
@@ -105,7 +113,6 @@ export default function MensajesPage() {
         nuevas[idx] = conversacionActualizada;
         return nuevas;
       });
-
       socket.emit("actualizarConversacion", conversacionActualizada);
       setMensaje("");
     }
@@ -113,7 +120,10 @@ export default function MensajesPage() {
 
   if (cargando) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0F] text-white font-syne">
+      <div 
+        style={{ backgroundColor: background[theme], color: textColor[theme] }}
+        className="min-h-screen flex items-center justify-center font-syne"
+      >
         Cargando conversaciones...
       </div>
     );
@@ -121,15 +131,19 @@ export default function MensajesPage() {
 
   return (
     <FirebaseAuthWatcher>
-      <div className="fixed top-22.5 inset-x-0 bottom-0 flex bg-[#0A0A0F] text-white font-sans overflow-hidden">
+      <div 
+        style={{ backgroundColor: background[theme], color: textColor[theme] }}
+        className="fixed top-22.5 inset-x-0 bottom-0 flex font-sans overflow-hidden transition-colors duration-200"
+      >
         {/* Lista izquierda */}
         <div
-          className={`${mostrarChat ? "hidden" : "flex"} md:flex w-full md:w-80 border-r border-[#2A2A38] flex-col`}
+          className={`${mostrarChat ? "hidden" : "flex"} md:flex w-full md:w-80 border-r ${borderColor} flex-col`}
         >
-          <div className="p-5 border-b border-[#0c0c3e]">
+          <div className={`p-5 border-b ${borderColor}`}>
             <h2 className="text-xl font-extrabold mb-3 font-syne">Mensajes</h2>
             <input
-              className="w-full px-3 py-2 rounded-lg bg-[#111118] border border-[#2A2A38] text-white text-sm outline-none focus:border-[#6C63FF] transition-all"
+              style={{ backgroundColor: inputBg, color: textColor[theme] }}
+              className={`w-full px-3 py-2 rounded-lg border ${borderColor} text-sm outline-none focus:border-[#6C63FF] transition-all`}
               placeholder="Buscar conversación..."
             />
           </div>
@@ -146,18 +160,27 @@ export default function MensajesPage() {
                     setSeleccionado(conv);
                     setMostrarChat(true);
                   }}
-                  className={`flex items-center gap-3 px-5 py-4 cursor-pointer border-b border-[#1a1a24] transition-all ${seleccionado?.id === conv.id ? "bg-[#111118] border-l-4 border-l-[#6C63FF]" : "hover:bg-[#111118]"}`}
+                  className={`flex items-center gap-3 px-5 py-4 cursor-pointer border-b ${
+                    theme === "dark" ? "border-[#1a1a24]" : "border-gray-100"
+                  } transition-all ${
+                    seleccionado?.id === conv.id 
+                      ? `${itemActiveBg} border-l-4 border-l-[#6C63FF]` 
+                      : itemHoverBg
+                  }`}
                 >
                   <div
-                    className={`relative w-10 h-10 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-xs font-bold shrink-0 font-syne`}
+                    className="relative w-10 h-10 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-xs font-bold shrink-0 font-syne"
                   >
                     {conv.iniciales}
                     {conv.online && (
-                      <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-[#0A0A0F]"></span>
+                      <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 ${
+                        theme === "dark" ? "border-[#0A0A0F]" : "border-white"
+                      }`}></span>
                     )}
                   </div>
+
                   <div className="flex-1 overflow-hidden">
-                    <div className="text-sm font-semibold text-[#F0F0F8]">
+                    <div className={`text-sm font-semibold ${theme === "dark" ? "text-[#F0F0F8]" : "text-gray-800"}`}>
                       {conv.nombre}
                     </div>
                     <div className="text-xs text-[#606078] truncate">
@@ -187,10 +210,9 @@ export default function MensajesPage() {
           ) : (
             <>
               {/* Header chat */}
-              <div className="flex items-center gap-3 px-6 py-4 border-b border-[#2A2A38] ">
+              <div className={`flex items-center gap-3 px-6 py-4 border-b ${borderColor}`}>
                 <button
-                  className="md:hidden mr-1 p-2 rounded-full transition-all cursor-pointer"
-                  style={{ color: "var(--text-secondary)" }}
+                  className="md:hidden mr-1 p-2 rounded-full transition-all cursor-pointer text-[#606078]"
                   onClick={() => setMostrarChat(false)}
                 >
                   <svg
@@ -207,16 +229,19 @@ export default function MensajesPage() {
                     <path d="M15 18l-6-6 6-6" />
                   </svg>
                 </button>
+
                 <div
-                  className={`relative w-10 h-10 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-xs font-bold shrink-0 font-syne`}
+                  className="relative w-10 h-10 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-xs font-bold shrink-0 font-syne"
                 >
                   {seleccionado.iniciales}
                   {seleccionado.online && (
-                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-[#0A0A0F]"></span>
+                    <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 ${
+                      theme === "dark" ? "border-[#0A0A0F]" : "border-white"
+                    }`}></span>
                   )}
                 </div>
                 <div className="flex-1">
-                  <div className="text-sm font-semibold text-[#F0F0F8]">
+                  <div className={`text-sm font-semibold ${theme === "dark" ? "text-[#F0F0F8]" : "text-gray-800"}`}>
                     {seleccionado.nombre}
                   </div>
                   <div className="text-xs text-green-400">
@@ -224,29 +249,26 @@ export default function MensajesPage() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button className="px-3 py-1.5 rounded-lg border border-[#2A2A38] text-sm text-[#F0F0F8] bg-transparent cursor-pointer hover:bg-[#2A2A38] transition-all">
+                  <button className={`px-3 py-1.5 rounded-lg border ${borderColor} text-sm ${theme === "dark" ? "text-[#F0F0F8]" : "text-gray-700"} bg-transparent cursor-pointer ${theme === "dark" ? "hover:bg-[#2A2A38]" : "hover:bg-gray-100"} transition-all`}>
                     Ver perfil
                   </button>
-                  <button className="px-3 py-1.5 rounded-lg bg-[#22c55e18] text-[#22C55E] text-sm cursor-pointer hover:bg-green-600 transition-all">
+                  <button className="px-3 py-1.5 rounded-lg bg-[#22c55e18] text-[#22C55E] text-sm cursor-pointer hover:bg-green-600 hover:text-white transition-all">
                     ✓ Contratar
                   </button>
                 </div>
               </div>
 
               {/* Banner */}
-              <div className="px-6 py-2.5 bg-[#111118] border-b border-[#2A2A38] text-sm text-[#9090A8]">
+              <div className={`px-6 py-2.5 border-b ${borderColor} text-sm ${
+                theme === "dark" ? "bg-[#111118] text-[#9090A8]" : "bg-gray-50 text-gray-600"
+              }`}>
                 {seleccionado.id === "nexora-bienvenida" ? (
                   <span>
-                    Chat oficial de{" "}
-                    <strong className="text-[#6C63FF]">Nexora</strong>
+                    Chat oficial de <strong className="text-[#6C63FF]">Nexora</strong>
                   </span>
                 ) : (
                   <>
-                    Trabajo:{" "}
-                    <strong className="text-[#6C63FF]">
-                      Técnico para reparar laptop con pantalla rota
-                    </strong>{" "}
-                    · S/ 80–150
+                    Trabajo: <strong className="text-[#6C63FF]">Técnico para reparar laptop con pantalla rota</strong> · S/ 80–150
                   </>
                 )}
               </div>
@@ -259,13 +281,19 @@ export default function MensajesPage() {
                     className={`flex items-end gap-2 ${msg.de === "yo" ? "flex-row-reverse" : ""}`}
                   >
                     <div
-                      className={`w-7 h-7 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-[9px] font-semibold shrink-0 font-syne`}
+                      className="w-7 h-7 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-[9px] font-semibold shrink-0 font-syne"
                     >
                       {msg.de === "yo" ? "yo" : seleccionado.iniciales}
                     </div>
                     <div>
                       <div
-                        className={`px-4 py-3 text-sm max-w-md leading-relaxed ${msg.de === "yo" ? "bg-[#6C63FF] text-white rounded-2xl rounded-br-md" : "bg-[#111118] border border-[#2A2A38] text-[#F0F0F8] rounded-2xl rounded-bl-md"}`}
+                        className={`px-4 py-3 text-sm max-w-md leading-relaxed ${
+                          msg.de === "yo"
+                            ? "bg-[#6C63FF] text-white rounded-2xl rounded-br-md"
+                            : theme === "dark"
+                              ? "bg-[#111118] border border-[#2A2A38] text-[#F0F0F8] rounded-2xl rounded-bl-md"
+                              : "bg-gray-100 border border-gray-200 text-gray-800 rounded-2xl rounded-bl-md"
+                        }`}
                       >
                         {msg.texto}
                       </div>
@@ -280,9 +308,10 @@ export default function MensajesPage() {
               </div>
 
               {/* Input */}
-              <div className="flex gap-3 px-6 py-4 border-t border-[#2A2A38]">
+              <div className={`flex gap-3 px-6 py-4 border-t ${borderColor}`}>
                 <textarea
-                  className="flex-1 px-4 py-3 rounded-xl bg-[#111118] border border-[#2A2A38] text-white text-sm resize-none outline-none h-12 focus:border-[#6C63FF] transition-all"
+                  style={{ backgroundColor: inputBg, color: textColor[theme] }}
+                  className={`flex-1 px-4 py-3 rounded-xl border ${borderColor} text-sm resize-none outline-none h-12 focus:border-[#6C63FF] transition-all`}
                   placeholder="Escribe un mensaje..."
                   value={mensaje}
                   onChange={(e) => setMensaje(e.target.value)}
