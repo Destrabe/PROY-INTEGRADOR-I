@@ -223,7 +223,19 @@ export default function FeedTrabajos() {
       return;
     }
 
-    if (sol.imageUrls?.length > 0) await eliminarImagenesSolicitud(sol.imageUrls);
+    const urlsDeStorage = (sol.imageUrls || []).filter(
+      (url) => typeof url === "string" && !url.startsWith("data:"),
+    );
+
+    if (urlsDeStorage.length > 0) {
+      try {
+        await eliminarImagenesSolicitud(urlsDeStorage);
+      } catch (err) {
+        console.error("[handleCancelar] Error al eliminar imágenes:", err);
+        // No bloquea la eliminación de la solicitud aunque falle borrar imágenes
+      }
+    }
+
     await eliminarSolicitud(solicitudId);
   };
 

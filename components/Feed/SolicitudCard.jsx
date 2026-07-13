@@ -250,7 +250,7 @@ export default function SolicitudCard({
         color: textColor[theme] 
       }}
     >
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#6c63ff]/60 to-transparent opacity-0 transition group-hover:opacity-100" />
+      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-[#6c63ff]/60 to-transparent opacity-0 transition group-hover:opacity-100" />
 
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex min-w-0 items-start gap-4">
@@ -327,7 +327,7 @@ export default function SolicitudCard({
             src={primerImagen}
             alt="Foto de la solicitud"
             onClick={(e) => e.stopPropagation()}
-            className="h-44 w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+            className="h-72 w-full object-cover object-center transition duration-700 group-hover:scale-[1.03]"
           />
         </div>
       )}

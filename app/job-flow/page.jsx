@@ -112,7 +112,7 @@ function Toast({ message, type, onClose }) {
     : "bg-red-500/10 border-red-500/20 text-red-400";
 
   return (
-    <div className={`fixed bottom-8 right-8 ${styles} border p-5 rounded-2xl flex items-center gap-4 z-[200] shadow-2xl backdrop-blur-md max-w-md`}>
+    <div className={`fixed bottom-8 right-8 ${styles} border p-5 rounded-2xl flex items-center gap-4 z-200 shadow-2xl backdrop-blur-md max-w-md`}>
       <div className="w-2 h-2 rounded-full bg-current animate-pulse shrink-0" />
       <p className="text-sm font-black uppercase tracking-widest">{message}</p>
     </div>
@@ -215,7 +215,7 @@ function ReviewBox({ placeholder, onSubmit, disabled }) {
 
 function PaymentProcessing({ done }) {
   return (
-    <div className="min-h-[420px] flex items-center justify-center">
+    <div className="min-h-105 flex items-center justify-center">
       <div className="text-center">
         <div className="relative w-32 h-32 mx-auto mb-8 flex items-center justify-center">
           <div className={`absolute inset-0 rounded-full border-4 ${done ? "border-emerald-500/30" : "border-[#6c63ff]/20 border-t-[#6c63ff] animate-spin"}`} />
@@ -512,7 +512,7 @@ function WorkerProfileModal({ workerId, onClose, onAceptar, yaAceptado }) {
   const fullName = titleCaseName(`${data?.first_name || ""} ${data?.last_name || ""}`.trim() || data?.displayName || data?.email || "Trabajador");
 
   return (
-    <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md">
+    <div className="fixed inset-0 z-150 flex items-center justify-center p-6 bg-black/90 backdrop-blur-md">
       <div className="bg-[#111118] border border-white/10 w-full max-w-2xl max-h-[90vh] rounded-[3rem] overflow-hidden flex flex-col shadow-2xl">
         <div className="p-8 border-b border-white/5 flex items-center justify-between">
           <h2 className="text-xl font-black text-white">Perfil del Trabajador</h2>
@@ -960,7 +960,7 @@ function JobFlowContent() {
                     <Icons.CheckSmall /> {STEPS[currentStepIndex].label === "Postulación" ? "Postulación enviada · esperando respuesta del cliente" : `Estado actual: ${STEPS[currentStepIndex].label}`}
                   </div>
                 ) : (
-                  <button onClick={handlePostular} disabled={applying} className="w-full bg-gradient-to-r from-[#6c63ff] to-[#4b45b2] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-xl shadow-[#6c63ff]/20 hover:scale-[1.01] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+                  <button onClick={handlePostular} disabled={applying} className="w-full bg-linear-to-r from-[#6c63ff] to-[#4b45b2] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-xl shadow-[#6c63ff]/20 hover:scale-[1.01] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
                     {applying ? "Enviando..." : "Postular ahora"}
                   </button>
                 )}
