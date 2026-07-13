@@ -171,41 +171,6 @@ const resizeImageToBase64 = (file, maxDim = 1600, quality = 0.85) =>
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
-const MAX_IMAGE_MB = 3;
-const MAX_TITULO = 70;
-const MAX_DESCRIPCION = 500;
-const MAX_PRESUPUESTO_DIGITS = 6;
-
-// Convierte y comprime una imagen a Base64 directamente en el navegador.
-// Así se guarda en el mismo documento de Firestore, sin necesitar
-// Firebase Storage (que actualmente exige plan de facturación Blaze).
-const resizeImageToBase64 = (file, maxDim = 1600, quality = 0.85) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new window.Image();
-      img.onload = () => {
-        let { width, height } = img;
-        if (width > height && width > maxDim) {
-          height = Math.round((height * maxDim) / width);
-          width = maxDim;
-        } else if (height >= width && height > maxDim) {
-          width = Math.round((width * maxDim) / height);
-          height = maxDim;
-        }
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL("image/jpeg", quality));
-      };
-      img.onerror = reject;
-      img.src = e.target.result;
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
 
 export default function NewRequestPage() {
   const router = useRouter();
@@ -269,7 +234,6 @@ export default function NewRequestPage() {
   const [archivos, setArchivos] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [procesandoImagenes, setProcesandoImagenes] = useState(false);
-  const [procesandoImagenes, setProcesandoImagenes] = useState(false);
 
   const [form, setForm] = useState({
     categoria: null,
@@ -306,44 +270,11 @@ export default function NewRequestPage() {
     if (disponibles <= 0) return;
 
     const candidatos = Array.from(nuevos)
-  const handlePresupuestoChange = (e) => {
-    const value = e.target.value.replace(/\D/g, "").slice(0, MAX_PRESUPUESTO_DIGITS);
-    setF("presupuesto", value);
-  };
-
-  const agregarArchivos = async (nuevos) => {
-    const disponibles = MAX_IMAGENES - archivos.length;
-    if (disponibles <= 0) return;
-
-    const candidatos = Array.from(nuevos)
       .filter((f) => f.type.startsWith("image/"))
       .slice(0, disponibles);
-      .slice(0, disponibles);
 
     if (candidatos.length === 0) return;
-    if (candidatos.length === 0) return;
 
-    const oversized = candidatos.filter((f) => f.size / (1024 * 1024) > MAX_IMAGE_MB);
-    const validos = candidatos.filter((f) => f.size / (1024 * 1024) <= MAX_IMAGE_MB);
-
-    if (oversized.length > 0) {
-      alert(
-        `${oversized.length} imagen${oversized.length > 1 ? "es" : ""} supera${oversized.length > 1 ? "n" : ""} el límite de ${MAX_IMAGE_MB}MB y no se agregó: ${oversized.map((f) => f.name).join(", ")}`,
-      );
-    }
-
-    if (validos.length === 0) return;
-
-    setProcesandoImagenes(true);
-    try {
-      const base64s = await Promise.all(validos.map((f) => resizeImageToBase64(f)));
-      setArchivos((p) => [...p, ...validos]);
-      setPreviews((p) => [...p, ...base64s]);
-    } catch {
-      alert("No se pudo procesar una o más imágenes. Intenta con otro archivo.");
-    } finally {
-      setProcesandoImagenes(false);
-    }
     const oversized = candidatos.filter((f) => f.size / (1024 * 1024) > MAX_IMAGE_MB);
     const validos = candidatos.filter((f) => f.size / (1024 * 1024) <= MAX_IMAGE_MB);
 
@@ -463,9 +394,6 @@ export default function NewRequestPage() {
           coordenadas: { lat: form.lat, lng: form.lng },
           nombre: user.displayName ?? user.email?.split("@")[0] ?? "Usuario",
           iniciales: obtenerIniciales(user.displayName ?? user.email ?? "U"),
-          // Imágenes ya comprimidas y en Base64: se guardan directo en el
-          // documento de Firestore, sin pasar por Firebase Storage.
-          imageUrls: previews,
           // Imágenes ya comprimidas y en Base64: se guardan directo en el
           // documento de Firestore, sin pasar por Firebase Storage.
           imageUrls: previews,
@@ -734,9 +662,7 @@ export default function NewRequestPage() {
                   style={{ background: T.inputBg, borderColor: T.inputBorder, color: T.inputText }}
                   placeholder="Ej. Necesito técnico para instalar cámaras de seguridad en casa"
                   maxLength={MAX_TITULO}
-                  maxLength={MAX_TITULO}
                   value={form.titulo}
-                  onChange={(e) => setF("titulo", e.target.value.slice(0, MAX_TITULO))}
                   onChange={(e) => setF("titulo", e.target.value.slice(0, MAX_TITULO))}
                 />
                 {errores.titulo && (
@@ -765,9 +691,7 @@ export default function NewRequestPage() {
                   style={{ background: T.inputBg, borderColor: T.inputBorder, color: T.inputText }}
                   placeholder="Cuéntanos qué necesitas exactamente, cuándo, dónde y cualquier detalle relevante..."
                   maxLength={MAX_DESCRIPCION}
-                  maxLength={MAX_DESCRIPCION}
                   value={form.descripcion}
-                  onChange={(e) => setF("descripcion", e.target.value.slice(0, MAX_DESCRIPCION))}
                   onChange={(e) => setF("descripcion", e.target.value.slice(0, MAX_DESCRIPCION))}
                 />
                 {errores.descripcion && (
@@ -805,14 +729,11 @@ export default function NewRequestPage() {
                     <input
                       type="text"
                       inputMode="numeric"
-                      type="text"
-                      inputMode="numeric"
                       className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] w-full box-border outline-none transition-all focus:border-[#500fe9] focus:shadow-[0_0_0_3px_rgba(80,15,233,0.15)]"
                       style={{ background: T.inputBg, borderColor: T.inputBorder, color: T.inputText }}
                       placeholder="Ej: 200"
                       maxLength={MAX_PRESUPUESTO_DIGITS}
                       value={form.presupuesto}
-                      onChange={handlePresupuestoChange}
                       onChange={handlePresupuestoChange}
                     />
                   </div>
@@ -1234,7 +1155,6 @@ export default function NewRequestPage() {
             onClick={publicar}
             disabled={enviando}
           >
-            {enviando ? "Publicando..." : "Publicar solicitud"}
             {enviando ? "Publicando..." : "Publicar solicitud"}
           </button>
         )}
