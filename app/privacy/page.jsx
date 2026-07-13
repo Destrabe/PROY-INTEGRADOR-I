@@ -1,6 +1,31 @@
+"use client";
+import { useThemeStore } from "@/store/themeStore";
+
 export default function PrivacyPage() {
+  const theme = useThemeStore((state) => state.theme);
+  const background = useThemeStore((state) => state.background);
+  const textColor = useThemeStore((state) => state.textColor);
+  const isDark = theme === "dark";
+
+  // Paleta neutra derivada del theme. El acento morado (#A855F7) se mantiene
+  // igual en ambos modos, igual que en HomePage / NewRequestPage.
+  const T = {
+    pageBg: background?.[theme] ?? (isDark ? "#0A0A0F" : "#ffffff"),
+    heading: isDark ? "#ffffff" : "#111118",
+    cardBg: isDark ? "#111118" : "#f4f4f5",
+    cardBorder: isDark ? "#2A2A38" : "#e4e4e7",
+    bodyText: isDark ? "#d1d5db" : "#374151", // text-gray-300 equivalente
+    mutedText: isDark ? "#9ca3af" : "#4b5563", // text-gray-400 equivalente
+    subtitle: isDark ? "#9ca3af" : "#6b7280",
+    calloutBg: isDark ? "rgba(168,85,247,0.08)" : "rgba(168,85,247,0.06)",
+    calloutBorder: isDark ? "rgba(168,85,247,0.3)" : "rgba(168,85,247,0.35)",
+  };
+
   return (
-    <main className="mt-12 min-h-screen px-6 py-12 bg-[#0A0A0F]">
+    <main
+      className="mt-12 min-h-screen px-6 py-12 bg-[#0A0A0F]"
+      style={{ background: T.pageBg }}
+    >
       <div className="max-w-4xl mx-auto">
         {/* HERO */}
         <div className="text-center mb-10">
@@ -23,11 +48,14 @@ export default function PrivacyPage() {
             </svg>
           </div>
 
-          <h1 className="font-syne text-5xl font-extrabold text-white mb-3">
+          <h1
+            className="font-syne text-5xl font-extrabold text-white mb-3"
+            style={{ color: T.heading }}
+          >
             Política de Privacidad
           </h1>
 
-          <p className="text-lg text-gray-400">
+          <p className="text-lg text-gray-400" style={{ color: T.subtitle }}>
             Tu información y seguridad son importantes para nosotros.
           </p>
         </div>
@@ -35,11 +63,11 @@ export default function PrivacyPage() {
         <div
           className="rounded-3xl p-8 md:p-10"
           style={{
-            background: "#111118",
-            border: "1px solid #2A2A38",
+            background: T.cardBg,
+            border: `1px solid ${T.cardBorder}`,
           }}
         >
-          <p className="text-gray-300 leading-8 mb-8">
+          <p className="text-gray-300 leading-8 mb-8" style={{ color: T.bodyText }}>
             En Nexora valoramos y protegemos la privacidad de nuestros usuarios.
             Esta política explica cómo recopilamos, utilizamos y protegemos la
             información proporcionada dentro de la plataforma.
@@ -60,12 +88,12 @@ export default function PrivacyPage() {
                 <path d="M4 21a8 8 0 0 1 16 0" />
               </svg>
 
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-white" style={{ color: T.heading }}>
                 Información recopilada
               </h2>
             </div>
 
-            <p className="text-gray-400 leading-7">
+            <p className="text-gray-400 leading-7" style={{ color: T.mutedText }}>
               Podemos recopilar información como nombre, correo electrónico,
               fotografía de perfil y otros datos necesarios para el correcto
               funcionamiento de la plataforma.
@@ -88,12 +116,12 @@ export default function PrivacyPage() {
                 <path d="M6 20v-6" />
               </svg>
 
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-white" style={{ color: T.heading }}>
                 Uso de la información
               </h2>
             </div>
 
-            <p className="text-gray-400 leading-7">
+            <p className="text-gray-400 leading-7" style={{ color: T.mutedText }}>
               Utilizamos la información para gestionar cuentas, mejorar la
               experiencia de usuario, personalizar funcionalidades y brindar
               soporte dentro de Nexora.
@@ -115,12 +143,12 @@ export default function PrivacyPage() {
                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
 
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-white" style={{ color: T.heading }}>
                 Protección de datos
               </h2>
             </div>
 
-            <p className="text-gray-400 leading-7">
+            <p className="text-gray-400 leading-7" style={{ color: T.mutedText }}>
               Implementamos medidas de seguridad razonables para proteger la
               información almacenada contra accesos no autorizados, pérdida o
               alteración de datos.
@@ -145,12 +173,12 @@ export default function PrivacyPage() {
                 <path d="M15.4 6.5l-6.8 4" />
               </svg>
 
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-white" style={{ color: T.heading }}>
                 Compartición de información
               </h2>
             </div>
 
-            <p className="text-gray-400 leading-7">
+            <p className="text-gray-400 leading-7" style={{ color: T.mutedText }}>
               Nexora no vende ni comparte información personal con terceros,
               excepto cuando exista una obligación legal o sea necesario para la
               prestación del servicio.
@@ -172,12 +200,12 @@ export default function PrivacyPage() {
                 <circle cx="12" cy="12" r="9" />
               </svg>
 
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-white" style={{ color: T.heading }}>
                 Derechos del usuario
               </h2>
             </div>
 
-            <p className="text-gray-400 leading-7">
+            <p className="text-gray-400 leading-7" style={{ color: T.mutedText }}>
               Los usuarios pueden solicitar la actualización, corrección o
               eliminación de su información personal conforme a las políticas de
               la plataforma.
@@ -188,8 +216,8 @@ export default function PrivacyPage() {
           <div
             className="rounded-2xl p-6 mt-10"
             style={{
-              background: "rgba(168,85,247,0.08)",
-              border: "1px solid rgba(168,85,247,0.3)",
+              background: T.calloutBg,
+              border: `1px solid ${T.calloutBorder}`,
             }}
           >
             <div className="flex items-center gap-3 mb-3">
@@ -207,12 +235,12 @@ export default function PrivacyPage() {
                 <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
               </svg>
 
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-xl font-bold text-white" style={{ color: T.heading }}>
                 Cambios en esta política
               </h2>
             </div>
 
-            <p className="text-gray-300 leading-7">
+            <p className="text-gray-300 leading-7" style={{ color: T.bodyText }}>
               Esta política puede actualizarse periódicamente para reflejar
               mejoras en Nexora, nuevas funcionalidades o cambios legales.
             </p>
