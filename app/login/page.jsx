@@ -5,18 +5,31 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/db";
-import { loginUser, loginWithGoogle, loginWithFacebook } from "@/firebase/auth";
+import { loginUser, loginWithGoogle} from "@/firebase/auth";
 import { useAuth } from "@/components/AuthContext";
 import Image from "next/image";
+import { useThemeStore } from "@/store/themeStore";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
+  
+  // Usamos el Store del Tema
+  const theme = useThemeStore((state) => state.theme);
+  const background = useThemeStore((state) => state.background);
+  const textColor = useThemeStore((state) => state.textColor);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [recordar, setRecordar] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Colores dinámicos
+  const cardBg = theme === "dark" ? "#111118" : "#ffffff";
+  const cardBorder = theme === "dark" ? "#2A2A38" : "#e4e4e7";
+  const mutedText = theme === "dark" ? "#9090A8" : "#64748b";
+  const dividerBg = theme === "dark" ? "#2A2A38" : "#e4e4e7";
 
   const handleGoogleLogin = async () => {
     try {
@@ -37,42 +50,10 @@ export default function LoginPage() {
         "sessionExpiration",
         String(Date.now() + 30 * 24 * 60 * 60 * 1000),
       );
-      uid: (user.uid, router.push("/"));
+      router.push("/");
     } catch (error) {
       console.log("GOOGLE ERROR:", error);
       setError("Error al iniciar sesión con Google.");
-    }
-  };
-
-  const handleFacebookLogin = async () => {
-    try {
-      setError("");
-      const user = await loginWithFacebook();
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      const data = userDoc.exists() ? userDoc.data() : {};
-
-      login({
-        uid: user.uid,
-        email: user.email,
-        first_name: data.first_name || user.displayName || "",
-        last_name: data.last_name || "",
-        rol: data.rol || "cliente",
-        photoURL: data.photoURL || null,
-      });
-      localStorage.setItem(
-        "sessionExpiration",
-        String(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      );
-      router.push("/");
-    } catch (error) {
-      console.log("FACEBOOK ERROR:", error);
-      if (error.code === "auth/account-exists-with-different-credential") {
-        setError(
-          "Ya existe una cuenta con este correo asociada a otro proveedor.",
-        );
-      } else {
-        setError("Error al iniciar sesión con Facebook.");
-      }
     }
   };
 
@@ -120,28 +101,40 @@ export default function LoginPage() {
   };
 
   return (
-    <div className=" min-h-screen flex items-center justify-center px-4 pt-24 pb-4 bg-[#0A0A0F] font-body text-[#f0f0f5] relative overflow-hidden selection:bg-[#635bff]/30">
+    <div 
+      className="min-h-screen flex items-center justify-center px-4 pt-24 pb-4 font-body relative overflow-hidden selection:bg-[#635bff]/30 transition-colors duration-300"
+      style={{ background: background[theme], color: textColor[theme] }}
+    >
       {/* Luces de fondo (Efecto Glow) */}
-      <div className="absolute top-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full bg-[#635bff]/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] rounded-full bg-[#9b59b6]/10 blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-75 h-75 rounded-full bg-[#635bff]/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-75 h-75 rounded-full bg-[#9b59b6]/10 blur-[120px] pointer-events-none" />
 
-      <div className="w-full max-w-[480px] animate-[cardIn_0.5s_cubic-bezier(0.22,1,0.36,1)_both] z-10">
+      <div className="w-full max-w-120 animate-[cardIn_0.5s_cubic-bezier(0.22,1,0.36,1)_both] z-10">
         {/* Card Principal */}
-        <div className="rounded-2xl p-6 sm:p-8 bg-[#111118] border border-[#2A2A38] shadow-[0_24px_64px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.05)]">
-          <h1 className="font-extrabold text-2xl sm:text-3xl mb-1 text-center font-display text-[#F0F0F8] tracking-tight">
+        <div 
+          className="rounded-2xl p-6 sm:p-8 border shadow-[0_24px_64px_rgba(0,0,0,0.5)] transition-colors duration-300"
+          style={{ backgroundColor: cardBg, borderColor: cardBorder }}
+        >
+          <h1 
+            className="font-extrabold text-2xl sm:text-3xl mb-1 text-center font-display tracking-tight transition-colors"
+            style={{ color: textColor[theme] }}
+          >
             Bienvenido de nuevo
           </h1>
-          <p className="text-sm text-center mb-6 text-[#9090A8]">
+          <p 
+            className="text-sm text-center mb-6 transition-colors"
+            style={{ color: mutedText }}
+          >
             Inicia sesión en tu cuenta
           </p>
 
           {/* Campo Email */}
           <div className="mb-4 flex flex-col gap-2">
-            <label className="text-sm font-bold text-[#9090A8] font-body">
+            <label className="text-sm font-bold font-body transition-colors" style={{ color: mutedText }}>
               Correo electrónico
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#606078]">
+              <span className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${theme === "dark" ? "text-[#606078]" : "text-[#94a3b8]"}`}>
                 <svg
                   width="16"
                   height="16"
@@ -160,18 +153,19 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                className="w-full h-[52px] pl-9 pr-4 py-3 bg-[#22222C] border-2 border-white/10 rounded-xl text-sm font-light text-[#F0F0F8] outline-none placeholder:text-[#5a5a6a] transition-all duration-200 focus:border-[#635bff]/60 focus:bg-[#1a1a22] focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body"
+                className={`w-full h-13 pl-9 pr-4 py-3 border-2 rounded-xl text-sm font-light outline-none transition-all duration-200 focus:border-[#635bff]/60 focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body
+                  ${theme === "dark" ? "bg-[#22222C] border-white/10 text-[#F0F0F8] placeholder:text-[#5a5a6a] focus:bg-[#1a1a22]" : "bg-[#f4f4f5] border-black/5 text-[#18181b] placeholder:text-[#94a3b8] focus:bg-white"}`}
               />
             </div>
           </div>
 
           {/* Campo Contraseña */}
           <div className="mb-4 flex flex-col gap-2">
-            <label className="text-sm font-bold text-[#9090A8] font-body">
+            <label className="text-sm font-bold font-body transition-colors" style={{ color: mutedText }}>
               Contraseña
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#606078]">
+              <span className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${theme === "dark" ? "text-[#606078]" : "text-[#94a3b8]"}`}>
                 <svg
                   width="16"
                   height="16"
@@ -190,7 +184,8 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                className="w-full h-[52px] pl-9 pr-4 py-3 bg-[#22222C] border-2 border-white/10 rounded-xl text-sm font-light text-[#F0F0F8] outline-none placeholder:text-[#5a5a6a] transition-all duration-200 focus:border-[#635bff]/60 focus:bg-[#1a1a22] focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body"
+                className={`w-full h-13 pl-9 pr-4 py-3 border-2 rounded-xl text-sm font-light outline-none transition-all duration-200 focus:border-[#635bff]/60 focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body
+                  ${theme === "dark" ? "bg-[#22222C] border-white/10 text-[#F0F0F8] placeholder:text-[#5a5a6a] focus:bg-[#1a1a22]" : "bg-[#f4f4f5] border-black/5 text-[#18181b] placeholder:text-[#94a3b8] focus:bg-white"}`}
               />
             </div>
           </div>
@@ -202,9 +197,11 @@ export default function LoginPage() {
                 type="checkbox"
                 checked={recordar}
                 onChange={(e) => setRecordar(e.target.checked)}
-                className="w-4 h-4 rounded accent-[#6C63FF] bg-[#1A1A28] border-[#2A2A38]"
+                className={`w-4 h-4 rounded accent-[#6C63FF] border-[#2A2A38] ${theme === "dark" ? "bg-[#1A1A28]" : "bg-white"}`}
               />
-              <span className="text-sm text-[#9090A8] group-hover:text-[#F0F0F8] transition-colors font-body">
+              <span 
+                className={`text-sm transition-colors font-body ${theme === "dark" ? "text-[#9090A8] group-hover:text-[#F0F0F8]" : "text-[#64748b] group-hover:text-[#18181b]"}`}
+              >
                 Recordarme
               </span>
             </label>
@@ -228,7 +225,7 @@ export default function LoginPage() {
             type="button"
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full h-[52px] rounded-xl text-sm font-bold text-white transition-all duration-200 bg-gradient-to-br from-[#6C63FF] to-[#9B59B6] hover:shadow-[0_0_32px_rgba(99,91,255,0.4)] hover:-translate-y-[1px] active:translate-y-0 disabled:pointer-events-none disabled:opacity-70 flex items-center justify-center gap-2 cursor-pointer font-body"
+            className="w-full h-13 rounded-xl text-sm font-bold text-white transition-all duration-200 bg-linear-to-br from-[#6C63FF] to-[#9B59B6] hover:shadow-[0_0_32px_rgba(99,91,255,0.4)] hover:-translate-y-px active:translate-y-0 disabled:pointer-events-none disabled:opacity-70 flex items-center justify-center gap-2 cursor-pointer font-body"
           >
             {loading ? (
               <>
@@ -242,19 +239,20 @@ export default function LoginPage() {
 
           {/* Divisor */}
           <div className="flex items-center gap-3 my-5">
-            <div className="flex-1 h-px bg-[#2A2A38]" />
-            <span className="text-xs text-[#606078] uppercase tracking-wider font-semibold">
+            <div className="flex-1 h-px transition-colors" style={{ backgroundColor: dividerBg }} />
+            <span className={`text-xs uppercase tracking-wider font-semibold transition-colors ${theme === "dark" ? "text-[#606078]" : "text-[#94a3b8]"}`}>
               O continúa con
             </span>
-            <div className="flex-1 h-px bg-[#2A2A38]" />
+            <div className="flex-1 h-px transition-colors" style={{ backgroundColor: dividerBg }} />
           </div>
 
-          {/* Botones de Proveedores (Oauth) */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
+          {/* Botones de Proveedores (Oauth) - CENTRADO Y ANCHO COMPLETO */}
+          <div className="flex justify-center mb-6">
             <button
               type="button"
               onClick={handleGoogleLogin}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all duration-200 bg-[#1A1A28] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6C63FF] cursor-pointer font-body"
+              className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all duration-200 border cursor-pointer font-body
+                ${theme === "dark" ? "bg-[#1A1A28] border-[#2A2A38] text-[#F0F0F8] hover:border-[#6C63FF]" : "bg-[#f4f4f5] border-[#e4e4e7] text-[#18181b] hover:border-[#6C63FF] hover:bg-white"}`}
             >
               <Image
                 src="/svg/google.svg"
@@ -265,24 +263,10 @@ export default function LoginPage() {
               />
               Google
             </button>
-            <button
-              type="button"
-              onClick={handleFacebookLogin}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all duration-200 bg-[#1A1A28] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6C63FF] cursor-pointer font-body"
-            >
-              <Image
-                src="/svg/facebook.svg"
-                alt="facebook"
-                className="object-contain"
-                width={16}
-                height={16}
-              />
-              Facebook
-            </button>
           </div>
 
           {/* Enlace de Registro */}
-          <p className="text-sm text-center text-[#9090A8] font-body font-black">
+          <p className={`text-sm text-center font-body font-black transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}>
             ¿No tienes una cuenta?{" "}
             <Link
               href="/register"

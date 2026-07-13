@@ -7,6 +7,7 @@ import { es } from "date-fns/locale";
 import { useAuth } from "@/components/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { db } from "@/firebase/client";
+import { useThemeStore } from "@/store/themeStore"; // <-- Importamos tu store
 import {
   doc,
   onSnapshot,
@@ -106,22 +107,20 @@ function Toast({ message, type, onClose }) {
     const timer = setTimeout(onClose, 4000);
     return () => clearTimeout(timer);
   }, [onClose]);
-
   const styles = type === "success"
-    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
-    : "bg-red-500/10 border-red-500/20 text-red-400";
-
+    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+    : "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400";
   return (
-    <div className={`fixed bottom-8 right-8 ${styles} border p-5 rounded-2xl flex items-center gap-4 z-[200] shadow-2xl backdrop-blur-md max-w-md`}>
+    <div className={`fixed bottom-8 right-8 ${styles} border p-5 rounded-2xl flex items-center gap-4 z-[200] shadow-2xl backdrop-blur-md max-w-md bg-white dark:bg-transparent`}>
       <div className="w-2 h-2 rounded-full bg-current animate-pulse shrink-0" />
       <p className="text-sm font-black uppercase tracking-widest">{message}</p>
     </div>
   );
 }
 
-function Stepper({ currentIndex }) {
+function Stepper({ currentIndex, theme }) {
   return (
-    <div className="flex items-center justify-between mb-10 px-2">
+    <div className="flex items-center justify-between mb-10 px-2 transition-colors duration-300">
       {STEPS.map((step, i) => (
         <React.Fragment key={step.key}>
           <div className="flex flex-col items-center gap-2">
@@ -129,19 +128,25 @@ function Stepper({ currentIndex }) {
               i === currentIndex
                 ? "bg-[#6c63ff] border-[#6c63ff] text-white shadow-lg shadow-[#6c63ff]/30"
                 : i < currentIndex
-                  ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
-                  : "bg-white/5 border-white/10 text-slate-600"
+                  ? `bg-emerald-500/10 border-emerald-500/30 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`
+                  : theme === "dark" ? "bg-white/5 border-white/10 text-slate-600" : "bg-black/5 border-black/10 text-slate-400"
             }`}>
               {i < currentIndex ? <Icons.CheckSmall /> : <step.Icon />}
             </div>
             <span className={`text-[10px] font-black uppercase tracking-widest ${
-              i === currentIndex ? "text-white" : i < currentIndex ? "text-emerald-400" : "text-slate-600"
+              i === currentIndex 
+                ? (theme === "dark" ? "text-white" : "text-[#18181b]") 
+                : i < currentIndex 
+                  ? (theme === "dark" ? "text-emerald-400" : "text-emerald-600") 
+                  : "text-slate-500"
             }`}>
               {step.label}
             </span>
           </div>
           {i < STEPS.length - 1 && (
-            <div className={`flex-1 h-0.5 mx-2 mb-6 rounded-full ${i < currentIndex ? "bg-emerald-500/30" : "bg-white/5"}`} />
+            <div className={`flex-1 h-0.5 mx-2 mb-6 rounded-full transition-colors ${
+              i < currentIndex ? "bg-emerald-500/30" : theme === "dark" ? "bg-white/5" : "bg-black/5"
+            }`} />
           )}
         </React.Fragment>
       ))}
@@ -158,7 +163,7 @@ function Avatar({ name, photoURL, size = "w-12 h-12", rounded = "rounded-2xl" })
   );
 }
 
-function ReviewBox({ placeholder, onSubmit, disabled }) {
+function ReviewBox({ placeholder, onSubmit, disabled, theme }) {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [sending, setSending] = useState(false);
@@ -167,7 +172,6 @@ function ReviewBox({ placeholder, onSubmit, disabled }) {
   const submit = async () => {
     if (!comment.trim() || sent || disabled) return;
     setSending(true);
-
     try {
       await onSubmit({ rating, comment });
       setSent(true);
@@ -179,7 +183,7 @@ function ReviewBox({ placeholder, onSubmit, disabled }) {
 
   if (disabled || sent) {
     return (
-      <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-2xl p-5 text-center text-[10px] font-black uppercase tracking-widest">
+      <div className={`border rounded-2xl p-5 text-center text-[10px] font-black uppercase tracking-widest ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-emerald-50 border-emerald-200 text-emerald-600"}`}>
         Reseña publicada
       </div>
     );
@@ -189,14 +193,14 @@ function ReviewBox({ placeholder, onSubmit, disabled }) {
     <div className="space-y-5">
       <div className="flex gap-2">
         {[1, 2, 3, 4, 5].map((n) => (
-          <button key={n} type="button" onClick={() => setRating(n)} className={`text-2xl font-black transition-all ${n <= rating ? "text-amber-400" : "text-slate-700"}`}>
+          <button key={n} type="button" onClick={() => setRating(n)} className={`text-2xl font-black transition-all ${n <= rating ? "text-amber-400" : "text-slate-300 dark:text-slate-700"}`}>
             ★
           </button>
         ))}
       </div>
 
       <textarea
-        className="w-full min-h-28 bg-white/5 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:border-[#6c63ff] resize-none"
+        className={`w-full min-h-28 border rounded-2xl p-4 text-sm outline-none focus:border-[#6c63ff] resize-none transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-transparent border-[#e4e4e7] text-[#18181b]"}`}
         placeholder={placeholder}
         value={comment}
         onChange={(e) => setComment(e.target.value)}
@@ -205,7 +209,7 @@ function ReviewBox({ placeholder, onSubmit, disabled }) {
       <button
         onClick={submit}
         disabled={sending || !comment.trim()}
-        className="w-full bg-[#6c63ff] disabled:bg-white/10 disabled:text-slate-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px]"
+        className={`w-full bg-[#6c63ff] py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-colors ${theme === "dark" ? "disabled:bg-white/10 disabled:text-slate-600 text-white" : "disabled:bg-black/5 disabled:text-slate-400 text-white"}`}
       >
         {sending ? "Publicando..." : "Publicar reseña"}
       </button>
@@ -213,9 +217,9 @@ function ReviewBox({ placeholder, onSubmit, disabled }) {
   );
 }
 
-function PaymentProcessing({ done }) {
+function PaymentProcessing({ done, theme }) {
   return (
-    <div className="min-h-[420px] flex items-center justify-center">
+    <div className="min-h-105 flex items-center justify-center">
       <div className="text-center">
         <div className="relative w-32 h-32 mx-auto mb-8 flex items-center justify-center">
           <div className={`absolute inset-0 rounded-full border-4 ${done ? "border-emerald-500/30" : "border-[#6c63ff]/20 border-t-[#6c63ff] animate-spin"}`} />
@@ -223,8 +227,8 @@ function PaymentProcessing({ done }) {
             {done ? <Icons.Check /> : <Icons.Lock />}
           </div>
         </div>
-        <h2 className="text-2xl font-black text-white mb-2">{done ? "Pago procesado" : "Procesando pago"}</h2>
-        <p className="text-slate-500 text-xs font-black uppercase tracking-widest">
+        <h2 className={`text-2xl font-black mb-2 ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}>{done ? "Pago procesado" : "Procesando pago"}</h2>
+        <p className={`text-xs font-black uppercase tracking-widest ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>
           {done ? "Tu pago quedó protegido en escrow" : "Validando transacción segura"}
         </p>
       </div>
@@ -232,63 +236,68 @@ function PaymentProcessing({ done }) {
   );
 }
 
-function PaymentPanel({ job, workerName, workerPhoto, onPay, processing, processed }) {
+function PaymentPanel({ job, workerName, workerPhoto, onPay, processing, processed, theme }) {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const total = moneyNumber(job.precio);
   const subtotal = total / 1.07;
   const comision = total * 0.06168;
   const igv = total - subtotal - comision;
 
-  if (processing || processed) return <PaymentProcessing done={processed} />;
+  const innerCardBg = theme === "dark" ? "#0A0A0F" : "#f4f4f5";
+  const borderColor = theme === "dark" ? "rgba(255,255,255,0.05)" : "#e4e4e7";
+  const textColor = theme === "dark" ? "text-white" : "text-[#18181b]";
+  const mutedText = theme === "dark" ? "text-slate-400" : "text-slate-500";
+
+  if (processing || processed) return <PaymentProcessing done={processed} theme={theme} />;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 transition-colors duration-300">
       <div>
         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#6c63ff] mb-3">Confirmar y Pagar</p>
-        <div className="bg-[#0A0A0F] border border-white/5 rounded-3xl p-6 flex items-center gap-4">
+        <div className="border rounded-3xl p-6 flex items-center gap-4 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
           <Avatar name={workerName} photoURL={workerPhoto} size="w-14 h-14" />
           <div className="flex-1">
-            <h2 className="text-xl font-black text-white">{workerName}</h2>
-            <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">{job.titulo || "Proyecto Nexora"} · {job.plazo || "14 días"}</p>
+            <h2 className={`text-xl font-black ${textColor}`}>{workerName}</h2>
+            <p className={`text-xs font-bold uppercase tracking-widest ${mutedText}`}>{job.titulo || "Proyecto Nexora"} · {job.plazo || "14 días"}</p>
           </div>
-          <p className="text-2xl font-black text-white">{formatMoney(total)}</p>
+          <p className={`text-2xl font-black ${textColor}`}>{formatMoney(total)}</p>
         </div>
       </div>
 
-      <div className="bg-[#0A0A0F] border border-white/5 rounded-3xl p-6 space-y-4">
-        <div className="flex justify-between text-sm font-bold text-slate-400"><span>Subtotal</span><span>{formatMoney(subtotal)}</span></div>
-        <div className="flex justify-between text-sm font-bold text-slate-400"><span>Comisión Nexora (6.6%)</span><span>{formatMoney(comision)}</span></div>
-        <div className="flex justify-between text-sm font-bold text-slate-400"><span>IGV (18%)</span><span>{formatMoney(igv)}</span></div>
-        <div className="h-px bg-white/10" />
-        <div className="flex justify-between text-lg font-black text-white"><span>Total</span><span>{formatMoney(total)}</span></div>
+      <div className="border rounded-3xl p-6 space-y-4 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
+        <div className={`flex justify-between text-sm font-bold ${mutedText}`}><span>Subtotal</span><span>{formatMoney(subtotal)}</span></div>
+        <div className={`flex justify-between text-sm font-bold ${mutedText}`}><span>Comisión Nexora (6.6%)</span><span>{formatMoney(comision)}</span></div>
+        <div className={`flex justify-between text-sm font-bold ${mutedText}`}><span>IGV (18%)</span><span>{formatMoney(igv)}</span></div>
+        <div className="h-px w-full" style={{ backgroundColor: borderColor }} />
+        <div className={`flex justify-between text-lg font-black ${textColor}`}><span>Total</span><span>{formatMoney(total)}</span></div>
       </div>
 
-      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-3xl p-6">
-        <p className="text-emerald-400 text-[10px] font-black uppercase tracking-[0.3em] mb-3 flex items-center gap-2"><Icons.Shield /> Pago Protegido por Escrow</p>
-        <p className="text-slate-300 text-sm leading-relaxed">
+      <div className={`border rounded-3xl p-6 transition-colors ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20" : "bg-emerald-50 border-emerald-200"}`}>
+        <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-3 flex items-center gap-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}><Icons.Shield /> Pago Protegido por Escrow</p>
+        <p className={`text-sm leading-relaxed ${theme === "dark" ? "text-slate-300" : "text-slate-600"}`}>
           Tu dinero quedará retenido de forma segura. Se liberará al freelancer solo cuando apruebes el trabajo finalizado. Si hay un problema, Nexora podrá mediar la disputa según las condiciones del servicio.
         </p>
       </div>
 
-      <div className="bg-[#0A0A0F] border border-white/5 rounded-3xl p-6 space-y-5">
+      <div className="border rounded-3xl p-6 space-y-5 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-white font-black">Izipay · Pago Seguro</p>
-            <p className="text-slate-500 text-xs font-bold">Transacción cifrada con TLS 1.3 · Pago retenido en escrow</p>
+            <p className={`font-black ${textColor}`}>Izipay · Pago Seguro</p>
+            <p className={`text-xs font-bold ${mutedText}`}>Transacción cifrada con TLS 1.3 · Pago retenido en escrow</p>
           </div>
-          <p className="text-white font-black">{formatMoney(total)}</p>
+          <p className={`font-black ${textColor}`}>{formatMoney(total)}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <input className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff]" placeholder="Número de tarjeta" />
-          <input className="bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff]" placeholder="Vencimiento" />
-          <input className="bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff]" placeholder="CVV" />
-          <input className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff]" placeholder="Nombre en la tarjeta" />
+          <input className={`md:col-span-2 border rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff] transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-transparent border-[#e4e4e7] text-black"}`} placeholder="Número de tarjeta" />
+          <input className={`border rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff] transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-transparent border-[#e4e4e7] text-black"}`} placeholder="Vencimiento" />
+          <input className={`border rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff] transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-transparent border-[#e4e4e7] text-black"}`} placeholder="CVV" />
+          <input className={`md:col-span-2 border rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff] transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-transparent border-[#e4e4e7] text-black"}`} placeholder="Nombre en la tarjeta" />
         </div>
 
-        <label className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-2xl p-4 cursor-pointer">
+        <label className={`flex items-start gap-3 border rounded-2xl p-4 cursor-pointer transition-colors ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-transparent border-[#e4e4e7]"}`}>
           <input type="checkbox" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 accent-[#6c63ff]" />
-          <span className="text-xs leading-relaxed text-slate-400 font-bold">
+          <span className={`text-xs leading-relaxed font-bold ${mutedText}`}>
             Acepto los términos y condiciones. Entiendo que el pago quedará retenido en escrow y que la aprobación, revisión y liberación del pago son responsabilidad del cliente una vez recibido el trabajo.
           </span>
         </label>
@@ -296,14 +305,14 @@ function PaymentPanel({ job, workerName, workerPhoto, onPay, processing, process
         <button
           onClick={onPay}
           disabled={!acceptedTerms}
-          className="w-full bg-[#6c63ff] disabled:bg-white/10 disabled:text-slate-600 text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all"
+          className={`w-full bg-[#6c63ff] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all ${theme === "dark" ? "disabled:bg-white/10 disabled:text-slate-600" : "disabled:bg-black/5 disabled:text-slate-400"}`}
         >
           Pagar {formatMoney(total)}
         </button>
 
-        <div className="flex gap-2 flex-wrap text-[10px] font-black text-slate-500 tracking-widest">
+        <div className={`flex gap-2 flex-wrap text-[10px] font-black tracking-widest ${mutedText}`}>
           {["VISA", "MC", "AMEX", "BCP", "BBVA"].map((brand) => (
-            <span key={brand} className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg">{brand}</span>
+            <span key={brand} className={`border px-3 py-1.5 rounded-lg ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-transparent border-[#e4e4e7]"}`}>{brand}</span>
           ))}
         </div>
       </div>
@@ -311,34 +320,39 @@ function PaymentPanel({ job, workerName, workerPhoto, onPay, processing, process
   );
 }
 
-function ProcessPanel({ job, workerName, workerPhoto, clientName, clientPhoto, isOwner, onFinish }) {
+function ProcessPanel({ job, workerName, workerPhoto, clientName, clientPhoto, isOwner, onFinish, theme }) {
   const total = moneyNumber(job.precio);
+  
+  const innerCardBg = theme === "dark" ? "#0A0A0F" : "#f4f4f5";
+  const borderColor = theme === "dark" ? "rgba(255,255,255,0.05)" : "#e4e4e7";
+  const textColor = theme === "dark" ? "text-white" : "text-[#18181b]";
+  const mutedText = theme === "dark" ? "text-slate-400" : "text-slate-500";
 
   return (
-    <div className="space-y-8">
-      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-3xl p-6">
-        <p className="text-emerald-400 text-[10px] font-black uppercase tracking-[0.3em] mb-2">Pago retenido en escrow · {formatMoney(total)}</p>
-        <p className="text-slate-300 text-sm">El pago será liberado al freelancer solo cuando el cliente marque el trabajo como completado.</p>
+    <div className="space-y-8 transition-colors duration-300">
+      <div className={`border rounded-3xl p-6 transition-colors ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20" : "bg-emerald-50 border-emerald-200"}`}>
+        <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}>Pago retenido en escrow · {formatMoney(total)}</p>
+        <p className={`text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-600"}`}>El pago será liberado al freelancer solo cuando el cliente marque el trabajo como completado.</p>
       </div>
 
-      <div className="bg-[#0A0A0F] border border-white/5 rounded-3xl p-8">
+      <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
-            <h2 className="text-3xl font-black text-white">{formatMoney(total)} retenido en escrow</h2>
-            <p className="text-slate-400 mt-2">
+            <h2 className={`text-3xl font-black ${textColor}`}>{formatMoney(total)} retenido en escrow</h2>
+            <p className={`mt-2 ${mutedText}`}>
               {isOwner ? "Tu pago está seguro. Libéralo cuando el freelancer entregue el trabajo." : "Tu pago está seguro. Se liberará cuando el cliente apruebe tu entrega."}
             </p>
           </div>
-          <span className="bg-amber-500/10 border border-amber-500/20 text-amber-400 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">En espera</span>
+          <span className={`border px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest ${theme === "dark" ? "bg-amber-500/10 border-amber-500/20 text-amber-400" : "bg-amber-50 border-amber-200 text-amber-600"}`}>En espera</span>
         </div>
 
         {!isOwner && (
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-6">
+          <div className={`border rounded-2xl p-5 mb-6 ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-white border-[#e4e4e7]"}`}>
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#6c63ff] mb-3">Mensaje del sistema</p>
-            <p className="text-slate-300 text-sm leading-relaxed">
+            <p className={`text-sm leading-relaxed ${theme === "dark" ? "text-slate-300" : "text-slate-600"}`}>
               Hola {workerName.split(" ")[0]}, el cliente ha realizado el pago de {formatMoney(total)}. Este monto permanecerá retenido en escrow hasta que entregues el proyecto y el cliente lo apruebe. Mucho éxito con el desarrollo.
             </p>
-            <p className="text-slate-600 text-[10px] font-black uppercase tracking-widest mt-4">Nexora · Hoy, 10:34 am</p>
+            <p className={`text-[10px] font-black uppercase tracking-widest mt-4 ${theme === "dark" ? "text-slate-600" : "text-slate-400"}`}>Nexora · Hoy, 10:34 am</p>
           </div>
         )}
 
@@ -349,62 +363,70 @@ function ProcessPanel({ job, workerName, workerPhoto, clientName, clientPhoto, i
             ["Revisiones", "Ilimitadas"],
             ["Estado", "En desarrollo"],
           ].map(([label, value]) => (
-            <div key={label} className="bg-white/5 border border-white/10 rounded-2xl p-4">
-              <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">{label}</p>
-              <p className="text-white font-black">{value}</p>
+            <div key={label} className={`border rounded-2xl p-4 ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-white border-[#e4e4e7]"}`}>
+              <p className={`text-[10px] font-black uppercase tracking-widest mb-2 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>{label}</p>
+              <p className={`font-black ${textColor}`}>{value}</p>
             </div>
           ))}
         </div>
       </div>
 
       {isOwner ? (
-        <div className="bg-[#0A0A0F] border border-white/5 rounded-3xl p-8">
-          <h3 className="text-xl font-black text-white mb-2">¿El trabajo está listo?</h3>
-          <p className="text-slate-400 text-sm leading-relaxed mb-6">
+        <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
+          <h3 className={`text-xl font-black mb-2 ${textColor}`}>¿El trabajo está listo?</h3>
+          <p className={`text-sm leading-relaxed mb-6 ${mutedText}`}>
             Cuando el freelancer entregue el trabajo y lo hayas revisado, confirma la finalización para liberar el pago de {formatMoney(total)}.
           </p>
-          <button onClick={onFinish} className="w-full bg-emerald-500 text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px]">
+          <button onClick={onFinish} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-colors">
             Aprobar entrega y liberar pago
           </button>
         </div>
       ) : (
-        <div className="bg-[#0A0A0F] border border-white/5 rounded-3xl p-8">
-          <h3 className="text-xl font-black text-white mb-2">Desarrolla y entrega el trabajo</h3>
-          <p className="text-slate-400 text-sm leading-relaxed">Una vez que entregues el proyecto, el cliente podrá aprobarlo y liberar el pago retenido en escrow.</p>
+        <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
+          <h3 className={`text-xl font-black mb-2 ${textColor}`}>Desarrolla y entrega el trabajo</h3>
+          <p className={`text-sm leading-relaxed ${mutedText}`}>Una vez que entregues el proyecto, el cliente podrá aprobarlo y liberar el pago retenido en escrow.</p>
         </div>
       )}
 
-      <div className="bg-[#0A0A0F] border border-white/5 rounded-3xl p-8">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-6">Partes del proyecto</p>
+      <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
+        <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-6 ${mutedText}`}>Partes del proyecto</p>
         <div className="space-y-4">
-          <div className="flex items-center gap-4"><Avatar name={clientName} photoURL={clientPhoto} /><div><p className="font-black text-white">{clientName}</p><p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Cliente</p></div></div>
-          <div className="flex items-center gap-4"><Avatar name={workerName} photoURL={workerPhoto} /><div><p className="font-black text-white">{workerName}</p><p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Freelancer</p></div></div>
-          <div className="flex items-center gap-4"><div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center"><Icons.Shield /></div><div><p className="font-black text-white">Escrow Izipay · {formatMoney(total)}</p><p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Retenido · En espera</p></div></div>
+          <div className="flex items-center gap-4"><Avatar name={clientName} photoURL={clientPhoto} /><div><p className={`font-black ${textColor}`}>{clientName}</p><p className={`text-xs font-bold uppercase tracking-widest ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>Cliente</p></div></div>
+          <div className="flex items-center gap-4"><Avatar name={workerName} photoURL={workerPhoto} /><div><p className={`font-black ${textColor}`}>{workerName}</p><p className={`text-xs font-bold uppercase tracking-widest ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>Freelancer</p></div></div>
+          <div className="flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${theme === "dark" ? "bg-emerald-500/10 text-emerald-400" : "bg-emerald-50 text-emerald-600"}`}><Icons.Shield /></div>
+            <div><p className={`font-black ${textColor}`}>Escrow Izipay · {formatMoney(total)}</p><p className={`text-xs font-bold uppercase tracking-widest ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>Retenido · En espera</p></div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function FinishedPanel({ job, workerName, isOwner, onSubmitReview, reviewSubmitted }) {
+function FinishedPanel({ job, workerName, isOwner, onSubmitReview, reviewSubmitted, theme }) {
   const total = moneyNumber(job.precio);
   const ganancias = total * 0.94;
+  
+  const innerCardBg = theme === "dark" ? "#0A0A0F" : "#f4f4f5";
+  const borderColor = theme === "dark" ? "rgba(255,255,255,0.05)" : "#e4e4e7";
+  const textColor = theme === "dark" ? "text-white" : "text-[#18181b]";
+  const mutedText = theme === "dark" ? "text-slate-400" : "text-slate-500";
 
   return (
-    <div className="space-y-8">
-      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-3xl p-8 text-center">
+    <div className="space-y-8 transition-colors duration-300">
+      <div className={`border rounded-3xl p-8 text-center transition-colors ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20" : "bg-emerald-50 border-emerald-200"}`}>
         <div className="w-20 h-20 rounded-full bg-emerald-500 text-white flex items-center justify-center mx-auto mb-6"><Icons.Check /></div>
-        <p className="text-emerald-400 text-[10px] font-black uppercase tracking-[0.3em] mb-2">Trabajo completado · Pago liberado</p>
-        <h2 className="text-3xl font-black text-white mb-3">¡Proyecto completado!</h2>
-        <p className="text-slate-300">
+        <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}>Trabajo completado · Pago liberado</p>
+        <h2 className={`text-3xl font-black mb-3 ${textColor}`}>¡Proyecto completado!</h2>
+        <p className={`${theme === "dark" ? "text-slate-300" : "text-slate-600"}`}>
           {isOwner
             ? `${formatMoney(total)} fueron liberados a ${workerName}. Gracias por usar Nexora.`
             : `Felicitaciones. ${formatMoney(total)} han sido transferidos a tu cuenta. Excelente trabajo.`}
         </p>
       </div>
 
-      <div className="bg-[#0A0A0F] border border-white/5 rounded-3xl p-8">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-6">Resumen del proyecto</p>
+      <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
+        <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-6 ${mutedText}`}>Resumen del proyecto</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             ["Monto pagado", formatMoney(total)],
@@ -412,15 +434,15 @@ function FinishedPanel({ job, workerName, isOwner, onSubmitReview, reviewSubmitt
             ["Revisiones", "2 realizadas"],
             ["Estado", "Completado"],
           ].map(([label, value]) => (
-            <div key={label} className="bg-white/5 border border-white/10 rounded-2xl p-4">
-              <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">{label}</p>
-              <p className="text-white font-black">{value}</p>
+            <div key={label} className={`border rounded-2xl p-4 ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-white border-[#e4e4e7]"}`}>
+              <p className={`text-[10px] font-black uppercase tracking-widest mb-2 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>{label}</p>
+              <p className={`font-black ${textColor}`}>{value}</p>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="bg-[#0A0A0F] border border-white/5 rounded-3xl p-8">
+      <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
         {[
           ["Proyecto publicado", "6 Jul 2026"],
           ["Propuesta enviada", "6 Jul 2026"],
@@ -429,43 +451,44 @@ function FinishedPanel({ job, workerName, isOwner, onSubmitReview, reviewSubmitt
           ["Desarrollo completado", "20 Jul 2026"],
           ["Pago liberado al freelancer", "20 Jul 2026"],
         ].map(([label, date]) => (
-          <div key={label} className="flex items-center justify-between border-b border-white/5 last:border-0 py-4">
-            <span className="text-slate-400 text-sm font-bold">{label}</span>
-            <span className="text-white text-sm font-black">{date}</span>
+          <div key={label} className="flex items-center justify-between border-b py-4 last:border-0" style={{ borderColor }}>
+            <span className={`text-sm font-bold ${mutedText}`}>{label}</span>
+            <span className={`text-sm font-black ${textColor}`}>{date}</span>
           </div>
         ))}
       </div>
 
-      <div className="bg-[#0A0A0F] border border-white/5 rounded-3xl p-8">
-        <h3 className="text-xl font-black text-white mb-2">
+      <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
+        <h3 className={`text-xl font-black mb-2 ${textColor}`}>
           {isOwner ? `Deja una reseña a ${workerName}` : "Califica al cliente"}
         </h3>
-        <p className="text-slate-500 text-sm font-bold mb-6">
+        <p className={`text-sm font-bold mb-6 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>
           {isOwner ? "Tu reseña aparecerá en el perfil del trabajador." : "Tu reseña aparecerá en el perfil del cliente."}
         </p>
         <ReviewBox
           disabled={reviewSubmitted}
           placeholder={isOwner ? `Cuéntanos cómo fue trabajar con ${workerName}` : "Cuéntanos cómo fue trabajar con este cliente"}
           onSubmit={onSubmitReview}
+          theme={theme}
         />
       </div>
 
       {!isOwner && (
-        <div className="bg-[#0A0A0F] border border-white/5 rounded-3xl p-8 flex items-center justify-between gap-4">
+        <div className="border rounded-3xl p-8 flex items-center justify-between gap-4 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 mb-2">Tus ganancias</p>
-            <h3 className="text-3xl font-black text-white">{formatMoney(ganancias)}</h3>
-            <p className="text-slate-500 text-xs font-bold mt-1">Después de comisión Nexora</p>
+            <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}>Tus ganancias</p>
+            <h3 className={`text-3xl font-black ${textColor}`}>{formatMoney(ganancias)}</h3>
+            <p className={`text-xs font-bold mt-1 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>Después de comisión Nexora</p>
           </div>
           <button className="bg-emerald-500 text-white px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px]">Retirar fondos</button>
         </div>
       )}
 
-      <div className="bg-[#0A0A0F] border border-white/5 rounded-3xl p-8">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-4">Próximos pasos</p>
+      <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
+        <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-4 ${mutedText}`}>Próximos pasos</p>
         <div className="flex flex-wrap gap-3">
           {["Explorar nuevos proyectos", "Ver historial completo", "Actualizar tu perfil"].map((item) => (
-            <button key={item} className="bg-white/5 border border-white/10 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-white">{item}</button>
+            <button key={item} className={`border px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-white border-[#e4e4e7] text-[#18181b] hover:bg-[#f4f4f5]"}`}>{item}</button>
           ))}
         </div>
       </div>
@@ -473,7 +496,7 @@ function FinishedPanel({ job, workerName, isOwner, onSubmitReview, reviewSubmitt
   );
 }
 
-function WorkerProfileModal({ workerId, onClose, onAceptar, yaAceptado }) {
+function WorkerProfileModal({ workerId, onClose, onAceptar, yaAceptado, theme }) {
   const [data, setData] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [portfolio, setPortfolio] = useState([]);
@@ -511,26 +534,30 @@ function WorkerProfileModal({ workerId, onClose, onAceptar, yaAceptado }) {
 
   const fullName = titleCaseName(`${data?.first_name || ""} ${data?.last_name || ""}`.trim() || data?.displayName || data?.email || "Trabajador");
 
+  const cardBg = theme === "dark" ? "#111118" : "#ffffff";
+  const borderColor = theme === "dark" ? "rgba(255,255,255,0.1)" : "#e4e4e7";
+  const textColor = theme === "dark" ? "text-white" : "text-[#18181b]";
+
   return (
-    <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md">
-      <div className="bg-[#111118] border border-white/10 w-full max-w-2xl max-h-[90vh] rounded-[3rem] overflow-hidden flex flex-col shadow-2xl">
-        <div className="p-8 border-b border-white/5 flex items-center justify-between">
-          <h2 className="text-xl font-black text-white">Perfil del Trabajador</h2>
-          <button onClick={onClose} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-white/10 hover:text-white transition-all text-sm">×</button>
+    <div className={`fixed inset-0 z-[150] flex items-center justify-center p-6 backdrop-blur-md transition-colors ${theme === "dark" ? "bg-black/90" : "bg-white/80"}`}>
+      <div className="w-full max-w-2xl max-h-[90vh] rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border" style={{ backgroundColor: cardBg, borderColor }}>
+        <div className="p-8 border-b flex items-center justify-between" style={{ borderColor }}>
+          <h2 className={`text-xl font-black ${textColor}`}>Perfil del Trabajador</h2>
+          <button onClick={onClose} className={`w-10 h-10 rounded-full flex items-center justify-center transition-all text-sm ${theme === "dark" ? "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white" : "bg-black/5 text-slate-500 hover:bg-black/10 hover:text-black"}`}>×</button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-8 space-y-8">
           {loading ? (
             <div className="flex items-center justify-center py-20"><div className="w-8 h-8 border-2 border-[#6c63ff] border-t-transparent rounded-full animate-spin" /></div>
           ) : !data ? (
-            <div className="text-center text-slate-600 text-[10px] font-black uppercase tracking-widest py-20">No se encontró este perfil</div>
+            <div className={`text-center text-[10px] font-black uppercase tracking-widest py-20 ${theme === "dark" ? "text-slate-600" : "text-slate-400"}`}>No se encontró este perfil</div>
           ) : (
             <>
               <div className="flex items-center gap-6">
                 <Avatar name={fullName} photoURL={data.photoURL} size="w-20 h-20" rounded="rounded-full" />
                 <div>
-                  <h3 className="text-2xl font-black text-white">{fullName}</h3>
-                  <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">{data.city || "Ciudad no especificada"}</p>
+                  <h3 className={`text-2xl font-black ${textColor}`}>{fullName}</h3>
+                  <p className={`text-xs font-bold uppercase tracking-widest mt-1 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>{data.city || "Ciudad no especificada"}</p>
                   {reputacion && <p className="text-amber-400 text-sm font-bold mt-1">★ {reputacion.score} · {reputacion.count} {reputacion.count === 1 ? "reseña" : "reseñas"}</p>}
                 </div>
               </div>
@@ -538,7 +565,7 @@ function WorkerProfileModal({ workerId, onClose, onAceptar, yaAceptado }) {
               {data.about_me && (
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-widest text-[#6c63ff] mb-2">Sobre el trabajador</p>
-                  <p className="text-slate-400 leading-relaxed italic">{data.about_me}</p>
+                  <p className={`leading-relaxed italic ${theme === "dark" ? "text-slate-400" : "text-slate-600"}`}>{data.about_me}</p>
                 </div>
               )}
 
@@ -547,7 +574,7 @@ function WorkerProfileModal({ workerId, onClose, onAceptar, yaAceptado }) {
                   <p className="text-[10px] font-black uppercase tracking-widest text-[#6c63ff] mb-4">Portfolio</p>
                   <div className="grid grid-cols-2 gap-4">
                     {portfolio.slice(0, 4).map((p) => (
-                      <div key={p.id} className="aspect-video rounded-2xl overflow-hidden border border-white/5">
+                      <div key={p.id} className="aspect-video rounded-2xl overflow-hidden border" style={{ borderColor }}>
                         <img src={p.imageUrl} alt={p.title || "portfolio"} className="w-full h-full object-cover" />
                       </div>
                     ))}
@@ -559,8 +586,8 @@ function WorkerProfileModal({ workerId, onClose, onAceptar, yaAceptado }) {
         </div>
 
         {data && (
-          <div className="p-8 border-t border-white/5 flex gap-4">
-            <button onClick={onClose} className="flex-1 bg-white/5 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] border border-white/10">Cerrar</button>
+          <div className="p-8 border-t flex gap-4" style={{ borderColor }}>
+            <button onClick={onClose} className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] border transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-black/5 border-[#e4e4e7] text-[#18181b]"}`}>Cerrar</button>
             {!yaAceptado && <button onClick={onAceptar} className="flex-1 bg-emerald-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px]">Aceptar Trabajador</button>}
           </div>
         )}
@@ -574,6 +601,16 @@ function JobFlowContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const jobId = searchParams.get("jobId");
+
+  // Traemos los colores globales del tema
+  const theme = useThemeStore((state) => state.theme);
+  const background = useThemeStore((state) => state.background);
+  const textColor = useThemeStore((state) => state.textColor);
+
+  const cardBg = theme === "dark" ? "#111118" : "#ffffff";
+  const innerCardBg = theme === "dark" ? "#0A0A0F" : "#f4f4f5";
+  const cardBorder = theme === "dark" ? "rgba(255,255,255,0.05)" : "#e4e4e7";
+  const mutedText = theme === "dark" ? "#94a3b8" : "#64748b";
 
   const [job, setJob] = useState(null);
   const [jobLoading, setJobLoading] = useState(true);
@@ -626,6 +663,7 @@ function JobFlowContent() {
   const postulantes = job?.postulantes ?? [];
   const miPostulacion = useMemo(() => encontrarMiPostulacion(postulantes, user?.uid), [postulantes, user?.uid]);
   const yaPostulo = !!miPostulacion;
+
   const esTrabajador = user?.rol === "trabajador" || user?.rol === "worker";
   const esPropietario = user?.uid && user.uid === job?.userId;
 
@@ -710,7 +748,6 @@ function JobFlowContent() {
     setPaymentProcessed(false);
 
     setTimeout(() => setPaymentProcessed(true), 1800);
-
     setTimeout(async () => {
       try {
         const nuevosPostulantes = postulantes.map((p) => {
@@ -794,7 +831,6 @@ function JobFlowContent() {
         pagoLiberado: true,
       };
     });
-
     await updateDoc(doc(db, "solicitudes", jobId), { postulantes: nuevosPostulantes });
     showToast("Pago liberado al freelancer.");
   };
@@ -806,7 +842,6 @@ function JobFlowContent() {
     if (yaPostulo) return;
 
     setApplying(true);
-
     try {
       await updateDoc(doc(db, "solicitudes", jobId), {
         postulantes: arrayUnion({
@@ -816,7 +851,6 @@ function JobFlowContent() {
           fecha: new Date().toISOString(),
         }),
       });
-
       showToast("Postulación enviada con éxito.");
     } catch {
       showToast("Error al enviar la postulación.", "error");
@@ -827,7 +861,7 @@ function JobFlowContent() {
 
   if (jobLoading) {
     return (
-      <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center transition-colors duration-300" style={{ background: background[theme] }}>
         <div className="w-8 h-8 border-2 border-[#6c63ff] border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -835,7 +869,7 @@ function JobFlowContent() {
 
   if (!job) {
     return (
-      <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center text-slate-500 font-black uppercase tracking-widest text-sm">
+      <div className="min-h-screen flex items-center justify-center font-black uppercase tracking-widest text-sm transition-colors duration-300" style={{ background: background[theme], color: mutedText }}>
         Trabajo no encontrado
       </div>
     );
@@ -857,16 +891,16 @@ function JobFlowContent() {
   const showProjectFlow = ["pago", "en_proceso", "finalizado"].includes(estadoProyecto) && (esPropietario || user?.uid === acceptedWorkerId);
 
   return (
-    <div className="w-full min-h-screen bg-[#0A0A0F] text-white font-sans selection:bg-[#6c63ff]/30">
+    <div className="w-full min-h-screen font-sans selection:bg-[#6c63ff]/30 transition-colors duration-300" style={{ background: background[theme], color: textColor[theme] }}>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       <main className="max-w-6xl mx-auto px-6 pt-28 pb-20">
-        <Stepper currentIndex={currentStepIndex} />
+        <Stepper currentIndex={currentStepIndex} theme={theme} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 bg-[#111118] rounded-[2.5rem] p-10 border border-white/5 shadow-2xl space-y-8">
+          <div className="lg:col-span-2 rounded-[2.5rem] p-10 border shadow-2xl space-y-8 transition-colors duration-300" style={{ backgroundColor: cardBg, borderColor: cardBorder }}>
             {showProjectFlow && estadoProyecto === "pago" && esPropietario ? (
-              <PaymentPanel job={job} workerName={workerName} workerPhoto={workerInfo.photoURL} onPay={handlePay} processing={paymentProcessing} processed={paymentProcessed} />
+              <PaymentPanel job={job} workerName={workerName} workerPhoto={workerInfo.photoURL} onPay={handlePay} processing={paymentProcessing} processed={paymentProcessed} theme={theme} />
             ) : showProjectFlow && estadoProyecto === "en_proceso" ? (
               <ProcessPanel
                 job={job}
@@ -876,6 +910,7 @@ function JobFlowContent() {
                 clientPhoto={clientInfo?.photoURL}
                 isOwner={esPropietario}
                 onFinish={handleFinalizar}
+                theme={theme}
               />
             ) : showProjectFlow && estadoProyecto === "finalizado" ? (
               <FinishedPanel
@@ -885,49 +920,50 @@ function JobFlowContent() {
                 isOwner={esPropietario}
                 onSubmitReview={handleSubmitReview}
                 reviewSubmitted={reviewSubmitted}
+                theme={theme}
               />
             ) : (
               <>
                 <div className="flex flex-wrap gap-3">
-                  {urgente && <span className="bg-red-500/10 text-red-400 border border-red-500/20 text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full">Urgente</span>}
-                  {modalidad && <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full">{modalidad}</span>}
+                  {urgente && <span className={`border text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full ${theme === "dark" ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-red-50 text-red-600 border-red-200"}`}>Urgente</span>}
+                  {modalidad && <span className={`border text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full ${theme === "dark" ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-blue-50 text-blue-600 border-blue-200"}`}>{modalidad}</span>}
                 </div>
 
                 <div>
-                  <h1 className="text-3xl font-black tracking-tight mb-2">{titulo}</h1>
-                  <p className="text-slate-500 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                  <h1 className="text-3xl font-black tracking-tight mb-2" style={{ color: textColor[theme] }}>{titulo}</h1>
+                  <p className={`text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${mutedText}`}>
                     <Icons.MapPin /> {distrito || "Ubicación no especificada"} · {tiempoRelativo}
                   </p>
                 </div>
 
-                {descripcion && <p className="text-slate-400 leading-relaxed">{descripcion}</p>}
+                {descripcion && <p className={`leading-relaxed ${theme === "dark" ? "text-slate-400" : "text-slate-600"}`}>{descripcion}</p>}
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-[#0A0A0F] border border-white/5 rounded-2xl p-6">
-                    <p className="text-emerald-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-2"><Icons.DollarSign /> Precio</p>
-                    <p className="text-lg font-black text-white">{precio || "A convenir"}</p>
+                  <div className="border rounded-2xl p-6 transition-colors" style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}>
+                    <p className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}><Icons.DollarSign /> Precio</p>
+                    <p className={`text-lg font-black ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}>{precio || "A convenir"}</p>
                   </div>
-                  <div className="bg-[#0A0A0F] border border-white/5 rounded-2xl p-6">
-                    <p className="text-blue-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-2"><Icons.Clock /> Plazo</p>
-                    <p className="text-lg font-black text-white">{job.plazo || "No especificado"}</p>
+                  <div className="border rounded-2xl p-6 transition-colors" style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}>
+                    <p className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-2 ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}><Icons.Clock /> Plazo</p>
+                    <p className={`text-lg font-black ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}>{job.plazo || "No especificado"}</p>
                   </div>
-                  <div className="bg-[#0A0A0F] border border-white/5 rounded-2xl p-6">
+                  <div className="border rounded-2xl p-6 transition-colors" style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}>
                     <p className="text-[#6c63ff] text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-2"><Icons.Users /> Postulantes</p>
-                    <p className="text-lg font-black text-white">{postulantes.length} {postulantes.length === 1 ? "propuesta" : "propuestas"}</p>
+                    <p className={`text-lg font-black ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}>{postulantes.length} {postulantes.length === 1 ? "propuesta" : "propuestas"}</p>
                   </div>
                 </div>
 
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-3">
-                    {tags.map((tag) => <span key={tag} className="bg-white/5 border border-white/10 text-slate-300 text-xs font-bold px-4 py-2 rounded-xl">{tag}</span>)}
+                    {tags.map((tag) => <span key={tag} className={`border text-xs font-bold px-4 py-2 rounded-xl transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-slate-300" : "bg-black/5 border-[#e4e4e7] text-slate-600"}`}>{tag}</span>)}
                   </div>
                 )}
 
                 {esPropietario ? (
                   <div className="space-y-4">
-                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Postulantes ({postulantes.length})</h3>
+                    <h3 className={`text-[10px] font-black uppercase tracking-[0.3em] ${mutedText}`}>Postulantes ({postulantes.length})</h3>
                     {postulantes.length === 0 ? (
-                      <div className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center text-slate-600 text-[10px] font-black uppercase tracking-widest">Aún no hay postulantes</div>
+                      <div className={`border rounded-2xl p-8 text-center text-[10px] font-black uppercase tracking-widest transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-slate-600" : "bg-transparent border-[#e4e4e7] text-slate-400"}`}>Aún no hay postulantes</div>
                     ) : (
                       postulantes.map((p, i) => {
                         const workerId = getPostulanteId(p);
@@ -936,17 +972,17 @@ function JobFlowContent() {
                         const aceptado = typeof p === "object" && ["pago", "en_proceso", "finalizado"].includes(p.estado);
 
                         return (
-                          <div key={workerId || i} className="bg-[#0A0A0F] border border-white/5 rounded-2xl p-5 flex items-center justify-between gap-4 flex-wrap">
+                          <div key={workerId || i} className="border rounded-2xl p-5 flex items-center justify-between gap-4 flex-wrap transition-colors" style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}>
                             <div className="flex items-center gap-4">
                               <Avatar name={nombrePostulante} photoURL={info.photoURL} size="w-10 h-10" rounded="rounded-xl" />
                               <div>
-                                <p className="font-bold text-white text-sm">{nombrePostulante}</p>
-                                <p className={`text-[10px] uppercase font-black tracking-widest ${aceptado ? "text-emerald-400" : "text-slate-500"}`}>{aceptado ? "Aceptado" : "Postulado"}</p>
+                                <p className={`font-bold text-sm ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}>{nombrePostulante}</p>
+                                <p className={`text-[10px] uppercase font-black tracking-widest ${aceptado ? (theme === "dark" ? "text-emerald-400" : "text-emerald-600") : mutedText}`}>{aceptado ? "Aceptado" : "Postulado"}</p>
                               </div>
                             </div>
                             <div className="flex gap-2 shrink-0">
-                              <button onClick={() => setSelectedWorkerId(workerId)} className="bg-white/5 border border-white/10 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">Ver Perfil</button>
-                              {!aceptado && <button onClick={() => handleAceptar(workerId)} className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all">Aceptar</button>}
+                              <button onClick={() => setSelectedWorkerId(workerId)} className={`border px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${theme === "dark" ? "bg-white/5 border-white/10 text-white hover:bg-white/10" : "bg-white border-[#e4e4e7] text-[#18181b] hover:bg-[#f4f4f5]"}`}>Ver Perfil</button>
+                              {!aceptado && <button onClick={() => handleAceptar(workerId)} className={`border px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${theme === "dark" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500 hover:text-white" : "bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-500 hover:text-white"}`}>Aceptar</button>}
                             </div>
                           </div>
                         );
@@ -954,13 +990,13 @@ function JobFlowContent() {
                     )}
                   </div>
                 ) : !esTrabajador ? (
-                  <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center text-slate-500 text-[10px] font-black uppercase tracking-widest">Solo cuentas de Trabajador pueden postular</div>
+                  <div className={`border rounded-2xl p-5 text-center text-[10px] font-black uppercase tracking-widest transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-slate-500" : "bg-transparent border-[#e4e4e7] text-slate-400"}`}>Solo cuentas de Trabajador pueden postular</div>
                 ) : yaPostulo ? (
-                  <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-2xl p-5 text-center text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
+                  <div className={`border rounded-2xl p-5 text-center text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-colors ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-emerald-50 border-emerald-200 text-emerald-600"}`}>
                     <Icons.CheckSmall /> {STEPS[currentStepIndex].label === "Postulación" ? "Postulación enviada · esperando respuesta del cliente" : `Estado actual: ${STEPS[currentStepIndex].label}`}
                   </div>
                 ) : (
-                  <button onClick={handlePostular} disabled={applying} className="w-full bg-gradient-to-r from-[#6c63ff] to-[#4b45b2] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-xl shadow-[#6c63ff]/20 hover:scale-[1.01] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+                  <button onClick={handlePostular} disabled={applying} className="w-full bg-linear-to-r from-[#6c63ff] to-[#4b45b2] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-xl shadow-[#6c63ff]/20 hover:scale-[1.01] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
                     {applying ? "Enviando..." : "Postular ahora"}
                   </button>
                 )}
@@ -969,31 +1005,31 @@ function JobFlowContent() {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-[#111118] rounded-[2.5rem] p-8 border border-white/5">
-              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-6">Cliente</h3>
+            <div className="rounded-[2.5rem] p-8 border transition-colors duration-300" style={{ backgroundColor: cardBg, borderColor: cardBorder }}>
+              <h3 className={`text-[10px] font-black uppercase tracking-[0.3em] mb-6 ${mutedText}`}>Cliente</h3>
               <div className="flex items-center gap-4 mb-6">
                 <Avatar name={clientName} photoURL={clientInfo?.photoURL} />
                 <div>
-                  <p className="font-black text-white">{clientName}</p>
+                  <p className={`font-black ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}>{clientName}</p>
                   {clienteReputacion ? (
-                    <p className="text-xs font-bold text-slate-500 flex items-center gap-1">
+                    <p className={`text-xs font-bold flex items-center gap-1 ${mutedText}`}>
                       <span className="text-amber-400">★ {clienteReputacion.score}</span> · {clienteReputacion.count} {clienteReputacion.count === 1 ? "reseña" : "reseñas"}
                     </p>
                   ) : (
-                    <p className="text-xs font-bold text-slate-500">{distrito || "Perú"}</p>
+                    <p className={`text-xs font-bold ${mutedText}`}>{distrito || "Perú"}</p>
                   )}
                 </div>
               </div>
-              <div className="space-y-3 text-xs font-bold text-slate-400">
+              <div className={`space-y-3 text-xs font-bold ${theme === "dark" ? "text-slate-400" : "text-slate-500"}`}>
                 {["Identidad verificada", "Pago protegido por Izipay", "Historial de pagos perfecto"].map((item) => (
-                  <div key={item} className="flex items-center gap-2 text-emerald-400"><Icons.CheckSmall /> {item}</div>
+                  <div key={item} className={`flex items-center gap-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}><Icons.CheckSmall /> <span className={mutedText}>{item}</span></div>
                 ))}
               </div>
             </div>
 
-            <div className="bg-[#111118] rounded-[2.5rem] p-8 border border-white/5">
-              <h3 className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-2"><Icons.Shield /> Protección Nexora</h3>
-              <div className="space-y-4 text-xs font-bold text-slate-400">
+            <div className="rounded-[2.5rem] p-8 border transition-colors duration-300" style={{ backgroundColor: cardBg, borderColor: cardBorder }}>
+              <h3 className={`text-[10px] font-black uppercase tracking-[0.3em] mb-6 flex items-center gap-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}><Icons.Shield /> Protección Nexora</h3>
+              <div className={`space-y-4 text-xs font-bold ${theme === "dark" ? "text-slate-400" : "text-slate-500"}`}>
                 {["Pago retenido hasta completar", "Disputa mediada por Nexora", "Reembolso si no hay entrega"].map((t) => (
                   <div key={t} className="flex items-center gap-2"><Icons.ChevronRight /> {t}</div>
                 ))}
@@ -1012,6 +1048,7 @@ function JobFlowContent() {
             const p = postulantes.find((p) => getPostulanteId(p) === selectedWorkerId);
             return typeof p === "object" && ["pago", "en_proceso", "finalizado"].includes(p.estado);
           })()}
+          theme={theme}
         />
       )}
     </div>
