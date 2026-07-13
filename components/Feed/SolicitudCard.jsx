@@ -310,7 +310,7 @@ export default function SolicitudCard({
             src={primerImagen}
             alt="Foto de la solicitud"
             onClick={(e) => e.stopPropagation()}
-            className="h-44 w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+            className="h-72 w-full object-cover object-center transition duration-700 group-hover:scale-[1.03]"
           />
         </div>
       )}

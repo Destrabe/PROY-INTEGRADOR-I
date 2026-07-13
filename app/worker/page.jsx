@@ -147,6 +147,11 @@ function TrabajadorPageContent() {
     }
 
     setCv(file);
+    e.target.value = ''; // permite volver a seleccionar el mismo archivo si se elimina y se vuelve a subir
+  };
+
+  const handleRemoveCv = () => {
+    setCv(null);
   };
 
   const handleImageChange = (e) => {
@@ -248,24 +253,44 @@ function TrabajadorPageContent() {
                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Currículum Vitae (PDF)</label>
                 <span className="text-[9px] font-black uppercase tracking-widest text-slate-600">Máx. {MAX_CV_SIZE_MB}MB</span>
               </div>
-              <div className="relative">
-                <input 
-                  type="file" 
-                  accept=".pdf,application/pdf" 
-                  required
-                  onChange={handleCvChange}
-                  className="hidden" 
-                  id="cv-upload"
-                />
-                <label htmlFor="cv-upload" className="flex items-center justify-center w-full bg-[#0A0A0F] border-2 border-dashed border-white/10 rounded-2xl px-6 py-8 cursor-pointer hover:border-[#6c63ff]/50 transition-all group">
-                  <div className="text-center flex flex-col items-center gap-2">
-                    <span className="text-slate-600 group-hover:text-[#6c63ff] group-hover:scale-110 transition-all"><Icons.FileText /></span>
-                    <p className="text-xs font-black uppercase tracking-widest text-slate-500 group-hover:text-[#6c63ff] transition-colors">
-                      {cv ? cv.name : "Seleccionar PDF"}
-                    </p>
+
+              {cv ? (
+                <div className="flex items-center justify-between w-full bg-[#0A0A0F] border border-white/10 rounded-2xl px-6 py-5">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-[#6c63ff] shrink-0"><Icons.FileText /></span>
+                    <div className="min-w-0">
+                      <p className="text-xs font-black uppercase tracking-widest text-white truncate">{cv.name}</p>
+                      <p className="text-[10px] font-bold text-slate-600 mt-0.5">{(cv.size / (1024 * 1024)).toFixed(1)}MB</p>
+                    </div>
                   </div>
-                </label>
-              </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveCv}
+                    className="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white p-2.5 rounded-xl transition-colors shrink-0 ml-4"
+                    aria-label="Eliminar CV"
+                  >
+                    <Icons.X />
+                  </button>
+                </div>
+              ) : (
+                <div className="relative">
+                  <input 
+                    type="file" 
+                    accept=".pdf,application/pdf" 
+                    onChange={handleCvChange}
+                    className="hidden" 
+                    id="cv-upload"
+                  />
+                  <label htmlFor="cv-upload" className="flex items-center justify-center w-full bg-[#0A0A0F] border-2 border-dashed border-white/10 rounded-2xl px-6 py-8 cursor-pointer hover:border-[#6c63ff]/50 transition-all group">
+                    <div className="text-center flex flex-col items-center gap-2">
+                      <span className="text-slate-600 group-hover:text-[#6c63ff] group-hover:scale-110 transition-all"><Icons.FileText /></span>
+                      <p className="text-xs font-black uppercase tracking-widest text-slate-500 group-hover:text-[#6c63ff] transition-colors">
+                        Seleccionar PDF
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              )}
             </div>
 
             {/* Fotos de Trabajos */}

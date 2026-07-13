@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/auth";
 import { crearSolicitud } from "@/firebase/Solicitudes";
-import { subirImagenesSolicitud } from "@/firebase/Storage";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import Link from "next/link";
 import Image from "next/image";
@@ -112,6 +111,41 @@ const MAP_STYLES = [
 
 const PASOS = ["Categoría", "Descripción", "Detalles", "Publicar"];
 const MAX_IMAGENES = 4;
+const MAX_IMAGE_MB = 3;
+const MAX_TITULO = 70;
+const MAX_DESCRIPCION = 500;
+const MAX_PRESUPUESTO_DIGITS = 6;
+
+// Convierte y comprime una imagen a Base64 directamente en el navegador.
+// Así se guarda en el mismo documento de Firestore, sin necesitar
+// Firebase Storage (que actualmente exige plan de facturación Blaze).
+const resizeImageToBase64 = (file, maxDim = 1600, quality = 0.85) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new window.Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > height && width > maxDim) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else if (height >= width && height > maxDim) {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 
 export default function NewRequestPage() {
   const router = useRouter();
@@ -134,7 +168,7 @@ export default function NewRequestPage() {
 
   const [archivos, setArchivos] = useState([]);
   const [previews, setPreviews] = useState([]);
-  const [subiendoPct, setSubiendoPct] = useState(null);
+  const [procesandoImagenes, setProcesandoImagenes] = useState(false);
 
   const [form, setForm] = useState({
     categoria: null,
@@ -161,22 +195,42 @@ export default function NewRequestPage() {
     setErrores({});
   };
 
-  const agregarArchivos = (nuevos) => {
-    const validos = Array.from(nuevos)
+  const handlePresupuestoChange = (e) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, MAX_PRESUPUESTO_DIGITS);
+    setF("presupuesto", value);
+  };
+
+  const agregarArchivos = async (nuevos) => {
+    const disponibles = MAX_IMAGENES - archivos.length;
+    if (disponibles <= 0) return;
+
+    const candidatos = Array.from(nuevos)
       .filter((f) => f.type.startsWith("image/"))
-      .slice(0, MAX_IMAGENES - archivos.length);
+      .slice(0, disponibles);
+
+    if (candidatos.length === 0) return;
+
+    const oversized = candidatos.filter((f) => f.size / (1024 * 1024) > MAX_IMAGE_MB);
+    const validos = candidatos.filter((f) => f.size / (1024 * 1024) <= MAX_IMAGE_MB);
+
+    if (oversized.length > 0) {
+      alert(
+        `${oversized.length} imagen${oversized.length > 1 ? "es" : ""} supera${oversized.length > 1 ? "n" : ""} el límite de ${MAX_IMAGE_MB}MB y no se agregó: ${oversized.map((f) => f.name).join(", ")}`,
+      );
+    }
 
     if (validos.length === 0) return;
 
-    validos.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPreviews((p) => [...p, e.target.result]);
-      };
-      reader.readAsDataURL(file);
-    });
-
-    setArchivos((p) => [...p, ...validos]);
+    setProcesandoImagenes(true);
+    try {
+      const base64s = await Promise.all(validos.map((f) => resizeImageToBase64(f)));
+      setArchivos((p) => [...p, ...validos]);
+      setPreviews((p) => [...p, ...base64s]);
+    } catch {
+      alert("No se pudo procesar una o más imágenes. Intenta con otro archivo.");
+    } finally {
+      setProcesandoImagenes(false);
+    }
   };
 
   const quitarImagen = (idx) => {
@@ -257,15 +311,6 @@ export default function NewRequestPage() {
     setEnviando(true);
 
     try {
-      let imageUrls = [];
-      if (archivos.length > 0) {
-        setSubiendoPct(0);
-        imageUrls = await subirImagenesSolicitud(archivos, user.uid, (pct) =>
-          setSubiendoPct(Math.round(pct)),
-        );
-        setSubiendoPct(null);
-      }
-
       const urgenciaTexto = calcularUrgenciaTexto(form.fechaRequerida);
       const esHoymismo = urgenciaTexto.includes("Hoy mismo");
 
@@ -284,7 +329,9 @@ export default function NewRequestPage() {
           coordenadas: { lat: form.lat, lng: form.lng },
           nombre: user.displayName ?? user.email?.split("@")[0] ?? "Usuario",
           iniciales: obtenerIniciales(user.displayName ?? user.email ?? "U"),
-          imageUrls,
+          // Imágenes ya comprimidas y en Base64: se guardan directo en el
+          // documento de Firestore, sin pasar por Firebase Storage.
+          imageUrls: previews,
         },
         user.uid,
       );
@@ -482,14 +529,20 @@ export default function NewRequestPage() {
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-1.5 flex-1">
-                <label className="text-[11px] font-bold tracking-wider text-[#555] uppercase">
-                  Título de la solicitud
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bold tracking-wider text-[#555] uppercase">
+                    Título de la solicitud
+                  </label>
+                  <span className="text-[10px] font-semibold text-[#555]">
+                    {form.titulo.length}/{MAX_TITULO}
+                  </span>
+                </div>
                 <input
                   className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] w-full box-border outline-none transition-all focus:border-[#500fe9] focus:shadow-[0_0_0_3px_rgba(80,15,233,0.15)]"
                   placeholder="Ej. Necesito técnico para instalar cámaras de seguridad en casa"
+                  maxLength={MAX_TITULO}
                   value={form.titulo}
-                  onChange={(e) => setF("titulo", e.target.value)}
+                  onChange={(e) => setF("titulo", e.target.value.slice(0, MAX_TITULO))}
                 />
                 {errores.titulo && (
                   <p className="text-[#f87171] text-xs mt-1">
@@ -498,14 +551,20 @@ export default function NewRequestPage() {
                 )}
               </div>
               <div className="flex flex-col gap-1.5 flex-1">
-                <label className="text-[11px] font-bold tracking-wider text-[#555] uppercase">
-                  Descripción detallada
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bold tracking-wider text-[#555] uppercase">
+                    Descripción detallada
+                  </label>
+                  <span className="text-[10px] font-semibold text-[#555]">
+                    {form.descripcion.length}/{MAX_DESCRIPCION}
+                  </span>
+                </div>
                 <textarea
                   className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] w-full box-border outline-none transition-all focus:border-[#500fe9] resize-vertical min-h-30"
                   placeholder="Cuéntanos qué necesitas exactamente, cuándo, dónde y cualquier detalle relevante..."
+                  maxLength={MAX_DESCRIPCION}
                   value={form.descripcion}
-                  onChange={(e) => setF("descripcion", e.target.value)}
+                  onChange={(e) => setF("descripcion", e.target.value.slice(0, MAX_DESCRIPCION))}
                 />
                 {errores.descripcion && (
                   <p className="text-[#f87171] text-xs mt-1">
@@ -531,10 +590,13 @@ export default function NewRequestPage() {
                       Presupuesto (S/)
                     </label>
                     <input
+                      type="text"
+                      inputMode="numeric"
                       className="bg-[#0d0d18] border border-[#2a2a3e] rounded-xl p-3 text-sm text-[#e0e0f0] w-full box-border outline-none transition-all focus:border-[#500fe9] focus:shadow-[0_0_0_3px_rgba(80,15,233,0.15)]"
-                      placeholder="Ej: 100-200"
+                      placeholder="Ej: 200"
+                      maxLength={MAX_PRESUPUESTO_DIGITS}
                       value={form.presupuesto}
-                      onChange={(e) => setF("presupuesto", e.target.value)}
+                      onChange={handlePresupuestoChange}
                     />
                   </div>
                   <div className="flex flex-col gap-1.5 flex-1">
@@ -733,7 +795,7 @@ export default function NewRequestPage() {
             {/* Dropzone */}
             {archivos.length < MAX_IMAGENES && (
               <div
-                className={`border-[1.5px] border-dashed rounded-2xl p-9 text-center cursor-pointer transition-all mb-4 ${dragging ? "bg-[#1a1a2e] border-[#500fe9]" : "bg-[#13131f] border-[#2a2a3e] hover:border-[#3a3a54]"}`}
+                className={`border-[1.5px] border-dashed rounded-2xl p-9 text-center cursor-pointer transition-all mb-4 ${dragging ? "bg-[#1a1a2e] border-[#500fe9]" : "bg-[#13131f] border-[#2a2a3e] hover:border-[#3a3a54]"} ${procesandoImagenes ? "opacity-60 pointer-events-none" : ""}`}
                 onClick={() => fileInputRef.current?.click()}
                 onDragOver={(e) => {
                   e.preventDefault();
@@ -743,18 +805,22 @@ export default function NewRequestPage() {
                 onDrop={onDrop}
               >
                 <p className="text-[#666] text-sm mb-1">
-                  {previews.length === 0
-                    ? "Arrastra fotos del trabajo aquí"
-                    : `${previews.length} imagen${previews.length > 1 ? "es" : ""} seleccionada${previews.length > 1 ? "s" : ""}`}
+                  {procesandoImagenes
+                    ? "Procesando imágenes..."
+                    : previews.length === 0
+                      ? "Arrastra fotos del trabajo aquí"
+                      : `${previews.length} imagen${previews.length > 1 ? "es" : ""} seleccionada${previews.length > 1 ? "s" : ""}`}
                 </p>
-                <p className="text-[#666] text-sm m-0">
-                  o{" "}
-                  <span className="text-[#500fe9] font-semibold">
-                    selecciona archivos
-                  </span>
-                </p>
+                {!procesandoImagenes && (
+                  <p className="text-[#666] text-sm m-0">
+                    o{" "}
+                    <span className="text-[#500fe9] font-semibold">
+                      selecciona archivos
+                    </span>
+                  </p>
+                )}
                 <p className="text-[#444] text-xs mt-1.5 m-0">
-                  Máximo {MAX_IMAGENES} imágenes · JPG, PNG, WEBP
+                  Máximo {MAX_IMAGENES} imágenes · JPG, PNG, WEBP · hasta {MAX_IMAGE_MB}MB c/u
                 </p>
               </div>
             )}
@@ -770,18 +836,6 @@ export default function NewRequestPage() {
             <p className="text-[#555] text-sm mb-6">
               Confirma que todo esté correcto antes de publicar
             </p>
-
-            {subiendoPct !== null && (
-              <div className="flex items-center gap-2.5 p-3 bg-[#0d0d18] rounded-xl border border-[#2a2a3e] text-[#a78bfa] text-xs mb-2">
-                <span>Subiendo imágenes... {subiendoPct}%</span>
-                <div className="flex-1 h-1 bg-[#1a1a2e] rounded-sm overflow-hidden">
-                  <div
-                    className="h-full bg-[#500fe9] rounded-sm transition-all duration-300"
-                    style={{ width: `${subiendoPct}%` }}
-                  />
-                </div>
-              </div>
-            )}
 
             <div className="bg-[#13131f] border border-[#1e1e30] rounded-2xl p-7 mb-4">
               {[
@@ -893,11 +947,7 @@ export default function NewRequestPage() {
             onClick={publicar}
             disabled={enviando}
           >
-            {enviando
-              ? subiendoPct !== null
-                ? `Subiendo imágenes ${subiendoPct}%...`
-                : "Publicando..."
-              : "Publicar solicitud"}
+            {enviando ? "Publicando..." : "Publicar solicitud"}
           </button>
         )}
       </div>
