@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/client";
 import { useAuth } from "@/components/AuthContext";
+import { useThemeStore } from "@/store/themeStore"; // Importamos tu store original
 import { useSolicitudes } from "./Hooks/useSolicitudes";
 import { usePostulacion } from "./Hooks/usePostulacion";
 import { eliminarSolicitud } from "@/firebase/Solicitudes";
 import { eliminarImagenesSolicitud } from "@/firebase/Storage";
-import FeedSidebar from "@/components/Feed/FeedSidebar";
+
 import FiltrosTags from "@/components/Feed/FiltrosTags";
 import SolicitudCard from "@/components/Feed/SolicitudCard";
 import SolicitudModal from "@/components/Feed/SolicitudModal";
@@ -99,17 +100,25 @@ function filtrar(solicitudes, filtroActivo, busqueda, vista, user) {
     });
 }
 
-function StatCard({ label, value, tone = "violet" }) {
+// Recibe el tema actual para cambiar los colores de "slate" según sea claro u oscuro
+function StatCard({ label, value, tone = "violet", theme, textColor }) {
   const tones = {
     violet: "border-[#6c63ff]/20 bg-[#6c63ff]/10 text-[#a9a4ff]",
     emerald: "border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
     amber: "border-amber-500/20 bg-amber-500/10 text-amber-400",
-    slate: "border-white/10 bg-white/[0.04] text-slate-300",
+    slate: theme === "dark" 
+      ? "border-white/10 bg-white/[0.04] text-slate-300"
+      : "border-black/10 bg-black/[0.04] text-slate-600",
   };
 
   return (
-    <div className={`rounded-3xl border p-5 ${tones[tone]}`}>
-      <p className="text-3xl font-black text-white tracking-tight">{value}</p>
+    <div className={`rounded-3xl border p-5 ${tones[tone]} transition-colors`}>
+      <p 
+        className="text-3xl font-black tracking-tight"
+        style={{ color: tone === "slate" ? "inherit" : textColor[theme] }}
+      >
+        {value}
+      </p>
       <p className="mt-1 text-[10px] font-black uppercase tracking-[0.22em]">
         {label}
       </p>
@@ -120,6 +129,11 @@ function StatCard({ label, value, tone = "violet" }) {
 export default function FeedTrabajos() {
   const { user: appUser, loading } = useAuth();
   const router = useRouter();
+
+  // Llamamos a tu store de forma exacta
+  const theme = useThemeStore((state) => state.theme);
+  const background = useThemeStore((state) => state.background);
+  const textColor = useThemeStore((state) => state.textColor);
 
   const { solicitudes, loading: loadingSolicitudes, error } = useSolicitudes();
   const { estaPostulado, togglePostulacion, loadingId } = usePostulacion(appUser?.uid);
@@ -232,9 +246,16 @@ export default function FeedTrabajos() {
     setModalSolicitud(actual);
   };
 
+  // Fondos y bordes dinámicos de los contenedores
+  const cardBg = theme === "dark" ? "#111118" : "#f4f4f5";
+  const cardBorder = theme === "dark" ? "rgba(255,255,255,0.1)" : "#e4e4e7";
+
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-90px)] bg-[#0A0A0F] flex items-center justify-center text-slate-500 text-sm font-bold">
+      <div 
+        className="min-h-[calc(100vh-90px)] flex items-center justify-center text-slate-500 text-sm font-bold transition-colors"
+        style={{ background: background[theme] }}
+      >
         Cargando...
       </div>
     );
@@ -243,16 +264,19 @@ export default function FeedTrabajos() {
   if (!appUser) return null;
 
   return (
-    <div className="flex min-h-[calc(100vh-90px)] bg-[#0A0A0F] text-white">
-      <FeedSidebar />
+    <div 
+      className="flex min-h-[calc(100vh-90px)] transition-colors"
+      style={{ background: background[theme], color: textColor[theme] }}
+    >
 
       <main className="flex-1 px-6 py-8 lg:px-10">
-        <section className="mb-8 overflow-hidden rounded-[2rem] border border-white/10 bg-[#111118] p-7 shadow-2xl">
+        <section 
+          className="mb-8 overflow-hidden rounded-[2rem] border p-7 shadow-2xl transition-colors"
+          style={{ background: cardBg, borderColor: cardBorder }}
+        >
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div>
-              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.35em] text-[#6c63ff]">
-                Nexora Marketplace
-              </p>
+
               <h1 className="text-3xl font-black tracking-tight md:text-4xl">
                 Feed de trabajos
               </h1>
@@ -273,20 +297,23 @@ export default function FeedTrabajos() {
           </div>
 
           <div className="mt-7 grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <StatCard label="Publicadas" value={stats.publicadas} />
-            <StatCard label="Postulaciones" value={stats.postuladas} tone="slate" />
-            <StatCard label="En proceso" value={stats.enProceso} tone="amber" />
-            <StatCard label="Finalizados" value={stats.finalizadas} tone="emerald" />
+            <StatCard label="Publicadas" value={stats.publicadas} theme={theme} textColor={textColor} />
+            <StatCard label="Postulaciones" value={stats.postuladas} tone="slate" theme={theme} textColor={textColor} />
+            <StatCard label="En proceso" value={stats.enProceso} tone="amber" theme={theme} textColor={textColor} />
+            <StatCard label="Finalizados" value={stats.finalizadas} tone="emerald" theme={theme} textColor={textColor} />
           </div>
         </section>
 
         {esCliente && (
-          <div className="mb-5 rounded-2xl border border-[#6c63ff]/20 bg-[#6c63ff]/10 px-5 py-4 text-sm font-bold text-[#b9b5ff]">
+          <div className="mb-5 rounded-2xl border border-[#6c63ff]/20 bg-[#6c63ff]/10 px-5 py-4 text-sm font-bold text-[#6c63ff]">
             Estás como cliente: puedes publicar solicitudes y gestionar postulantes.
           </div>
         )}
 
-        <div className="mb-5 flex gap-2 overflow-x-auto rounded-2xl border border-white/10 bg-[#111118] p-2">
+        <div 
+          className="mb-5 flex gap-2 overflow-x-auto rounded-2xl border p-2 transition-colors"
+          style={{ background: cardBg, borderColor: cardBorder }}
+        >
           {vistas.map((item) => (
             <button
               key={item}
@@ -294,7 +321,9 @@ export default function FeedTrabajos() {
               className={`min-w-fit flex-1 rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition ${
                 vista === item
                   ? "bg-[#6c63ff] text-white shadow-lg shadow-[#6c63ff]/20"
-                  : "text-slate-500 hover:bg-white/5 hover:text-white"
+                  : theme === "dark"
+                    ? "text-slate-500 hover:bg-white/5 hover:text-white"
+                    : "text-slate-500 hover:bg-black/5 hover:text-black"
               }`}
             >
               {item}
@@ -310,7 +339,7 @@ export default function FeedTrabajos() {
         />
 
         <p className="mb-4 mt-4 text-sm font-bold text-slate-500">
-          Mostrando <span className="font-black text-white">{solicitudesFiltradas.length} solicitudes</span> en {vista.toLowerCase()}
+          Mostrando <span className="font-black" style={{ color: textColor[theme] }}>{solicitudesFiltradas.length} solicitudes</span> en {vista.toLowerCase()}
         </p>
 
         {error && (
@@ -322,14 +351,21 @@ export default function FeedTrabajos() {
         {loadingSolicitudes && (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-56 animate-pulse rounded-[2rem] border border-white/5 bg-[#111118]" />
+              <div 
+                key={i} 
+                className="h-56 animate-pulse rounded-[2rem] border transition-colors" 
+                style={{ background: cardBg, borderColor: cardBorder }}
+              />
             ))}
           </div>
         )}
 
         {!loadingSolicitudes && solicitudesFiltradas.length === 0 && (
-          <div className="rounded-[2rem] border border-white/5 bg-[#111118] p-16 text-center">
-            <p className="text-lg font-black text-white">No se encontraron solicitudes</p>
+          <div 
+            className="rounded-[2rem] border p-16 text-center transition-colors"
+            style={{ background: cardBg, borderColor: cardBorder }}
+          >
+            <p className="text-lg font-black">No se encontraron solicitudes</p>
             <p className="mt-2 text-sm font-bold text-slate-500">
               Intenta cambiar filtros o publicar una nueva solicitud.
             </p>
