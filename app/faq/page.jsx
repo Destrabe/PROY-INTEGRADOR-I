@@ -1,6 +1,18 @@
 "use client";
 
+import { useThemeStore } from "@/store/themeStore"; // Importamos tu store original
+
 export default function FAQPage() {
+  // Traemos el estado del store exacto
+  const theme = useThemeStore((state) => state.theme);
+  const background = useThemeStore((state) => state.background);
+  const textColor = useThemeStore((state) => state.textColor);
+
+  // Configuración de colores internos condicionales
+  const cardBg = theme === "dark" ? "#151520" : "#ffffff";
+  const cardBorder = theme === "dark" ? "#2A2A38" : "#e4e4e7";
+  const mutedText = theme === "dark" ? "#9090A8" : "#64748b";
+
   const faqData = [
     {
       question: "¿Qué es Nexora?",
@@ -45,7 +57,10 @@ export default function FAQPage() {
   ];
 
   return (
-    <main className="mt-12 min-h-screen w-full px-4 sm:px-6 md:px-8 py-20 bg-[#0A0A0F]">
+    <main 
+      className="mt-12 min-h-screen w-full px-4 sm:px-6 md:px-8 py-20 transition-colors duration-300"
+      style={{ background: background[theme], color: textColor[theme] }}
+    >
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
@@ -53,14 +68,20 @@ export default function FAQPage() {
             Centro de Ayuda
           </div>
 
-          <h1 className="font-extrabold leading-tight mb-5 font-['Syne',sans-serif] text-[clamp(38px,5vw,64px)] tracking-[-2px] text-white">
+          <h1 
+            className="font-extrabold leading-tight mb-5 font-['Syne',sans-serif] text-[clamp(38px,5vw,64px)] tracking-[-2px]"
+            style={{ color: textColor[theme] }}
+          >
             Preguntas{" "}
             <span className="bg-[linear-gradient(135deg,#7c3aed,#6c63ff,#4f8ef7)] bg-clip-text text-transparent">
               Frecuentes
             </span>
           </h1>
 
-          <p className="max-w-2xl mx-auto leading-relaxed text-[#9090A8] text-[17px] font-['DM_Sans',sans-serif]">
+          <p 
+            className="max-w-2xl mx-auto leading-relaxed text-[17px] font-['DM_Sans',sans-serif] transition-colors"
+            style={{ color: mutedText }}
+          >
             Encuentra respuestas rápidas sobre cómo funciona Nexora, publicación
             de proyectos, seguridad, trabajadores y más.
           </p>
@@ -71,11 +92,16 @@ export default function FAQPage() {
           {faqData.map((faq, index) => (
             <div
               key={index}
-              className="rounded-2xl p-6 transition-all duration-300 hover:translate-y-[-2px] bg-[#151520] border border-[#2A2A38]"
+              className="rounded-2xl p-6 transition-all duration-300 hover:translate-y-[-2px] border shadow-md"
+              style={{ 
+                backgroundColor: cardBg, 
+                borderColor: cardBorder,
+                color: textColor[theme]
+              }}
             >
               <div className="flex items-start gap-4">
                 {/* Icon */}
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 bg-[linear-gradient(135deg,#7c3aed,#6c63ff)]">
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 bg-[linear-gradient(135deg,#7c3aed,#6c63ff)] shadow-sm">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -89,11 +115,17 @@ export default function FAQPage() {
 
                 {/* Content */}
                 <div>
-                  <h2 className="font-bold mb-2 font-['Syne',sans-serif] text-white text-[18px]">
+                  <h2 
+                    className="font-bold mb-2 font-['Syne',sans-serif] text-[18px]"
+                    style={{ color: textColor[theme] }}
+                  >
                     {faq.question}
                   </h2>
 
-                  <p className="leading-relaxed text-[#9090A8] font-['DM_Sans',sans-serif] text-[15px]">
+                  <p 
+                    className="leading-relaxed font-['DM_Sans',sans-serif] text-[15px] transition-colors"
+                    style={{ color: mutedText }}
+                  >
                     {faq.answer}
                   </p>
                 </div>
@@ -103,7 +135,7 @@ export default function FAQPage() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-16 rounded-3xl p-8 text-center bg-[linear-gradient(135deg,#7c3aed,#6c63ff,#4f8ef7)]">
+        <div className="mt-16 rounded-3xl p-8 text-center bg-[linear-gradient(135deg,#7c3aed,#6c63ff,#4f8ef7)] shadow-xl">
           <h2 className="font-extrabold mb-3 text-white font-['Syne',sans-serif] text-[30px]">
             ¿Aún tienes dudas?
           </h2>

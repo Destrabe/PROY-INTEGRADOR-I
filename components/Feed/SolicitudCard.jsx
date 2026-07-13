@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
+import { useThemeStore } from "@/store/themeStore"; // <-- Importamos tu store
 
 function colorAvatar(iniciales = "") {
   const colores = [
@@ -89,28 +90,28 @@ function getStatusConfig(estado) {
   const map = {
     abierto: {
       label: "Abierto",
-      className: "border-[#6c63ff]/25 bg-[#6c63ff]/10 text-[#aaa5ff]",
+      className: "border-[#6c63ff]/25 bg-[#6c63ff]/10 text-[#6c63ff] dark:text-[#aaa5ff]", // Adaptado para modo claro/oscuro
       dot: "bg-[#6c63ff]",
     },
     postulado: {
       label: "Recibiendo propuestas",
-      className: "border-blue-500/20 bg-blue-500/10 text-blue-400",
-      dot: "bg-blue-400",
+      className: "border-blue-500/20 bg-blue-500/10 text-blue-600 dark:text-blue-400",
+      dot: "bg-blue-500 dark:bg-blue-400",
     },
     pago: {
       label: "Pendiente de pago",
-      className: "border-amber-500/20 bg-amber-500/10 text-amber-400",
-      dot: "bg-amber-400",
+      className: "border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-400",
+      dot: "bg-amber-500 dark:bg-amber-400",
     },
     en_proceso: {
       label: "En desarrollo",
-      className: "border-cyan-500/20 bg-cyan-500/10 text-cyan-400",
-      dot: "bg-cyan-400",
+      className: "border-cyan-500/20 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400",
+      dot: "bg-cyan-500 dark:bg-cyan-400",
     },
     finalizado: {
       label: "Finalizado",
-      className: "border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
-      dot: "bg-emerald-400",
+      className: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+      dot: "bg-emerald-500 dark:bg-emerald-400",
     },
   };
 
@@ -160,6 +161,15 @@ export default function SolicitudCard({
   onCancelar,
 }) {
   const router = useRouter();
+
+  // <-- Traemos el tema del store
+  const theme = useThemeStore((state) => state.theme);
+  const textColor = useThemeStore((state) => state.textColor);
+
+  // Colores dinámicos basados en tu diseño
+  const cardBg = theme === "dark" ? "#111118" : "#ffffff";
+  const defaultBorder = theme === "dark" ? "rgba(255,255,255,0.1)" : "#e4e4e7";
+  const mutedText = theme === "dark" ? "#94a3b8" : "#64748b"; // text-slate-400 / 500
 
   const rol = normalizarRol(currentUserRole);
   const esTrabajador = rol === "trabajador" || rol === "worker";
@@ -223,16 +233,22 @@ export default function SolicitudCard({
     return "Postularme";
   })();
 
+  // Calculamos el borde condicional basado en el estado, pero considerando el tema base
+  const dynamicBorder = estado === "finalizado"
+    ? "rgba(16, 185, 129, 0.2)" // emerald-500/20
+    : postulado || soyAceptado
+      ? "rgba(108, 99, 255, 0.35)" // #6c63ff/35
+      : defaultBorder;
+
   return (
     <article
       onClick={() => onVerDetalle(solicitud)}
-      className={`group relative cursor-pointer overflow-hidden rounded-4xl border bg-[#111118] p-5 shadow-xl transition duration-200 hover:-translate-y-0.5 hover:border-[#6c63ff]/40 hover:shadow-[#6c63ff]/10 md:p-6 ${
-        estado === "finalizado"
-          ? "border-emerald-500/20"
-          : postulado || soyAceptado
-            ? "border-[#6c63ff]/35"
-            : "border-white/10"
-      }`}
+      className="group relative cursor-pointer overflow-hidden rounded-[2rem] border p-5 shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[#6c63ff]/10 md:p-6"
+      style={{ 
+        background: cardBg, 
+        borderColor: dynamicBorder, 
+        color: textColor[theme] 
+      }}
     >
       <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-[#6c63ff]/60 to-transparent opacity-0 transition group-hover:opacity-100" />
 
@@ -257,55 +273,56 @@ export default function SolicitudCard({
 
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <p className="text-sm font-black text-white">{nombreCliente}</p>
-              <span className="text-xs font-bold text-slate-600">·</span>
-              <p className="text-xs font-bold text-slate-500">
+              <p className="text-sm font-black" style={{ color: textColor[theme] }}>{nombreCliente}</p>
+              <span className="text-xs font-bold" style={{ color: mutedText }}>·</span>
+              <p className="text-xs font-bold" style={{ color: mutedText }}>
                 {solicitud.distrito || "Sin distrito"}
               </p>
-              <span className="text-xs font-bold text-slate-600">·</span>
-              <p className="text-xs font-bold text-slate-600">
+              <span className="text-xs font-bold" style={{ color: mutedText }}>·</span>
+              <p className="text-xs font-bold" style={{ color: mutedText }}>
                 {tiempoRelativo}
               </p>
             </div>
 
-            <h2 className="mt-3 text-xl font-black tracking-tight text-white transition group-hover:text-[#aaa5ff]">
+            <h2 className="mt-3 text-xl font-black tracking-tight transition group-hover:text-[#6c63ff]" style={{ color: textColor[theme] }}>
               {solicitud.titulo || "Solicitud sin título"}
             </h2>
 
-            <p className="mt-2 max-w-3xl text-sm font-medium leading-relaxed text-slate-400">
+            <p className="mt-2 max-w-3xl text-sm font-medium leading-relaxed" style={{ color: mutedText }}>
               {truncar(solicitud.descripcion || "Sin descripción")}
             </p>
           </div>
         </div>
 
         <div className="flex shrink-0 flex-col items-start gap-2 lg:items-end">
-          <div
-            className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] ${status.className}`}
-          >
+          <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] ${theme === 'dark' ? 'dark ' : ''}${status.className}`}>
             <span className={`h-2 w-2 rounded-full ${status.dot}`} />
             {status.label}
           </div>
 
           {solicitud.urgente && (
-            <span className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-red-400">
+            <span className={`rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] ${theme === 'dark' ? 'border-red-500/20 bg-red-500/10 text-red-400' : 'border-red-500/20 bg-red-50 text-red-600'}`}>
               Urgente
             </span>
           )}
 
           {esPropietario && (
-            <span className="rounded-full border border-[#6c63ff]/20 bg-[#6c63ff]/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#aaa5ff]">
+            <span className={`rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] ${theme === 'dark' ? 'border-[#6c63ff]/20 bg-[#6c63ff]/10 text-[#aaa5ff]' : 'border-[#6c63ff]/20 bg-[#6c63ff]/5 text-[#6c63ff]'}`}>
               Mi solicitud
             </span>
           )}
 
-          <p className="text-2xl font-black text-white">
+          <p className="text-2xl font-black" style={{ color: textColor[theme] }}>
             {solicitud.precio || "A convenir"}
           </p>
         </div>
       </div>
 
       {primerImagen && (
-        <div className="mt-5 overflow-hidden rounded-3xl border border-white/10 bg-[#0A0A0F]">
+        <div 
+          className="mt-5 overflow-hidden rounded-3xl border"
+          style={{ borderColor: defaultBorder, background: theme === "dark" ? "#0A0A0F" : "#f1f5f9" }}
+        >
           <img
             src={primerImagen}
             alt="Foto de la solicitud"
@@ -319,25 +336,30 @@ export default function SolicitudCard({
         {(solicitud.tags || []).slice(0, 6).map((tag) => (
           <span
             key={tag}
-            className="rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-xs font-bold text-slate-300"
+            className="rounded-xl border px-3 py-2 text-xs font-bold"
+            style={{ 
+              borderColor: defaultBorder, 
+              background: theme === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
+              color: mutedText
+            }}
           >
             {tag}
           </span>
         ))}
 
         {solicitud.modalidad && (
-          <span className="rounded-xl border border-blue-500/20 bg-blue-500/10 px-3 py-2 text-xs font-bold text-blue-400">
+          <span className={`rounded-xl border px-3 py-2 text-xs font-bold ${theme === 'dark' ? 'border-blue-500/20 bg-blue-500/10 text-blue-400' : 'border-blue-200 bg-blue-50 text-blue-600'}`}>
             {solicitud.modalidad}
           </span>
         )}
       </div>
 
-      <div className="mt-6 flex flex-col gap-4 border-t border-white/5 pt-5 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-wrap items-center gap-4 text-xs font-black uppercase tracking-[0.16em] text-slate-600">
+      <div className="mt-6 flex flex-col gap-4 border-t pt-5 lg:flex-row lg:items-center lg:justify-between" style={{ borderColor: defaultBorder }}>
+        <div className="flex flex-wrap items-center gap-4 text-xs font-black uppercase tracking-[0.16em]" style={{ color: mutedText }}>
           <span>{totalPostulantes} postulantes</span>
           <span>{solicitud.distrito || "Sin ubicación"}</span>
           {["pago", "en_proceso", "finalizado"].includes(estado) && (
-            <span className="inline-flex items-center gap-1.5 text-emerald-400">
+            <span className={`inline-flex items-center gap-1.5 ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'}`}>
               <IconShield /> Escrow activo
             </span>
           )}
@@ -350,7 +372,7 @@ export default function SolicitudCard({
                 e.stopPropagation();
                 onCancelar(solicitud.id);
               }}
-              className="rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-amber-400 transition hover:bg-amber-500 hover:text-white"
+              className={`rounded-xl border px-4 py-3 text-[10px] font-black uppercase tracking-widest transition ${theme === 'dark' ? 'border-amber-500/20 bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-white' : 'border-amber-200 bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white'}`}
             >
               Eliminar
             </button>
@@ -384,7 +406,7 @@ export default function SolicitudCard({
             <button
               onClick={irAFlujo}
               disabled={loading || estado === "finalizado"}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#6c63ff] px-5 py-3 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-[#6c63ff]/20 transition hover:scale-[1.01] disabled:bg-white/10 disabled:text-slate-600 disabled:shadow-none"
+              className={`inline-flex items-center gap-2 rounded-xl bg-[#6c63ff] px-5 py-3 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-[#6c63ff]/20 transition hover:scale-[1.01] ${theme === 'dark' ? 'disabled:bg-white/10 disabled:text-slate-600' : 'disabled:bg-black/5 disabled:text-slate-400'} disabled:shadow-none`}
             >
               {loading
                 ? "Cargando..."
@@ -401,7 +423,7 @@ export default function SolicitudCard({
                 e.stopPropagation();
                 onCancelar(solicitud.id);
               }}
-              className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-red-400 transition hover:bg-red-500 hover:text-white"
+              className={`rounded-xl border px-4 py-3 text-[10px] font-black uppercase tracking-widest transition ${theme === 'dark' ? 'border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white' : 'border-red-200 bg-red-50 text-red-600 hover:bg-red-500 hover:text-white'}`}
             >
               Cancelar
             </button>
