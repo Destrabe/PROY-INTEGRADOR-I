@@ -57,7 +57,7 @@ export default function FAQPage() {
   ];
 
   return (
-    <main 
+    <main
       className="mt-12 min-h-screen w-full px-4 sm:px-6 md:px-8 py-20 transition-colors duration-300"
       style={{ background: background[theme], color: textColor[theme] }}
     >
@@ -68,7 +68,7 @@ export default function FAQPage() {
             Centro de Ayuda
           </div>
 
-          <h1 
+          <h1
             className="font-extrabold leading-tight mb-5 font-['Syne',sans-serif] text-[clamp(38px,5vw,64px)] tracking-[-2px]"
             style={{ color: textColor[theme] }}
           >
@@ -78,7 +78,7 @@ export default function FAQPage() {
             </span>
           </h1>
 
-          <p 
+          <p
             className="max-w-2xl mx-auto leading-relaxed text-[17px] font-['DM_Sans',sans-serif] transition-colors"
             style={{ color: mutedText }}
           >
@@ -92,11 +92,11 @@ export default function FAQPage() {
           {faqData.map((faq, index) => (
             <div
               key={index}
-              className="rounded-2xl p-6 transition-all duration-300 hover:translate-y-[-2px] border shadow-md"
-              style={{ 
-                backgroundColor: cardBg, 
+              className="rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 border shadow-md"
+              style={{
+                backgroundColor: cardBg,
                 borderColor: cardBorder,
-                color: textColor[theme]
+                color: textColor[theme],
               }}
             >
               <div className="flex items-start gap-4">
@@ -115,14 +115,14 @@ export default function FAQPage() {
 
                 {/* Content */}
                 <div>
-                  <h2 
+                  <h2
                     className="font-bold mb-2 font-['Syne',sans-serif] text-[18px]"
                     style={{ color: textColor[theme] }}
                   >
                     {faq.question}
                   </h2>
 
-                  <p 
+                  <p
                     className="leading-relaxed font-['DM_Sans',sans-serif] text-[15px] transition-colors"
                     style={{ color: mutedText }}
                   >

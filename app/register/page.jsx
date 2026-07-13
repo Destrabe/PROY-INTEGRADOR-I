@@ -163,7 +163,7 @@ export default function RegisterPage() {
     `}
               >
                 <img
-                  className="w-[36px] h-[36px]"
+                  className="w-9 h-9"
                   src="/svg/client-register.svg"
                   alt="client-icon"
                 />
@@ -180,7 +180,7 @@ export default function RegisterPage() {
                 onClick={() => {
                   setRol("trabajador");
                 }}
-                className={`w-[268px] h-[125px] rounded-[20px] border border-[#313141] flex flex-col justify-center items-center bg-[#22222c] cursor-pointer transition-all duration-200 ease-in-out hover:-translate-y-1 hover:border-[rgba(124,92,255,0.6)] hover:shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)]
+                className={`w-67 h-31.25 rounded-[20px] border border-[#313141] flex flex-col justify-center items-center bg-[#22222c] cursor-pointer transition-all duration-200 ease-in-out hover:-translate-y-1 hover:border-[rgba(124,92,255,0.6)] hover:shadow-[0_0_15px_rgba(124,92,255,0.25),0_10px_40px_rgba(0,0,0,0.8)]
 
       ${
         !rol
@@ -192,7 +192,7 @@ export default function RegisterPage() {
     `}
               >
                 <img
-                  className="w-[36px] h-[36px]"
+                  className="w-9 h-9"
                   src="/svg/worker-register.svg"
                   alt="worker-icon"
                 />
@@ -208,7 +208,7 @@ export default function RegisterPage() {
             </div>
 
             {/* NOMBRES Y APELLIDOS */}
-            <div className="flex gap-[16px]">
+            <div className="flex gap-4">
               <div className="w-1/2">
                 <label className="block text-[11px] font-bold text-[#9090A8] tracking-wider mb-1.5 uppercase">
                   Nombre
@@ -218,7 +218,7 @@ export default function RegisterPage() {
                   placeholder="Tu nombre"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full px-4 h-[46px] rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
+                  className="w-full px-4 h-11.5 rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
                 />
               </div>
 
@@ -231,7 +231,7 @@ export default function RegisterPage() {
                   placeholder="Tu apellido"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="w-full px-4 h-[46px] rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
+                  className="w-full px-4 h-11.5 rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
                 />
               </div>
             </div>
@@ -246,7 +246,7 @@ export default function RegisterPage() {
                 placeholder="correo@ejemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 h-[46px] rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
+                className="w-full px-4 h-11.5 rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
               />
             </div>
 
@@ -260,7 +260,7 @@ export default function RegisterPage() {
                 placeholder="Mínimo 8 caracteres"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 h-[46px] rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
+                className="w-full px-4 h-11.5 rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
               />
               {sended && password.length < 8 && (
                 <p className="text-red-400 text-xs mt-1.5">
@@ -279,7 +279,7 @@ export default function RegisterPage() {
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 h-[46px] rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
+                className="w-full px-4 h-11.5 rounded-[10px] outline-none transition-colors text-[14px] bg-[#1a1a24] border border-[#2A2A38] text-white focus:border-[#6c63ff] placeholder:text-[#606078]"
               />
             </div>
 
@@ -287,7 +287,7 @@ export default function RegisterPage() {
             <div className="flex items-center gap-2 mb-2">
               <input
                 type="checkbox"
-                className="accent-[#6c63ff] w-[14px] h-[14px] rounded border-[#2A2A38] bg-[#1a1a24]"
+                className="accent-[#6c63ff] w-3.5 h-3.5 rounded border-[#2A2A38] bg-[#1a1a24]"
               />
               <p className="text-[12px] text-[#9090A8] m-0">
                 Acepto los{" "}
@@ -314,7 +314,7 @@ export default function RegisterPage() {
           <button
             disabled={loading}
             type="submit"
-            className={`font-bold text-[15px] mt-4 h-[48px] w-full rounded-[10px] bg-[#6c63ff] text-white cursor-pointer flex justify-center items-center transition-all hover:opacity-90 ${
+            className={`font-bold text-[15px] mt-4 h-12 w-full rounded-[10px] bg-[#6c63ff] text-white cursor-pointer flex justify-center items-center transition-all hover:opacity-90 ${
               loading && "opacity-50"
             }`}
           >
@@ -333,11 +333,11 @@ export default function RegisterPage() {
           </div>
 
           {/* GOOGLE Y FACEBOOK */}
-          <div className="grid grid-cols-2 gap-[16px] mb-6">
+          <div className="grid grid-cols-2 gap-4 mb-6">
             <button
               type="button"
               onClick={handleGoogleRegister}
-              className="flex items-center justify-center gap-2 h-[46px] rounded-[10px] text-[13px] font-semibold transition-all duration-300 cursor-pointer hover:-translate-y-1 bg-[#1a1a24] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6c63ff]"
+              className="flex items-center justify-center gap-2 h-11.5 rounded-[10px] text-[13px] font-semibold transition-all duration-300 cursor-pointer hover:-translate-y-1 bg-[#1a1a24] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6c63ff]"
             >
               <svg width="16" height="16" viewBox="0 0 24 24">
                 <path
@@ -363,7 +363,7 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={handleFacebookRegister}
-              className="flex items-center justify-center gap-2 h-[46px] rounded-[10px] text-[13px] font-semibold transition-all duration-300 cursor-pointer hover:-translate-y-1 bg-[#1a1a24] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6c63ff]"
+              className="flex items-center justify-center gap-2 h-11.5 rounded-[10px] text-[13px] font-semibold transition-all duration-300 cursor-pointer hover:-translate-y-1 bg-[#1a1a24] border border-[#2A2A38] text-[#F0F0F8] hover:border-[#6c63ff]"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877F2">
                 <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073c0 6.019 4.388 11.009 10.125 11.927v-8.437H7.078v-3.49h3.047V9.413c0-3.007 1.792-4.669 4.533-4.669 1.313 0 2.686.235 2.686.235v2.953h-1.514c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.082 24 18.092 24 12.073z" />

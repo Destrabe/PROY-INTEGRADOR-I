@@ -25,12 +25,12 @@ const Steps = ({ current, theme }) => {
           >
             {i < steps.length - 1 && (
               <div
-                className={`absolute top-[13px] left-[calc(50%+13px)] right-[calc(-50%+13px)] h-px transition-all duration-500 
+                className={`absolute top-3.25eft-[calc(50%+13px)] right-[calc(-50%+13px)] h-px transition-all duration-500 
                 ${done ? "bg-[#635bff]" : theme === "dark" ? "bg-[#2A2A38]" : "bg-[#e4e4e7]"}`}
               />
             )}
             <div
-              className={`w-[26px] h-[26px] rounded-full flex items-center justify-center text-[11px] font-semibold border z-10 transition-all duration-300
+              className={`w-6.5 h-6.5 rounded-full flex items-center justify-center text-[11px] font-semibold border z-10 transition-all duration-300
               ${done ? "bg-[#635bff] border-[#635bff] text-white" : ""}
               ${active ? "bg-[#635bff]/20 border-[#635bff] text-[#635bff] shadow-[0_0_10px_rgba(99,91,255,0.35)]" : ""}
               ${!done && !active ? (theme === "dark" ? "bg-[#22222C] border-[#2A2A38] text-[#606078]" : "bg-[#f4f4f5] border-[#e4e4e7] text-[#94a3b8]") : ""}
@@ -40,7 +40,7 @@ const Steps = ({ current, theme }) => {
             </div>
             <span
               className={`text-[10px] mt-1 whitespace-nowrap transition-colors duration-300
-              ${done ? "text-[#635bff]" : active ? (theme === "dark" ? "text-[#F0F0F8]" : "text-[#18181b]") : (theme === "dark" ? "text-[#606078]" : "text-[#94a3b8]")}
+              ${done ? "text-[#635bff]" : active ? (theme === "dark" ? "text-[#F0F0F8]" : "text-[#18181b]") : theme === "dark" ? "text-[#606078]" : "text-[#94a3b8]"}
             `}
             >
               {s.label}
@@ -70,10 +70,12 @@ const FieldInput = ({
   placeholder,
   onKeyDown,
   autoComplete,
-  theme
+  theme,
 }) => (
   <div className="mb-4 flex flex-col gap-2">
-    <label className={`text-sm font-bold font-body transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}>
+    <label
+      className={`text-sm font-bold font-body transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}
+    >
       {label}
     </label>
     <div className="relative">
@@ -87,7 +89,7 @@ const FieldInput = ({
         placeholder={placeholder}
         onKeyDown={onKeyDown}
         autoComplete={autoComplete}
-        className={`w-full h-[52px] pl-9 pr-4 py-3 border-2 rounded-xl text-sm font-light outline-none transition-all duration-200 focus:border-[#635bff]/60 focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body
+        className={`w-full h-13 pl-9 pr-4 py-3 border-2 rounded-xl text-sm font-light outline-none transition-all duration-200 focus:border-[#635bff]/60 focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body
         ${theme === "dark" ? "bg-[#22222C] border-white/10 text-[#F0F0F8] placeholder:text-[#5a5a6a] focus:bg-[#1a1a22]" : "bg-[#f4f4f5] border-black/5 text-[#18181b] placeholder:text-[#94a3b8] focus:bg-white"}`}
       />
     </div>
@@ -95,11 +97,20 @@ const FieldInput = ({
 );
 
 /* ── Password input con toggle ── */
-const PasswordField = ({ label, value, onChange, placeholder, onKeyDown, theme }) => {
+const PasswordField = ({
+  label,
+  value,
+  onChange,
+  placeholder,
+  onKeyDown,
+  theme,
+}) => {
   const [show, setShow] = useState(false);
   return (
     <div className="mb-4 flex flex-col gap-2">
-      <label className={`text-sm font-bold font-body transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}>
+      <label
+        className={`text-sm font-bold font-body transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}
+      >
         {label}
       </label>
       <div className="relative">
@@ -118,7 +129,7 @@ const PasswordField = ({ label, value, onChange, placeholder, onKeyDown, theme }
           onChange={onChange}
           placeholder={placeholder}
           onKeyDown={onKeyDown}
-          className={`w-full h-[52px] pl-9 pr-10 py-3 border-2 rounded-xl text-sm font-light outline-none transition-all duration-200 focus:border-[#635bff]/60 focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body
+          className={`w-full h-13 pl-9 pr-10 py-3 border-2 rounded-xl text-sm font-light outline-none transition-all duration-200 focus:border-[#635bff]/60 focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body
           ${theme === "dark" ? "bg-[#22222C] border-white/10 text-[#F0F0F8] placeholder:text-[#5a5a6a] focus:bg-[#1a1a22]" : "bg-[#f4f4f5] border-black/5 text-[#18181b] placeholder:text-[#94a3b8] focus:bg-white"}`}
         />
         <button
@@ -127,9 +138,21 @@ const PasswordField = ({ label, value, onChange, placeholder, onKeyDown, theme }
           className={`absolute right-3 top-1/2 -translate-y-1/2 transition-colors ${theme === "dark" ? "text-[#606078] hover:text-[#9090A8]" : "text-[#94a3b8] hover:text-[#64748b]"}`}
         >
           {show ? (
-            <Image src="/svg/eyeIconOff.svg" alt="eye off" className={`object-contain ${theme === "light" ? "invert opacity-50" : ""}`} width={16} height={16} />
+            <Image
+              src="/svg/eyeIconOff.svg"
+              alt="eye off"
+              className={`object-contain ${theme === "light" ? "invert opacity-50" : ""}`}
+              width={16}
+              height={16}
+            />
           ) : (
-            <Image src="/svg/eyeIconOn.svg" alt="eye on" className={`object-contain ${theme === "light" ? "invert opacity-50" : ""}`} width={16} height={16} />
+            <Image
+              src="/svg/eyeIconOn.svg"
+              alt="eye on"
+              className={`object-contain ${theme === "light" ? "invert opacity-50" : ""}`}
+              width={16}
+              height={16}
+            />
           )}
         </button>
       </div>
@@ -166,7 +189,7 @@ const StrengthBar = ({ pw, theme }) => {
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
-            className={`flex-1 h-[3px] rounded-full transition-all duration-300 ${i < score ? colors[score - 1] : theme === "dark" ? "bg-[#2A2A38]" : "bg-[#e4e4e7]"}`}
+            className={`flex-1 h-0.75 rounded-full transition-all duration-300 ${i < score ? colors[score - 1] : theme === "dark" ? "bg-[#2A2A38]" : "bg-[#e4e4e7]"}`}
           />
         ))}
       </div>
@@ -185,7 +208,7 @@ const PrimaryBtn = ({ children, onClick, loading, disabled }) => (
     type="button"
     onClick={onClick}
     disabled={loading || disabled}
-    className="w-full h-[52px] rounded-xl text-sm font-bold text-white transition-all duration-200 bg-gradient-to-br from-[#6C63FF] to-[#9B59B6] hover:shadow-[0_0_32px_rgba(99,91,255,0.4)] hover:-translate-y-[1px] active:translate-y-0 disabled:pointer-events-none disabled:opacity-70 flex items-center justify-center gap-2 cursor-pointer font-body"
+    className="w-full h-13 rounded-xl text-sm font-bold text-white transition-all duration-200 bg-linear-to-br from-[#6C63FF] to-[#9B59B6] hover:shadow-[0_0_32px_rgba(99,91,255,0.4)] hover:-translate-y-px active:translate-y-0 disabled:pointer-events-none disabled:opacity-70 flex items-center justify-center gap-2 cursor-pointer font-body"
   >
     {loading ? (
       <>
@@ -248,10 +271,14 @@ const StepEmail = ({ onNext, theme }) => {
 
   return (
     <>
-      <h1 className={`font-extrabold text-2xl sm:text-3xl mb-1 text-center font-display tracking-tight transition-colors ${theme === "dark" ? "text-[#F0F0F8]" : "text-[#18181b]"}`}>
+      <h1
+        className={`font-extrabold text-2xl sm:text-3xl mb-1 text-center font-display tracking-tight transition-colors ${theme === "dark" ? "text-[#F0F0F8]" : "text-[#18181b]"}`}
+      >
         Recuperar contraseña
       </h1>
-      <p className={`text-sm text-center mb-6 transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}>
+      <p
+        className={`text-sm text-center mb-6 transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}
+      >
         Ingresa tu correo y te enviaremos un código
       </p>
       <ErrorAlert msg={error} />
@@ -374,18 +401,28 @@ const StepOtp = ({ email, onNext, onBack, theme }) => {
 
   return (
     <>
-      <h1 className={`font-extrabold text-2xl sm:text-3xl mb-1 text-center font-display tracking-tight transition-colors ${theme === "dark" ? "text-[#F0F0F8]" : "text-[#18181b]"}`}>
+      <h1
+        className={`font-extrabold text-2xl sm:text-3xl mb-1 text-center font-display tracking-tight transition-colors ${theme === "dark" ? "text-[#F0F0F8]" : "text-[#18181b]"}`}
+      >
         Verifica tu identidad
       </h1>
-      <p className={`text-sm text-center mb-6 transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}>
+      <p
+        className={`text-sm text-center mb-6 transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}
+      >
         Enviamos un código a{" "}
-        <span className={`font-semibold ${theme === "dark" ? "text-[#F0F0F8]" : "text-[#18181b]"}`}>{email}</span>
+        <span
+          className={`font-semibold ${theme === "dark" ? "text-[#F0F0F8]" : "text-[#18181b]"}`}
+        >
+          {email}
+        </span>
       </p>
       <ErrorAlert msg={error} />
 
       {/* OTP inputs */}
       <div className="mb-2 flex flex-col gap-2">
-        <label className={`text-sm font-bold font-body transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}>
+        <label
+          className={`text-sm font-bold font-body transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}
+        >
           Código de verificación
         </label>
         <div className="flex gap-2" onPaste={handlePaste}>
@@ -399,7 +436,7 @@ const StepOtp = ({ email, onNext, onBack, theme }) => {
               value={d}
               onChange={(e) => handleDigit(i, e.target.value)}
               onKeyDown={(e) => handleKey(i, e)}
-              className={`w-full h-[52px] text-center text-xl font-bold border-2 rounded-xl outline-none transition-all duration-200 font-body
+              className={`w-full h-13 text-center text-xl font-bold border-2 rounded-xl outline-none transition-all duration-200 font-body
                 ${theme === "dark" ? "bg-[#22222C] text-[#F0F0F8] focus:bg-[#1a1a22]" : "bg-[#f4f4f5] text-[#18181b] focus:bg-white"}
                 ${d ? "border-[#635bff]/60 shadow-[0_0_0_3px_rgba(99,91,255,0.12)]" : theme === "dark" ? "border-white/10" : "border-black/5"}
                 focus:border-[#635bff]/60 focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)]`}
@@ -408,7 +445,9 @@ const StepOtp = ({ email, onNext, onBack, theme }) => {
         </div>
       </div>
 
-      <p className={`text-[12px] text-center mb-5 font-body transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}>
+      <p
+        className={`text-[12px] text-center mb-5 font-body transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}
+      >
         ¿No recibiste el código?{" "}
         {canResend ? (
           <button
@@ -420,7 +459,12 @@ const StepOtp = ({ email, onNext, onBack, theme }) => {
           </button>
         ) : (
           <span>
-            Reenviar en <strong className={theme === "dark" ? "text-[#F0F0F8]" : "text-[#18181b]"}>{timer}s</strong>
+            Reenviar en{" "}
+            <strong
+              className={theme === "dark" ? "text-[#F0F0F8]" : "text-[#18181b]"}
+            >
+              {timer}s
+            </strong>
           </span>
         )}
       </p>
@@ -428,7 +472,9 @@ const StepOtp = ({ email, onNext, onBack, theme }) => {
       <PrimaryBtn onClick={verify} loading={loading}>
         Verificar código
       </PrimaryBtn>
-      <BackLink onClick={onBack} theme={theme}>Cambiar correo</BackLink>
+      <BackLink onClick={onBack} theme={theme}>
+        Cambiar correo
+      </BackLink>
     </>
   );
 };
@@ -463,10 +509,14 @@ const StepNewPassword = ({ email, onNext, theme }) => {
 
   return (
     <>
-      <h1 className={`font-extrabold text-2xl sm:text-3xl mb-1 text-center font-display tracking-tight transition-colors ${theme === "dark" ? "text-[#F0F0F8]" : "text-[#18181b]"}`}>
+      <h1
+        className={`font-extrabold text-2xl sm:text-3xl mb-1 text-center font-display tracking-tight transition-colors ${theme === "dark" ? "text-[#F0F0F8]" : "text-[#18181b]"}`}
+      >
         Nueva contraseña
       </h1>
-      <p className={`text-sm text-center mb-6 transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}>
+      <p
+        className={`text-sm text-center mb-6 transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}
+      >
         Elige una contraseña segura para tu cuenta
       </p>
       <ErrorAlert msg={error} />
@@ -507,10 +557,14 @@ const StepSuccess = ({ theme }) => {
           height={50}
         />
       </div>
-      <h1 className={`font-extrabold text-2xl sm:text-3xl mb-2 text-center font-display tracking-tight transition-colors ${theme === "dark" ? "text-[#F0F0F8]" : "text-[#18181b]"}`}>
+      <h1
+        className={`font-extrabold text-2xl sm:text-3xl mb-2 text-center font-display tracking-tight transition-colors ${theme === "dark" ? "text-[#F0F0F8]" : "text-[#18181b]"}`}
+      >
         ¡Contraseña actualizada!
       </h1>
-      <p className={`text-sm text-center mb-7 leading-relaxed transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}>
+      <p
+        className={`text-sm text-center mb-7 leading-relaxed transition-colors ${theme === "dark" ? "text-[#9090A8]" : "text-[#64748b]"}`}
+      >
         Tu contraseña fue cambiada exitosamente.
         <br />
         Ya puedes iniciar sesión.
@@ -535,16 +589,16 @@ export default function ForgotPasswordPage() {
   const cardBorder = theme === "dark" ? "#2A2A38" : "#e4e4e7";
 
   return (
-    <div 
+    <div
       className="min-h-screen flex items-center justify-center px-4 py-12 font-body relative overflow-hidden selection:bg-[#635bff]/30 transition-colors duration-300"
       style={{ background: background[theme], color: textColor[theme] }}
     >
       {/* Glow */}
-      <div className="absolute top-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full bg-[#635bff]/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] rounded-full bg-[#9b59b6]/10 blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-75 h-75 rounded-full bg-[#635bff]/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-75 h-75 rounded-full bg-[#9b59b6]/10 blur-[120px] pointer-events-none" />
 
-      <div className="w-full max-w-[480px] z-10">
-        <div 
+      <div className="w-full max-w-120 z-10">
+        <div
           className="rounded-2xl p-6 sm:p-8 border shadow-[0_24px_64px_rgba(0,0,0,0.5)] transition-colors duration-300"
           style={{ backgroundColor: cardBg, borderColor: cardBorder }}
         >
@@ -568,10 +622,10 @@ export default function ForgotPasswordPage() {
             />
           )}
           {step === 3 && (
-            <StepNewPassword 
-              email={email} 
-              theme={theme} 
-              onNext={() => setStep(4)} 
+            <StepNewPassword
+              email={email}
+              theme={theme}
+              onNext={() => setStep(4)}
             />
           )}
           {step === 4 && <StepSuccess theme={theme} />}
