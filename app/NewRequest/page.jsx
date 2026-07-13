@@ -875,7 +875,7 @@ export default function NewRequestPage() {
                     {form.fechaRequerida && (
                       <span className="text-[11px] text-[#a78bfa] font-semibold mt-1">
                         Prioridad detectada:{" "}
-                        {calcularUergenciaTexto ? calcularUrgenciaTexto(form.fechaRequerida) : calcularUrgenciaTexto(form.fechaRequerida)}
+                        {calcularUrgenciaTexto ? calcularUrgenciaTexto(form.fechaRequerida) : calcularUrgenciaTexto(form.fechaRequerida)}
                       </span>
                     )}
                   </div>
