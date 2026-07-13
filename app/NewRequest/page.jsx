@@ -9,6 +9,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useThemeStore } from "@/store/themeStore";
 
+
 const CATEGORIAS = [
   {
     id: "tecnologia",
@@ -243,7 +244,7 @@ export default function NewRequestPage() {
     urgentText: isDark ? "#f87171" : "#b91c1c",
     disabledBg: isDark ? "#2a2a3e" : "#e4e4e7",
     disabledText: isDark ? "#555555" : "#9ca3af",
-    mapStyles: isDark ? MAP_STYLES_DARK : MAP_STYLES_LIGHT,
+    mapStyles: isDark ? MAP_STYLES : MAP_STYLES_LIGHT,
   };
 
   const centroSJL = useMemo(() => ({ lat: -11.9902, lng: -77.0142 }), []);
