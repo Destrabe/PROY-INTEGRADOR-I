@@ -226,7 +226,7 @@ export default function SolicitudCard({
   return (
     <article
       onClick={() => onVerDetalle(solicitud)}
-      className={`group relative cursor-pointer overflow-hidden rounded-[2rem] border bg-[#111118] p-5 shadow-xl transition duration-200 hover:-translate-y-0.5 hover:border-[#6c63ff]/40 hover:shadow-[#6c63ff]/10 md:p-6 ${
+      className={`group relative cursor-pointer overflow-hidden rounded-4xl border bg-[#111118] p-5 shadow-xl transition duration-200 hover:-translate-y-0.5 hover:border-[#6c63ff]/40 hover:shadow-[#6c63ff]/10 md:p-6 ${
         estado === "finalizado"
           ? "border-emerald-500/20"
           : postulado || soyAceptado
@@ -234,7 +234,7 @@ export default function SolicitudCard({
             : "border-white/10"
       }`}
     >
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#6c63ff]/60 to-transparent opacity-0 transition group-hover:opacity-100" />
+      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-[#6c63ff]/60 to-transparent opacity-0 transition group-hover:opacity-100" />
 
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex min-w-0 items-start gap-4">
@@ -319,7 +319,7 @@ export default function SolicitudCard({
         {(solicitud.tags || []).slice(0, 6).map((tag) => (
           <span
             key={tag}
-            className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-bold text-slate-300"
+            className="rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-xs font-bold text-slate-300"
           >
             {tag}
           </span>
