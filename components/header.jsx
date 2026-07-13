@@ -1,29 +1,37 @@
 "use client";
 
+import { useVerificationStore } from "@/store/verificationStore";
 import Link from "next/link";
 import { useAuth } from "./AuthContext";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useThemeStore } from "@/store/themeStore";
 import ThemeToggle from "./themeToogle";
 
-const Logo = (color) => (
+const Logo = ({ color }) => (
   <div
-    style={{
-      color: color.color,
-    }}
-    className="flex items-end font-extrabold text-2xl leading-none  font-syne select-none"
+    style={{ color }}
+    className="flex items-end font-extrabold text-2xl leading-none font-syne select-none"
   >
     <div className="logo-header-name">Nexora</div>
     <div className="text-[32px] text-[#6c63ff] relative top-0.75">.</div>
   </div>
 );
 
-const NavLink = ({ href, children, active }) => {
+const NavLink = ({ href, children, active, disabled }) => {
   const theme = useThemeStore((state) => state.theme);
-  const background = useThemeStore((state) => state.background);
   const textColor = useThemeStore((state) => state.textColor);
+
+  if (disabled) {
+    return (
+      <span
+        style={{ color: textColor[theme] }}
+        className="flex items-center opacity-30 cursor-not-allowed select-none"
+      >
+        {children}
+      </span>
+    );
+  }
 
   return (
     <Link
@@ -31,9 +39,7 @@ const NavLink = ({ href, children, active }) => {
       style={{
         color: active ? "#6c63ff" : textColor[theme],
       }}
-      className={`flex items-center transition-colors ${
-        active ? "text-[#6c63ff]" : "text-zinc-400 hover:text-[#6c63ff]"
-      }`}
+      className="flex items-center transition-colors hover:text-[#6c63ff]"
     >
       {children}
     </Link>
@@ -42,15 +48,15 @@ const NavLink = ({ href, children, active }) => {
 
 export default function Header() {
   const { user, logout, loading } = useAuth();
-
-  console.log("HEADER USER:", user);
-  console.log("PHOTO:", user?.photoURL);
-
   const router = useRouter();
   const pathname = usePathname();
+  const isVerifying = useVerificationStore((state) => state.isVerifying);
+  
+  // Variables del Store
   const theme = useThemeStore((state) => state.theme);
   const background = useThemeStore((state) => state.background);
   const textColor = useThemeStore((state) => state.textColor);
+
   const handleLogout = async () => {
     await logout();
     router.push("/");
@@ -58,9 +64,12 @@ export default function Header() {
 
   if (loading) {
     return (
-      <div className="font-sans w-full h-22.5 text-white bg-[#0a0a0a]">
+      <div 
+        className="font-sans w-full h-22.5" 
+        style={{ backgroundColor: background[theme] }}
+      >
         <div className="h-full flex items-center px-15">
-          <Logo />
+          <Logo color={textColor[theme]} />
         </div>
       </div>
     );
@@ -71,13 +80,14 @@ export default function Header() {
       style={{
         backgroundColor: background[theme],
         color: textColor[theme],
+        borderColor: theme === "dark" ? "#27272a" : "#e5e7eb",
       }}
-      className="fixed z-10 h-12 font-sans w-full lg:h-22.5 py-3 lg:py-0 transition-all border-zinc-800"
+      className="fixed z-10 h-12 font-sans w-full lg:h-22.5 py-3 lg:py-0 transition-all border-b"
     >
       <div className="h-full flex flex-col lg:grid lg:grid-cols-3 items-center px-4 sm:px-6 lg:px-15 py-4 gap-4">
         {/* LOGO */}
         <div className="h-full flex items-center justify-center lg:justify-start select-none w-full">
-          <Link href="/" className="flex items-center gap-2 text-white">
+          <Link href="/" className="flex items-center gap-2">
             <Logo color={textColor[theme]} />
           </Link>
         </div>
@@ -85,38 +95,55 @@ export default function Header() {
         {/* NAV */}
         <div className="flex justify-center items-center w-full">
           <nav className="flex flex-wrap justify-center gap-4 lg:gap-7.5 text-sm sm:text-base">
-            <NavLink href="/" active={pathname === "/"}>
+            <NavLink href="/" active={pathname === "/"} disabled={isVerifying}>
               Inicio
             </NavLink>
-            <NavLink href="/FeedTrabajos" active={pathname === "/FeedTrabajos"}>
+            <NavLink
+              href="/FeedTrabajos"
+              active={pathname === "/FeedTrabajos"}
+              disabled={isVerifying}
+            >
               Explorar
             </NavLink>
-            <NavLink href="/faq" active={pathname === "/faq"}>
+            <NavLink href="/faq" active={pathname === "/faq"} disabled={isVerifying}>
               FAQ
             </NavLink>
 
             {user && (
               <>
                 {pathname.startsWith("/trabajador") && (
-                  <Link
+                  <NavLink
                     href="/trabajador/panel"
-                    className="flex items-center text-[#6c63ff] transition-colors hover:text-[#8b7cff]"
+                    active={false}
+                    disabled={isVerifying}
                   >
                     Talent Hub
-                  </Link>
+                  </NavLink>
                 )}
 
                 {user?.rol === "admin" && (
-                  <NavLink href="/admin" active={pathname.startsWith("/admin")}>
+                  <NavLink
+                    href="/admin"
+                    active={pathname.startsWith("/admin")}
+                    disabled={isVerifying}
+                  >
                     Admin
                   </NavLink>
                 )}
 
-                <NavLink href="/messages" active={pathname === "/messages"}>
+                <NavLink
+                  href="/messages"
+                  active={pathname === "/messages"}
+                  disabled={isVerifying}
+                >
                   Mensajes
                 </NavLink>
 
-                <NavLink href="/profile" active={pathname === "/profile"}>
+                <NavLink
+                  href="/profile"
+                  active={pathname === "/profile"}
+                  disabled={isVerifying}
+                >
                   Perfil
                 </NavLink>
               </>
@@ -126,13 +153,26 @@ export default function Header() {
 
         {/* AUTH */}
         <div className="flex justify-center lg:justify-end items-center gap-4 w-full">
-          <div className="">
+          <div>
             <ThemeToggle />
           </div>
+          
           {user ? (
             <div className="relative group">
-              <button className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all bg-[#121212] border border-zinc-800 text-white">
-                <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-[#0a0a0a] border border-zinc-800">
+              <button 
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all border ${
+                  theme === "dark" 
+                    ? "bg-[#121212] border-zinc-800 text-white" 
+                    : "bg-white border-gray-200 text-black shadow-sm"
+                }`}
+              >
+                <div 
+                  className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center border ${
+                    theme === "dark" 
+                      ? "bg-[#0a0a0a] border-zinc-800" 
+                      : "bg-gray-100 border-gray-200"
+                  }`}
+                >
                   {user?.photoURL ? (
                     <img
                       src={user.photoURL}
@@ -143,26 +183,34 @@ export default function Header() {
                     <img
                       src="/svg/userIcon.svg"
                       alt="User Icon"
-                      className="w-4 h-4 opacity-70"
+                      className={`w-4 h-4 opacity-70 ${theme === "light" ? "invert" : ""}`}
                     />
                   )}
                 </div>
 
-                <span className="text-sm text-zinc-400">
+                <span className={`text-sm ${theme === "dark" ? "text-zinc-400" : "text-gray-500"}`}>
                   Hola,{" "}
-                  <span className="text-white font-semibold">
+                  <span className={`font-semibold ${theme === "dark" ? "text-white" : "text-black"}`}>
                     {user?.first_name
                       ? `${user.first_name.split(" ")[0]} ${user.last_name?.split(" ")[0] || ""}`
                       : user.email}
                   </span>
                 </span>
-                <ArrowIcon />
+                <ArrowIcon theme={theme} />
               </button>
 
-              <div className="absolute right-0 mt-2 w-44 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden bg-[#121212] border border-zinc-800">
+              <div 
+                className={`absolute right-0 mt-2 w-44 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden border ${
+                  theme === "dark" ? "bg-[#121212] border-zinc-800" : "bg-white border-gray-200"
+                }`}
+              >
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-2 px-4 py-3 text-sm transition-all text-white hover:text-red-400"
+                  className={`w-full flex items-center gap-2 px-4 py-3 text-sm transition-all ${
+                    theme === "dark" 
+                      ? "text-white hover:text-red-400 hover:bg-white/5" 
+                      : "text-gray-800 hover:text-red-600 hover:bg-gray-50"
+                  }`}
                 >
                   <LogoutIcon />
                   Cerrar sesión
@@ -175,14 +223,15 @@ export default function Header() {
                 href="/login"
                 style={{
                   color: pathname === "/login" ? "#6c63ff" : textColor[theme],
+                  borderColor: pathname === "/login" ? "#6c63ff" : (theme === "dark" ? "#52525b" : "#d1d5db")
                 }}
-                className="h-10.5 px-4 border border-zinc-500 flex items-center justify-center rounded-[10px] text-center transition-all hover:text-[#6c63ff]! hover:border-[#6c63ff]!"
+                className="h-10.5 px-4 border flex items-center justify-center rounded-[10px] text-center transition-all hover:text-[#6c63ff] hover:border-[#6c63ff]"
               >
                 Iniciar Sesión
               </Link>
               <Link
                 href="/register"
-                className="h-10.5 px-4 flex items-center justify-center rounded-[10px] text-white transition-all bg-[#6c63ff] hover:bg-[#5b52e5] "
+                className="h-10.5 px-4 flex items-center justify-center rounded-[10px] text-white transition-all bg-[#6c63ff] hover:bg-[#5b52e5]"
               >
                 Registrarse
               </Link>
@@ -210,7 +259,7 @@ const LogoutIcon = () => (
   </svg>
 );
 
-const ArrowIcon = () => (
+const ArrowIcon = ({ theme }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="16"
@@ -219,7 +268,7 @@ const ArrowIcon = () => (
     stroke="currentColor"
     strokeWidth="2"
     viewBox="0 0 24 24"
-    className="transition-transform group-hover:rotate-180 text-zinc-400"
+    className={`transition-transform group-hover:rotate-180 ${theme === "dark" ? "text-zinc-400" : "text-gray-500"}`}
   >
     <polyline points="6 9 12 15 18 9" />
   </svg>
