@@ -50,6 +50,7 @@ export default function Header() {
   const { user, logout, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const isVerifying = useVerificationStore((state) => state.isVerifying);
   
   // Variables del Store
   const theme = useThemeStore((state) => state.theme);
