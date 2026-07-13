@@ -8,7 +8,7 @@ import { db } from "@/firebase/db";
 import { loginUser, loginWithGoogle} from "@/firebase/auth";
 import { useAuth } from "@/components/AuthContext";
 import Image from "next/image";
-import { useThemeStore } from "@/store/themeStore"; // <-- Importamos tu store
+import { useThemeStore } from "@/store/themeStore";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -56,7 +56,6 @@ export default function LoginPage() {
       setError("Error al iniciar sesión con Google.");
     }
   };
-
 
   const handleSubmit = async () => {
     if (!email || !password) {
@@ -154,7 +153,8 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                className="w-full h-13 pl-9 pr-4 py-3 bg-[#22222C] border-2 border-white/10 rounded-xl text-sm font-light text-[#F0F0F8] outline-none placeholder:text-[#5a5a6a] transition-all duration-200 focus:border-[#635bff]/60 focus:bg-[#1a1a22] focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body"
+                className={`w-full h-13 pl-9 pr-4 py-3 border-2 rounded-xl text-sm font-light outline-none transition-all duration-200 focus:border-[#635bff]/60 focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body
+                  ${theme === "dark" ? "bg-[#22222C] border-white/10 text-[#F0F0F8] placeholder:text-[#5a5a6a] focus:bg-[#1a1a22]" : "bg-[#f4f4f5] border-black/5 text-[#18181b] placeholder:text-[#94a3b8] focus:bg-white"}`}
               />
             </div>
           </div>
@@ -184,7 +184,8 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                className="w-full h-13 pl-9 pr-4 py-3 bg-[#22222C] border-2 border-white/10 rounded-xl text-sm font-light text-[#F0F0F8] outline-none placeholder:text-[#5a5a6a] transition-all duration-200 focus:border-[#635bff]/60 focus:bg-[#1a1a22] focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body"
+                className={`w-full h-13 pl-9 pr-4 py-3 border-2 rounded-xl text-sm font-light outline-none transition-all duration-200 focus:border-[#635bff]/60 focus:shadow-[0_0_0_3px_rgba(99,91,255,0.12)] font-body
+                  ${theme === "dark" ? "bg-[#22222C] border-white/10 text-[#F0F0F8] placeholder:text-[#5a5a6a] focus:bg-[#1a1a22]" : "bg-[#f4f4f5] border-black/5 text-[#18181b] placeholder:text-[#94a3b8] focus:bg-white"}`}
               />
             </div>
           </div>
@@ -245,7 +246,7 @@ export default function LoginPage() {
             <div className="flex-1 h-px transition-colors" style={{ backgroundColor: dividerBg }} />
           </div>
 
-          {/* Botones de Proveedores (Oauth) - AHORA CENTRADO Y ANCHO COMPLETO */}
+          {/* Botones de Proveedores (Oauth) - CENTRADO Y ANCHO COMPLETO */}
           <div className="flex justify-center mb-6">
             <button
               type="button"
