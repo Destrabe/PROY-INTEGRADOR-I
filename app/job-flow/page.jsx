@@ -23,18 +23,160 @@ import {
 } from "firebase/firestore";
 
 const Icons = {
-  Briefcase: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" /></svg>,
-  User: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>,
-  CreditCard: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="4" width="22" height="16" rx="2" /><line x1="1" y1="10" x2="23" y2="10" /></svg>,
-  Clock: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>,
-  Check: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>,
-  CheckSmall: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>,
-  MapPin: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>,
-  DollarSign: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>,
-  Users: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>,
-  Shield: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>,
-  Lock: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>,
-  ChevronRight: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>,
+  Briefcase: () => (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <rect x="2" y="7" width="20" height="14" rx="2" />
+      <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+    </svg>
+  ),
+  User: () => (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  ),
+  CreditCard: () => (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <rect x="1" y="4" width="22" height="16" rx="2" />
+      <line x1="1" y1="10" x2="23" y2="10" />
+    </svg>
+  ),
+  Clock: () => (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  ),
+  Check: () => (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  ),
+  CheckSmall: () => (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  ),
+  MapPin: () => (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  ),
+  DollarSign: () => (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <line x1="12" y1="1" x2="12" y2="23" />
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    </svg>
+  ),
+  Users: () => (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  ),
+  Shield: () => (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  ),
+  Lock: () => (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <rect x="3" y="11" width="18" height="11" rx="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  ),
+  ChevronRight: () => (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <polyline points="9 18 15 12 9 6" />
+    </svg>
+  ),
 };
 
 const STEPS = [
@@ -55,7 +197,9 @@ function toSafeDate(value) {
 
 function moneyNumber(value) {
   if (typeof value === "number") return value;
-  const raw = String(value || "").replace(",", ".").replace(/[^\d.]/g, "");
+  const raw = String(value || "")
+    .replace(",", ".")
+    .replace(/[^\d.]/g, "");
   const parsed = Number(raw);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 850;
 }
@@ -65,7 +209,9 @@ function formatMoney(value) {
 }
 
 function titleCaseName(value = "") {
-  const noEmail = String(value).includes("@") ? String(value).split("@")[0] : String(value);
+  const noEmail = String(value).includes("@")
+    ? String(value).split("@")[0]
+    : String(value);
   return noEmail
     .replace(/[._-]+/g, " ")
     .replace(/\s+/g, " ")
@@ -82,7 +228,15 @@ function initialsFromName(value = "") {
 }
 
 function colorAvatar(iniciales = "") {
-  const colores = ["#2d1a5e", "#0f2d1a", "#2d1a0a", "#0a1a2d", "#2d0a1a", "#1a0a2d", "#0a2d2d"];
+  const colores = [
+    "#2d1a5e",
+    "#0f2d1a",
+    "#2d1a0a",
+    "#0a1a2d",
+    "#2d0a1a",
+    "#1a0a2d",
+    "#0a2d2d",
+  ];
   let hash = 0;
   for (const c of iniciales) hash = (hash * 31 + c.charCodeAt(0)) & 0xffffffff;
   return colores[Math.abs(hash) % colores.length];
@@ -107,11 +261,14 @@ function Toast({ message, type, onClose }) {
     const timer = setTimeout(onClose, 4000);
     return () => clearTimeout(timer);
   }, [onClose]);
-  const styles = type === "success"
-    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-    : "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400";
+  const styles =
+    type === "success"
+      ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+      : "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400";
   return (
-    <div className={`fixed bottom-8 right-8 ${styles} border p-5 rounded-2xl flex items-center gap-4 z-[200] shadow-2xl backdrop-blur-md max-w-md bg-white dark:bg-transparent`}>
+    <div
+      className={`fixed bottom-8 right-8 ${styles} border p-5 rounded-2xl flex items-center gap-4 z-200 shadow-2xl backdrop-blur-md max-w-md bg-white dark:bg-transparent`}
+    >
       <div className="w-2 h-2 rounded-full bg-current animate-pulse shrink-0" />
       <p className="text-sm font-black uppercase tracking-widest">{message}</p>
     </div>
@@ -124,29 +281,45 @@ function Stepper({ currentIndex, theme }) {
       {STEPS.map((step, i) => (
         <React.Fragment key={step.key}>
           <div className="flex flex-col items-center gap-2">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all ${
-              i === currentIndex
-                ? "bg-[#6c63ff] border-[#6c63ff] text-white shadow-lg shadow-[#6c63ff]/30"
-                : i < currentIndex
-                  ? `bg-emerald-500/10 border-emerald-500/30 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`
-                  : theme === "dark" ? "bg-white/5 border-white/10 text-slate-600" : "bg-black/5 border-black/10 text-slate-400"
-            }`}>
+            <div
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all ${
+                i === currentIndex
+                  ? "bg-[#6c63ff] border-[#6c63ff] text-white shadow-lg shadow-[#6c63ff]/30"
+                  : i < currentIndex
+                    ? `bg-emerald-500/10 border-emerald-500/30 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`
+                    : theme === "dark"
+                      ? "bg-white/5 border-white/10 text-slate-600"
+                      : "bg-black/5 border-black/10 text-slate-400"
+              }`}
+            >
               {i < currentIndex ? <Icons.CheckSmall /> : <step.Icon />}
             </div>
-            <span className={`text-[10px] font-black uppercase tracking-widest ${
-              i === currentIndex 
-                ? (theme === "dark" ? "text-white" : "text-[#18181b]") 
-                : i < currentIndex 
-                  ? (theme === "dark" ? "text-emerald-400" : "text-emerald-600") 
-                  : "text-slate-500"
-            }`}>
+            <span
+              className={`text-[10px] font-black uppercase tracking-widest ${
+                i === currentIndex
+                  ? theme === "dark"
+                    ? "text-white"
+                    : "text-[#18181b]"
+                  : i < currentIndex
+                    ? theme === "dark"
+                      ? "text-emerald-400"
+                      : "text-emerald-600"
+                    : "text-slate-500"
+              }`}
+            >
               {step.label}
             </span>
           </div>
           {i < STEPS.length - 1 && (
-            <div className={`flex-1 h-0.5 mx-2 mb-6 rounded-full transition-colors ${
-              i < currentIndex ? "bg-emerald-500/30" : theme === "dark" ? "bg-white/5" : "bg-black/5"
-            }`} />
+            <div
+              className={`flex-1 h-0.5 mx-2 mb-6 rounded-full transition-colors ${
+                i < currentIndex
+                  ? "bg-emerald-500/30"
+                  : theme === "dark"
+                    ? "bg-white/5"
+                    : "bg-black/5"
+              }`}
+            />
           )}
         </React.Fragment>
       ))}
@@ -154,11 +327,23 @@ function Stepper({ currentIndex, theme }) {
   );
 }
 
-function Avatar({ name, photoURL, size = "w-12 h-12", rounded = "rounded-2xl" }) {
+function Avatar({
+  name,
+  photoURL,
+  size = "w-12 h-12",
+  rounded = "rounded-2xl",
+}) {
   const initials = initialsFromName(name);
   return (
-    <div className={`${size} ${rounded} overflow-hidden flex items-center justify-center font-black text-white uppercase shrink-0`} style={{ backgroundColor: colorAvatar(initials) }}>
-      {photoURL ? <img src={photoURL} alt="" className="w-full h-full object-cover" /> : initials}
+    <div
+      className={`${size} ${rounded} overflow-hidden flex items-center justify-center font-black text-white uppercase shrink-0`}
+      style={{ backgroundColor: colorAvatar(initials) }}
+    >
+      {photoURL ? (
+        <img src={photoURL} alt="" className="w-full h-full object-cover" />
+      ) : (
+        initials
+      )}
     </div>
   );
 }
@@ -183,7 +368,9 @@ function ReviewBox({ placeholder, onSubmit, disabled, theme }) {
 
   if (disabled || sent) {
     return (
-      <div className={`border rounded-2xl p-5 text-center text-[10px] font-black uppercase tracking-widest ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-emerald-50 border-emerald-200 text-emerald-600"}`}>
+      <div
+        className={`border rounded-2xl p-5 text-center text-[10px] font-black uppercase tracking-widest ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-emerald-50 border-emerald-200 text-emerald-600"}`}
+      >
         Reseña publicada
       </div>
     );
@@ -193,7 +380,12 @@ function ReviewBox({ placeholder, onSubmit, disabled, theme }) {
     <div className="space-y-5">
       <div className="flex gap-2">
         {[1, 2, 3, 4, 5].map((n) => (
-          <button key={n} type="button" onClick={() => setRating(n)} className={`text-2xl font-black transition-all ${n <= rating ? "text-amber-400" : "text-slate-300 dark:text-slate-700"}`}>
+          <button
+            key={n}
+            type="button"
+            onClick={() => setRating(n)}
+            className={`text-2xl font-black transition-all ${n <= rating ? "text-amber-400" : "text-slate-300 dark:text-slate-700"}`}
+          >
             ★
           </button>
         ))}
@@ -222,21 +414,41 @@ function PaymentProcessing({ done, theme }) {
     <div className="min-h-105 flex items-center justify-center">
       <div className="text-center">
         <div className="relative w-32 h-32 mx-auto mb-8 flex items-center justify-center">
-          <div className={`absolute inset-0 rounded-full border-4 ${done ? "border-emerald-500/30" : "border-[#6c63ff]/20 border-t-[#6c63ff] animate-spin"}`} />
-          <div className={`w-20 h-20 rounded-full flex items-center justify-center ${done ? "bg-emerald-500 text-white" : "bg-[#6c63ff]/10 text-[#6c63ff]"}`}>
+          <div
+            className={`absolute inset-0 rounded-full border-4 ${done ? "border-emerald-500/30" : "border-[#6c63ff]/20 border-t-[#6c63ff] animate-spin"}`}
+          />
+          <div
+            className={`w-20 h-20 rounded-full flex items-center justify-center ${done ? "bg-emerald-500 text-white" : "bg-[#6c63ff]/10 text-[#6c63ff]"}`}
+          >
             {done ? <Icons.Check /> : <Icons.Lock />}
           </div>
         </div>
-        <h2 className={`text-2xl font-black mb-2 ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}>{done ? "Pago procesado" : "Procesando pago"}</h2>
-        <p className={`text-xs font-black uppercase tracking-widest ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>
-          {done ? "Tu pago quedó protegido en escrow" : "Validando transacción segura"}
+        <h2
+          className={`text-2xl font-black mb-2 ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}
+        >
+          {done ? "Pago procesado" : "Procesando pago"}
+        </h2>
+        <p
+          className={`text-xs font-black uppercase tracking-widest ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}
+        >
+          {done
+            ? "Tu pago quedó protegido en escrow"
+            : "Validando transacción segura"}
         </p>
       </div>
     </div>
   );
 }
 
-function PaymentPanel({ job, workerName, workerPhoto, onPay, processing, processed, theme }) {
+function PaymentPanel({
+  job,
+  workerName,
+  workerPhoto,
+  onPay,
+  processing,
+  processed,
+  theme,
+}) {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const total = moneyNumber(job.precio);
   const subtotal = total / 1.07;
@@ -248,57 +460,120 @@ function PaymentPanel({ job, workerName, workerPhoto, onPay, processing, process
   const textColor = theme === "dark" ? "text-white" : "text-[#18181b]";
   const mutedText = theme === "dark" ? "text-slate-400" : "text-slate-500";
 
-  if (processing || processed) return <PaymentProcessing done={processed} theme={theme} />;
+  if (processing || processed)
+    return <PaymentProcessing done={processed} theme={theme} />;
 
   return (
     <div className="space-y-8 transition-colors duration-300">
       <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#6c63ff] mb-3">Confirmar y Pagar</p>
-        <div className="border rounded-3xl p-6 flex items-center gap-4 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#6c63ff] mb-3">
+          Confirmar y Pagar
+        </p>
+        <div
+          className="border rounded-3xl p-6 flex items-center gap-4 transition-colors"
+          style={{ backgroundColor: innerCardBg, borderColor }}
+        >
           <Avatar name={workerName} photoURL={workerPhoto} size="w-14 h-14" />
           <div className="flex-1">
             <h2 className={`text-xl font-black ${textColor}`}>{workerName}</h2>
-            <p className={`text-xs font-bold uppercase tracking-widest ${mutedText}`}>{job.titulo || "Proyecto Nexora"} · {job.plazo || "14 días"}</p>
+            <p
+              className={`text-xs font-bold uppercase tracking-widest ${mutedText}`}
+            >
+              {job.titulo || "Proyecto Nexora"} · {job.plazo || "14 días"}
+            </p>
           </div>
-          <p className={`text-2xl font-black ${textColor}`}>{formatMoney(total)}</p>
+          <p className={`text-2xl font-black ${textColor}`}>
+            {formatMoney(total)}
+          </p>
         </div>
       </div>
 
-      <div className="border rounded-3xl p-6 space-y-4 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
-        <div className={`flex justify-between text-sm font-bold ${mutedText}`}><span>Subtotal</span><span>{formatMoney(subtotal)}</span></div>
-        <div className={`flex justify-between text-sm font-bold ${mutedText}`}><span>Comisión Nexora (6.6%)</span><span>{formatMoney(comision)}</span></div>
-        <div className={`flex justify-between text-sm font-bold ${mutedText}`}><span>IGV (18%)</span><span>{formatMoney(igv)}</span></div>
+      <div
+        className="border rounded-3xl p-6 space-y-4 transition-colors"
+        style={{ backgroundColor: innerCardBg, borderColor }}
+      >
+        <div className={`flex justify-between text-sm font-bold ${mutedText}`}>
+          <span>Subtotal</span>
+          <span>{formatMoney(subtotal)}</span>
+        </div>
+        <div className={`flex justify-between text-sm font-bold ${mutedText}`}>
+          <span>Comisión Nexora (6.6%)</span>
+          <span>{formatMoney(comision)}</span>
+        </div>
+        <div className={`flex justify-between text-sm font-bold ${mutedText}`}>
+          <span>IGV (18%)</span>
+          <span>{formatMoney(igv)}</span>
+        </div>
         <div className="h-px w-full" style={{ backgroundColor: borderColor }} />
-        <div className={`flex justify-between text-lg font-black ${textColor}`}><span>Total</span><span>{formatMoney(total)}</span></div>
+        <div className={`flex justify-between text-lg font-black ${textColor}`}>
+          <span>Total</span>
+          <span>{formatMoney(total)}</span>
+        </div>
       </div>
 
-      <div className={`border rounded-3xl p-6 transition-colors ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20" : "bg-emerald-50 border-emerald-200"}`}>
-        <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-3 flex items-center gap-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}><Icons.Shield /> Pago Protegido por Escrow</p>
-        <p className={`text-sm leading-relaxed ${theme === "dark" ? "text-slate-300" : "text-slate-600"}`}>
-          Tu dinero quedará retenido de forma segura. Se liberará al freelancer solo cuando apruebes el trabajo finalizado. Si hay un problema, Nexora podrá mediar la disputa según las condiciones del servicio.
+      <div
+        className={`border rounded-3xl p-6 transition-colors ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20" : "bg-emerald-50 border-emerald-200"}`}
+      >
+        <p
+          className={`text-[10px] font-black uppercase tracking-[0.3em] mb-3 flex items-center gap-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}
+        >
+          <Icons.Shield /> Pago Protegido por Escrow
+        </p>
+        <p
+          className={`text-sm leading-relaxed ${theme === "dark" ? "text-slate-300" : "text-slate-600"}`}
+        >
+          Tu dinero quedará retenido de forma segura. Se liberará al freelancer
+          solo cuando apruebes el trabajo finalizado. Si hay un problema, Nexora
+          podrá mediar la disputa según las condiciones del servicio.
         </p>
       </div>
 
-      <div className="border rounded-3xl p-6 space-y-5 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
+      <div
+        className="border rounded-3xl p-6 space-y-5 transition-colors"
+        style={{ backgroundColor: innerCardBg, borderColor }}
+      >
         <div className="flex items-center justify-between">
           <div>
             <p className={`font-black ${textColor}`}>Izipay · Pago Seguro</p>
-            <p className={`text-xs font-bold ${mutedText}`}>Transacción cifrada con TLS 1.3 · Pago retenido en escrow</p>
+            <p className={`text-xs font-bold ${mutedText}`}>
+              Transacción cifrada con TLS 1.3 · Pago retenido en escrow
+            </p>
           </div>
           <p className={`font-black ${textColor}`}>{formatMoney(total)}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <input className={`md:col-span-2 border rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff] transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-transparent border-[#e4e4e7] text-black"}`} placeholder="Número de tarjeta" />
-          <input className={`border rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff] transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-transparent border-[#e4e4e7] text-black"}`} placeholder="Vencimiento" />
-          <input className={`border rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff] transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-transparent border-[#e4e4e7] text-black"}`} placeholder="CVV" />
-          <input className={`md:col-span-2 border rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff] transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-transparent border-[#e4e4e7] text-black"}`} placeholder="Nombre en la tarjeta" />
+          <input
+            className={`md:col-span-2 border rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff] transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-transparent border-[#e4e4e7] text-black"}`}
+            placeholder="Número de tarjeta"
+          />
+          <input
+            className={`border rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff] transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-transparent border-[#e4e4e7] text-black"}`}
+            placeholder="Vencimiento"
+          />
+          <input
+            className={`border rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff] transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-transparent border-[#e4e4e7] text-black"}`}
+            placeholder="CVV"
+          />
+          <input
+            className={`md:col-span-2 border rounded-2xl px-4 py-4 text-sm outline-none focus:border-[#6c63ff] transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-transparent border-[#e4e4e7] text-black"}`}
+            placeholder="Nombre en la tarjeta"
+          />
         </div>
 
-        <label className={`flex items-start gap-3 border rounded-2xl p-4 cursor-pointer transition-colors ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-transparent border-[#e4e4e7]"}`}>
-          <input type="checkbox" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 accent-[#6c63ff]" />
+        <label
+          className={`flex items-start gap-3 border rounded-2xl p-4 cursor-pointer transition-colors ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-transparent border-[#e4e4e7]"}`}
+        >
+          <input
+            type="checkbox"
+            checked={acceptedTerms}
+            onChange={(e) => setAcceptedTerms(e.target.checked)}
+            className="mt-1 accent-[#6c63ff]"
+          />
           <span className={`text-xs leading-relaxed font-bold ${mutedText}`}>
-            Acepto los términos y condiciones. Entiendo que el pago quedará retenido en escrow y que la aprobación, revisión y liberación del pago son responsabilidad del cliente una vez recibido el trabajo.
+            Acepto los términos y condiciones. Entiendo que el pago quedará
+            retenido en escrow y que la aprobación, revisión y liberación del
+            pago son responsabilidad del cliente una vez recibido el trabajo.
           </span>
         </label>
 
@@ -310,9 +585,16 @@ function PaymentPanel({ job, workerName, workerPhoto, onPay, processing, process
           Pagar {formatMoney(total)}
         </button>
 
-        <div className={`flex gap-2 flex-wrap text-[10px] font-black tracking-widest ${mutedText}`}>
+        <div
+          className={`flex gap-2 flex-wrap text-[10px] font-black tracking-widest ${mutedText}`}
+        >
           {["VISA", "MC", "AMEX", "BCP", "BBVA"].map((brand) => (
-            <span key={brand} className={`border px-3 py-1.5 rounded-lg ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-transparent border-[#e4e4e7]"}`}>{brand}</span>
+            <span
+              key={brand}
+              className={`border px-3 py-1.5 rounded-lg ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-transparent border-[#e4e4e7]"}`}
+            >
+              {brand}
+            </span>
           ))}
         </div>
       </div>
@@ -320,9 +602,18 @@ function PaymentPanel({ job, workerName, workerPhoto, onPay, processing, process
   );
 }
 
-function ProcessPanel({ job, workerName, workerPhoto, clientName, clientPhoto, isOwner, onFinish, theme }) {
+function ProcessPanel({
+  job,
+  workerName,
+  workerPhoto,
+  clientName,
+  clientPhoto,
+  isOwner,
+  onFinish,
+  theme,
+}) {
   const total = moneyNumber(job.precio);
-  
+
   const innerCardBg = theme === "dark" ? "#0A0A0F" : "#f4f4f5";
   const borderColor = theme === "dark" ? "rgba(255,255,255,0.05)" : "#e4e4e7";
   const textColor = theme === "dark" ? "text-white" : "text-[#18181b]";
@@ -330,29 +621,64 @@ function ProcessPanel({ job, workerName, workerPhoto, clientName, clientPhoto, i
 
   return (
     <div className="space-y-8 transition-colors duration-300">
-      <div className={`border rounded-3xl p-6 transition-colors ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20" : "bg-emerald-50 border-emerald-200"}`}>
-        <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}>Pago retenido en escrow · {formatMoney(total)}</p>
-        <p className={`text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-600"}`}>El pago será liberado al freelancer solo cuando el cliente marque el trabajo como completado.</p>
+      <div
+        className={`border rounded-3xl p-6 transition-colors ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20" : "bg-emerald-50 border-emerald-200"}`}
+      >
+        <p
+          className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}
+        >
+          Pago retenido en escrow · {formatMoney(total)}
+        </p>
+        <p
+          className={`text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-600"}`}
+        >
+          El pago será liberado al freelancer solo cuando el cliente marque el
+          trabajo como completado.
+        </p>
       </div>
 
-      <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
+      <div
+        className="border rounded-3xl p-8 transition-colors"
+        style={{ backgroundColor: innerCardBg, borderColor }}
+      >
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
-            <h2 className={`text-3xl font-black ${textColor}`}>{formatMoney(total)} retenido en escrow</h2>
+            <h2 className={`text-3xl font-black ${textColor}`}>
+              {formatMoney(total)} retenido en escrow
+            </h2>
             <p className={`mt-2 ${mutedText}`}>
-              {isOwner ? "Tu pago está seguro. Libéralo cuando el freelancer entregue el trabajo." : "Tu pago está seguro. Se liberará cuando el cliente apruebe tu entrega."}
+              {isOwner
+                ? "Tu pago está seguro. Libéralo cuando el freelancer entregue el trabajo."
+                : "Tu pago está seguro. Se liberará cuando el cliente apruebe tu entrega."}
             </p>
           </div>
-          <span className={`border px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest ${theme === "dark" ? "bg-amber-500/10 border-amber-500/20 text-amber-400" : "bg-amber-50 border-amber-200 text-amber-600"}`}>En espera</span>
+          <span
+            className={`border px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest ${theme === "dark" ? "bg-amber-500/10 border-amber-500/20 text-amber-400" : "bg-amber-50 border-amber-200 text-amber-600"}`}
+          >
+            En espera
+          </span>
         </div>
 
         {!isOwner && (
-          <div className={`border rounded-2xl p-5 mb-6 ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-white border-[#e4e4e7]"}`}>
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#6c63ff] mb-3">Mensaje del sistema</p>
-            <p className={`text-sm leading-relaxed ${theme === "dark" ? "text-slate-300" : "text-slate-600"}`}>
-              Hola {workerName.split(" ")[0]}, el cliente ha realizado el pago de {formatMoney(total)}. Este monto permanecerá retenido en escrow hasta que entregues el proyecto y el cliente lo apruebe. Mucho éxito con el desarrollo.
+          <div
+            className={`border rounded-2xl p-5 mb-6 ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-white border-[#e4e4e7]"}`}
+          >
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#6c63ff] mb-3">
+              Mensaje del sistema
             </p>
-            <p className={`text-[10px] font-black uppercase tracking-widest mt-4 ${theme === "dark" ? "text-slate-600" : "text-slate-400"}`}>Nexora · Hoy, 10:34 am</p>
+            <p
+              className={`text-sm leading-relaxed ${theme === "dark" ? "text-slate-300" : "text-slate-600"}`}
+            >
+              Hola {workerName.split(" ")[0]}, el cliente ha realizado el pago
+              de {formatMoney(total)}. Este monto permanecerá retenido en escrow
+              hasta que entregues el proyecto y el cliente lo apruebe. Mucho
+              éxito con el desarrollo.
+            </p>
+            <p
+              className={`text-[10px] font-black uppercase tracking-widest mt-4 ${theme === "dark" ? "text-slate-600" : "text-slate-400"}`}
+            >
+              Nexora · Hoy, 10:34 am
+            </p>
           </div>
         )}
 
@@ -363,8 +689,15 @@ function ProcessPanel({ job, workerName, workerPhoto, clientName, clientPhoto, i
             ["Revisiones", "Ilimitadas"],
             ["Estado", "En desarrollo"],
           ].map(([label, value]) => (
-            <div key={label} className={`border rounded-2xl p-4 ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-white border-[#e4e4e7]"}`}>
-              <p className={`text-[10px] font-black uppercase tracking-widest mb-2 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>{label}</p>
+            <div
+              key={label}
+              className={`border rounded-2xl p-4 ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-white border-[#e4e4e7]"}`}
+            >
+              <p
+                className={`text-[10px] font-black uppercase tracking-widest mb-2 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}
+              >
+                {label}
+              </p>
               <p className={`font-black ${textColor}`}>{value}</p>
             </div>
           ))}
@@ -372,30 +705,88 @@ function ProcessPanel({ job, workerName, workerPhoto, clientName, clientPhoto, i
       </div>
 
       {isOwner ? (
-        <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
-          <h3 className={`text-xl font-black mb-2 ${textColor}`}>¿El trabajo está listo?</h3>
+        <div
+          className="border rounded-3xl p-8 transition-colors"
+          style={{ backgroundColor: innerCardBg, borderColor }}
+        >
+          <h3 className={`text-xl font-black mb-2 ${textColor}`}>
+            ¿El trabajo está listo?
+          </h3>
           <p className={`text-sm leading-relaxed mb-6 ${mutedText}`}>
-            Cuando el freelancer entregue el trabajo y lo hayas revisado, confirma la finalización para liberar el pago de {formatMoney(total)}.
+            Cuando el freelancer entregue el trabajo y lo hayas revisado,
+            confirma la finalización para liberar el pago de{" "}
+            {formatMoney(total)}.
           </p>
-          <button onClick={onFinish} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-colors">
+          <button
+            onClick={onFinish}
+            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-colors"
+          >
             Aprobar entrega y liberar pago
           </button>
         </div>
       ) : (
-        <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
-          <h3 className={`text-xl font-black mb-2 ${textColor}`}>Desarrolla y entrega el trabajo</h3>
-          <p className={`text-sm leading-relaxed ${mutedText}`}>Una vez que entregues el proyecto, el cliente podrá aprobarlo y liberar el pago retenido en escrow.</p>
+        <div
+          className="border rounded-3xl p-8 transition-colors"
+          style={{ backgroundColor: innerCardBg, borderColor }}
+        >
+          <h3 className={`text-xl font-black mb-2 ${textColor}`}>
+            Desarrolla y entrega el trabajo
+          </h3>
+          <p className={`text-sm leading-relaxed ${mutedText}`}>
+            Una vez que entregues el proyecto, el cliente podrá aprobarlo y
+            liberar el pago retenido en escrow.
+          </p>
         </div>
       )}
 
-      <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
-        <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-6 ${mutedText}`}>Partes del proyecto</p>
+      <div
+        className="border rounded-3xl p-8 transition-colors"
+        style={{ backgroundColor: innerCardBg, borderColor }}
+      >
+        <p
+          className={`text-[10px] font-black uppercase tracking-[0.3em] mb-6 ${mutedText}`}
+        >
+          Partes del proyecto
+        </p>
         <div className="space-y-4">
-          <div className="flex items-center gap-4"><Avatar name={clientName} photoURL={clientPhoto} /><div><p className={`font-black ${textColor}`}>{clientName}</p><p className={`text-xs font-bold uppercase tracking-widest ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>Cliente</p></div></div>
-          <div className="flex items-center gap-4"><Avatar name={workerName} photoURL={workerPhoto} /><div><p className={`font-black ${textColor}`}>{workerName}</p><p className={`text-xs font-bold uppercase tracking-widest ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>Freelancer</p></div></div>
           <div className="flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${theme === "dark" ? "bg-emerald-500/10 text-emerald-400" : "bg-emerald-50 text-emerald-600"}`}><Icons.Shield /></div>
-            <div><p className={`font-black ${textColor}`}>Escrow Izipay · {formatMoney(total)}</p><p className={`text-xs font-bold uppercase tracking-widest ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>Retenido · En espera</p></div>
+            <Avatar name={clientName} photoURL={clientPhoto} />
+            <div>
+              <p className={`font-black ${textColor}`}>{clientName}</p>
+              <p
+                className={`text-xs font-bold uppercase tracking-widest ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}
+              >
+                Cliente
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <Avatar name={workerName} photoURL={workerPhoto} />
+            <div>
+              <p className={`font-black ${textColor}`}>{workerName}</p>
+              <p
+                className={`text-xs font-bold uppercase tracking-widest ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}
+              >
+                Freelancer
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center ${theme === "dark" ? "bg-emerald-500/10 text-emerald-400" : "bg-emerald-50 text-emerald-600"}`}
+            >
+              <Icons.Shield />
+            </div>
+            <div>
+              <p className={`font-black ${textColor}`}>
+                Escrow Izipay · {formatMoney(total)}
+              </p>
+              <p
+                className={`text-xs font-bold uppercase tracking-widest ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}
+              >
+                Retenido · En espera
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -403,10 +794,17 @@ function ProcessPanel({ job, workerName, workerPhoto, clientName, clientPhoto, i
   );
 }
 
-function FinishedPanel({ job, workerName, isOwner, onSubmitReview, reviewSubmitted, theme }) {
+function FinishedPanel({
+  job,
+  workerName,
+  isOwner,
+  onSubmitReview,
+  reviewSubmitted,
+  theme,
+}) {
   const total = moneyNumber(job.precio);
   const ganancias = total * 0.94;
-  
+
   const innerCardBg = theme === "dark" ? "#0A0A0F" : "#f4f4f5";
   const borderColor = theme === "dark" ? "rgba(255,255,255,0.05)" : "#e4e4e7";
   const textColor = theme === "dark" ? "text-white" : "text-[#18181b]";
@@ -414,19 +812,38 @@ function FinishedPanel({ job, workerName, isOwner, onSubmitReview, reviewSubmitt
 
   return (
     <div className="space-y-8 transition-colors duration-300">
-      <div className={`border rounded-3xl p-8 text-center transition-colors ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20" : "bg-emerald-50 border-emerald-200"}`}>
-        <div className="w-20 h-20 rounded-full bg-emerald-500 text-white flex items-center justify-center mx-auto mb-6"><Icons.Check /></div>
-        <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}>Trabajo completado · Pago liberado</p>
-        <h2 className={`text-3xl font-black mb-3 ${textColor}`}>¡Proyecto completado!</h2>
-        <p className={`${theme === "dark" ? "text-slate-300" : "text-slate-600"}`}>
+      <div
+        className={`border rounded-3xl p-8 text-center transition-colors ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20" : "bg-emerald-50 border-emerald-200"}`}
+      >
+        <div className="w-20 h-20 rounded-full bg-emerald-500 text-white flex items-center justify-center mx-auto mb-6">
+          <Icons.Check />
+        </div>
+        <p
+          className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}
+        >
+          Trabajo completado · Pago liberado
+        </p>
+        <h2 className={`text-3xl font-black mb-3 ${textColor}`}>
+          ¡Proyecto completado!
+        </h2>
+        <p
+          className={`${theme === "dark" ? "text-slate-300" : "text-slate-600"}`}
+        >
           {isOwner
             ? `${formatMoney(total)} fueron liberados a ${workerName}. Gracias por usar Nexora.`
             : `Felicitaciones. ${formatMoney(total)} han sido transferidos a tu cuenta. Excelente trabajo.`}
         </p>
       </div>
 
-      <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
-        <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-6 ${mutedText}`}>Resumen del proyecto</p>
+      <div
+        className="border rounded-3xl p-8 transition-colors"
+        style={{ backgroundColor: innerCardBg, borderColor }}
+      >
+        <p
+          className={`text-[10px] font-black uppercase tracking-[0.3em] mb-6 ${mutedText}`}
+        >
+          Resumen del proyecto
+        </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             ["Monto pagado", formatMoney(total)],
@@ -434,15 +851,25 @@ function FinishedPanel({ job, workerName, isOwner, onSubmitReview, reviewSubmitt
             ["Revisiones", "2 realizadas"],
             ["Estado", "Completado"],
           ].map(([label, value]) => (
-            <div key={label} className={`border rounded-2xl p-4 ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-white border-[#e4e4e7]"}`}>
-              <p className={`text-[10px] font-black uppercase tracking-widest mb-2 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>{label}</p>
+            <div
+              key={label}
+              className={`border rounded-2xl p-4 ${theme === "dark" ? "bg-white/5 border-white/10" : "bg-white border-[#e4e4e7]"}`}
+            >
+              <p
+                className={`text-[10px] font-black uppercase tracking-widest mb-2 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}
+              >
+                {label}
+              </p>
               <p className={`font-black ${textColor}`}>{value}</p>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
+      <div
+        className="border rounded-3xl p-8 transition-colors"
+        style={{ backgroundColor: innerCardBg, borderColor }}
+      >
         {[
           ["Proyecto publicado", "6 Jul 2026"],
           ["Propuesta enviada", "6 Jul 2026"],
@@ -451,44 +878,90 @@ function FinishedPanel({ job, workerName, isOwner, onSubmitReview, reviewSubmitt
           ["Desarrollo completado", "20 Jul 2026"],
           ["Pago liberado al freelancer", "20 Jul 2026"],
         ].map(([label, date]) => (
-          <div key={label} className="flex items-center justify-between border-b py-4 last:border-0" style={{ borderColor }}>
+          <div
+            key={label}
+            className="flex items-center justify-between border-b py-4 last:border-0"
+            style={{ borderColor }}
+          >
             <span className={`text-sm font-bold ${mutedText}`}>{label}</span>
             <span className={`text-sm font-black ${textColor}`}>{date}</span>
           </div>
         ))}
       </div>
 
-      <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
+      <div
+        className="border rounded-3xl p-8 transition-colors"
+        style={{ backgroundColor: innerCardBg, borderColor }}
+      >
         <h3 className={`text-xl font-black mb-2 ${textColor}`}>
           {isOwner ? `Deja una reseña a ${workerName}` : "Califica al cliente"}
         </h3>
-        <p className={`text-sm font-bold mb-6 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>
-          {isOwner ? "Tu reseña aparecerá en el perfil del trabajador." : "Tu reseña aparecerá en el perfil del cliente."}
+        <p
+          className={`text-sm font-bold mb-6 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}
+        >
+          {isOwner
+            ? "Tu reseña aparecerá en el perfil del trabajador."
+            : "Tu reseña aparecerá en el perfil del cliente."}
         </p>
         <ReviewBox
           disabled={reviewSubmitted}
-          placeholder={isOwner ? `Cuéntanos cómo fue trabajar con ${workerName}` : "Cuéntanos cómo fue trabajar con este cliente"}
+          placeholder={
+            isOwner
+              ? `Cuéntanos cómo fue trabajar con ${workerName}`
+              : "Cuéntanos cómo fue trabajar con este cliente"
+          }
           onSubmit={onSubmitReview}
           theme={theme}
         />
       </div>
 
       {!isOwner && (
-        <div className="border rounded-3xl p-8 flex items-center justify-between gap-4 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
+        <div
+          className="border rounded-3xl p-8 flex items-center justify-between gap-4 transition-colors"
+          style={{ backgroundColor: innerCardBg, borderColor }}
+        >
           <div>
-            <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}>Tus ganancias</p>
-            <h3 className={`text-3xl font-black ${textColor}`}>{formatMoney(ganancias)}</h3>
-            <p className={`text-xs font-bold mt-1 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>Después de comisión Nexora</p>
+            <p
+              className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}
+            >
+              Tus ganancias
+            </p>
+            <h3 className={`text-3xl font-black ${textColor}`}>
+              {formatMoney(ganancias)}
+            </h3>
+            <p
+              className={`text-xs font-bold mt-1 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}
+            >
+              Después de comisión Nexora
+            </p>
           </div>
-          <button className="bg-emerald-500 text-white px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px]">Retirar fondos</button>
+          <button className="bg-emerald-500 text-white px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px]">
+            Retirar fondos
+          </button>
         </div>
       )}
 
-      <div className="border rounded-3xl p-8 transition-colors" style={{ backgroundColor: innerCardBg, borderColor }}>
-        <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-4 ${mutedText}`}>Próximos pasos</p>
+      <div
+        className="border rounded-3xl p-8 transition-colors"
+        style={{ backgroundColor: innerCardBg, borderColor }}
+      >
+        <p
+          className={`text-[10px] font-black uppercase tracking-[0.3em] mb-4 ${mutedText}`}
+        >
+          Próximos pasos
+        </p>
         <div className="flex flex-wrap gap-3">
-          {["Explorar nuevos proyectos", "Ver historial completo", "Actualizar tu perfil"].map((item) => (
-            <button key={item} className={`border px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-white border-[#e4e4e7] text-[#18181b] hover:bg-[#f4f4f5]"}`}>{item}</button>
+          {[
+            "Explorar nuevos proyectos",
+            "Ver historial completo",
+            "Actualizar tu perfil",
+          ].map((item) => (
+            <button
+              key={item}
+              className={`border px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-white border-[#e4e4e7] text-[#18181b] hover:bg-[#f4f4f5]"}`}
+            >
+              {item}
+            </button>
           ))}
         </div>
       </div>
@@ -496,7 +969,13 @@ function FinishedPanel({ job, workerName, isOwner, onSubmitReview, reviewSubmitt
   );
 }
 
-function WorkerProfileModal({ workerId, onClose, onAceptar, yaAceptado, theme }) {
+function WorkerProfileModal({
+  workerId,
+  onClose,
+  onAceptar,
+  yaAceptado,
+  theme,
+}) {
   const [data, setData] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [portfolio, setPortfolio] = useState([]);
@@ -510,8 +989,15 @@ function WorkerProfileModal({ workerId, onClose, onAceptar, yaAceptado, theme })
       setLoading(true);
       const [userSnap, reviewsSnap, portfolioSnap] = await Promise.all([
         getDoc(doc(db, "users", workerId)),
-        getDocs(query(collection(db, "reviews"), where("targetUserId", "==", workerId))),
-        getDocs(query(collection(db, "portfolio"), where("userId", "==", workerId))),
+        getDocs(
+          query(
+            collection(db, "reviews"),
+            where("targetUserId", "==", workerId),
+          ),
+        ),
+        getDocs(
+          query(collection(db, "portfolio"), where("userId", "==", workerId)),
+        ),
       ]);
 
       if (!active) return;
@@ -532,50 +1018,108 @@ function WorkerProfileModal({ workerId, onClose, onAceptar, yaAceptado, theme })
     return { score: (sum / reviews.length).toFixed(1), count: reviews.length };
   }, [reviews]);
 
-  const fullName = titleCaseName(`${data?.first_name || ""} ${data?.last_name || ""}`.trim() || data?.displayName || data?.email || "Trabajador");
+  const fullName = titleCaseName(
+    `${data?.first_name || ""} ${data?.last_name || ""}`.trim() ||
+      data?.displayName ||
+      data?.email ||
+      "Trabajador",
+  );
 
   const cardBg = theme === "dark" ? "#111118" : "#ffffff";
   const borderColor = theme === "dark" ? "rgba(255,255,255,0.1)" : "#e4e4e7";
   const textColor = theme === "dark" ? "text-white" : "text-[#18181b]";
 
   return (
-    <div className={`fixed inset-0 z-[150] flex items-center justify-center p-6 backdrop-blur-md transition-colors ${theme === "dark" ? "bg-black/90" : "bg-white/80"}`}>
-      <div className="w-full max-w-2xl max-h-[90vh] rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border" style={{ backgroundColor: cardBg, borderColor }}>
-        <div className="p-8 border-b flex items-center justify-between" style={{ borderColor }}>
-          <h2 className={`text-xl font-black ${textColor}`}>Perfil del Trabajador</h2>
-          <button onClick={onClose} className={`w-10 h-10 rounded-full flex items-center justify-center transition-all text-sm ${theme === "dark" ? "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white" : "bg-black/5 text-slate-500 hover:bg-black/10 hover:text-black"}`}>×</button>
+    <div
+      className={`fixed inset-0 z-150 flex items-center justify-center p-6 backdrop-blur-md transition-colors ${theme === "dark" ? "bg-black/90" : "bg-white/80"}`}
+    >
+      <div
+        className="w-full max-w-2xl max-h-[90vh] rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border"
+        style={{ backgroundColor: cardBg, borderColor }}
+      >
+        <div
+          className="p-8 border-b flex items-center justify-between"
+          style={{ borderColor }}
+        >
+          <h2 className={`text-xl font-black ${textColor}`}>
+            Perfil del Trabajador
+          </h2>
+          <button
+            onClick={onClose}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all text-sm ${theme === "dark" ? "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white" : "bg-black/5 text-slate-500 hover:bg-black/10 hover:text-black"}`}
+          >
+            ×
+          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-8 space-y-8">
           {loading ? (
-            <div className="flex items-center justify-center py-20"><div className="w-8 h-8 border-2 border-[#6c63ff] border-t-transparent rounded-full animate-spin" /></div>
+            <div className="flex items-center justify-center py-20">
+              <div className="w-8 h-8 border-2 border-[#6c63ff] border-t-transparent rounded-full animate-spin" />
+            </div>
           ) : !data ? (
-            <div className={`text-center text-[10px] font-black uppercase tracking-widest py-20 ${theme === "dark" ? "text-slate-600" : "text-slate-400"}`}>No se encontró este perfil</div>
+            <div
+              className={`text-center text-[10px] font-black uppercase tracking-widest py-20 ${theme === "dark" ? "text-slate-600" : "text-slate-400"}`}
+            >
+              No se encontró este perfil
+            </div>
           ) : (
             <>
               <div className="flex items-center gap-6">
-                <Avatar name={fullName} photoURL={data.photoURL} size="w-20 h-20" rounded="rounded-full" />
+                <Avatar
+                  name={fullName}
+                  photoURL={data.photoURL}
+                  size="w-20 h-20"
+                  rounded="rounded-full"
+                />
                 <div>
-                  <h3 className={`text-2xl font-black ${textColor}`}>{fullName}</h3>
-                  <p className={`text-xs font-bold uppercase tracking-widest mt-1 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>{data.city || "Ciudad no especificada"}</p>
-                  {reputacion && <p className="text-amber-400 text-sm font-bold mt-1">★ {reputacion.score} · {reputacion.count} {reputacion.count === 1 ? "reseña" : "reseñas"}</p>}
+                  <h3 className={`text-2xl font-black ${textColor}`}>
+                    {fullName}
+                  </h3>
+                  <p
+                    className={`text-xs font-bold uppercase tracking-widest mt-1 ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}
+                  >
+                    {data.city || "Ciudad no especificada"}
+                  </p>
+                  {reputacion && (
+                    <p className="text-amber-400 text-sm font-bold mt-1">
+                      ★ {reputacion.score} · {reputacion.count}{" "}
+                      {reputacion.count === 1 ? "reseña" : "reseñas"}
+                    </p>
+                  )}
                 </div>
               </div>
 
               {data.about_me && (
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-[#6c63ff] mb-2">Sobre el trabajador</p>
-                  <p className={`leading-relaxed italic ${theme === "dark" ? "text-slate-400" : "text-slate-600"}`}>{data.about_me}</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#6c63ff] mb-2">
+                    Sobre el trabajador
+                  </p>
+                  <p
+                    className={`leading-relaxed italic ${theme === "dark" ? "text-slate-400" : "text-slate-600"}`}
+                  >
+                    {data.about_me}
+                  </p>
                 </div>
               )}
 
               {portfolio.length > 0 && (
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-[#6c63ff] mb-4">Portfolio</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#6c63ff] mb-4">
+                    Portfolio
+                  </p>
                   <div className="grid grid-cols-2 gap-4">
                     {portfolio.slice(0, 4).map((p) => (
-                      <div key={p.id} className="aspect-video rounded-2xl overflow-hidden border" style={{ borderColor }}>
-                        <img src={p.imageUrl} alt={p.title || "portfolio"} className="w-full h-full object-cover" />
+                      <div
+                        key={p.id}
+                        className="aspect-video rounded-2xl overflow-hidden border"
+                        style={{ borderColor }}
+                      >
+                        <img
+                          src={p.imageUrl}
+                          alt={p.title || "portfolio"}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     ))}
                   </div>
@@ -587,8 +1131,20 @@ function WorkerProfileModal({ workerId, onClose, onAceptar, yaAceptado, theme })
 
         {data && (
           <div className="p-8 border-t flex gap-4" style={{ borderColor }}>
-            <button onClick={onClose} className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] border transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-black/5 border-[#e4e4e7] text-[#18181b]"}`}>Cerrar</button>
-            {!yaAceptado && <button onClick={onAceptar} className="flex-1 bg-emerald-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px]">Aceptar Trabajador</button>}
+            <button
+              onClick={onClose}
+              className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] border transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-black/5 border-[#e4e4e7] text-[#18181b]"}`}
+            >
+              Cerrar
+            </button>
+            {!yaAceptado && (
+              <button
+                onClick={onAceptar}
+                className="flex-1 bg-emerald-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px]"
+              >
+                Aceptar Trabajador
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -640,9 +1196,12 @@ function JobFlowContent() {
 
   useEffect(() => {
     if (!job?.userId) return;
-    const unsub = onSnapshot(query(collection(db, "reviews"), where("targetUserId", "==", job.userId)), (snap) => {
-      setClienteReviews(snap.docs.map((d) => d.data()));
-    });
+    const unsub = onSnapshot(
+      query(collection(db, "reviews"), where("targetUserId", "==", job.userId)),
+      (snap) => {
+        setClienteReviews(snap.docs.map((d) => d.data()));
+      },
+    );
     return () => unsub();
   }, [job?.userId]);
 
@@ -661,18 +1220,31 @@ function JobFlowContent() {
   }, [job?.userId]);
 
   const postulantes = job?.postulantes ?? [];
-  const miPostulacion = useMemo(() => encontrarMiPostulacion(postulantes, user?.uid), [postulantes, user?.uid]);
+  const miPostulacion = useMemo(
+    () => encontrarMiPostulacion(postulantes, user?.uid),
+    [postulantes, user?.uid],
+  );
   const yaPostulo = !!miPostulacion;
 
   const esTrabajador = user?.rol === "trabajador" || user?.rol === "worker";
   const esPropietario = user?.uid && user.uid === job?.userId;
 
   const acceptedPostulante = useMemo(() => {
-    return postulantes.find((p) => typeof p === "object" && ["pago", "en_proceso", "finalizado"].includes(p.estado)) || null;
+    return (
+      postulantes.find(
+        (p) =>
+          typeof p === "object" &&
+          ["pago", "en_proceso", "finalizado"].includes(p.estado),
+      ) || null
+    );
   }, [postulantes]);
 
-  const acceptedWorkerId = acceptedPostulante ? getPostulanteId(acceptedPostulante) : null;
-  const estadoProyecto = acceptedPostulante?.estado || (yaPostulo ? miPostulacion?.estado || "postulado" : "inicio");
+  const acceptedWorkerId = acceptedPostulante
+    ? getPostulanteId(acceptedPostulante)
+    : null;
+  const estadoProyecto =
+    acceptedPostulante?.estado ||
+    (yaPostulo ? miPostulacion?.estado || "postulado" : "inicio");
   const currentStepIndex = getStepIndex(estadoProyecto);
 
   useEffect(() => {
@@ -697,8 +1269,14 @@ function JobFlowContent() {
 
   const clienteReputacion = useMemo(() => {
     if (clienteReviews.length === 0) return null;
-    const sum = clienteReviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0);
-    return { score: (sum / clienteReviews.length).toFixed(1), count: clienteReviews.length };
+    const sum = clienteReviews.reduce(
+      (acc, r) => acc + (Number(r.rating) || 0),
+      0,
+    );
+    return {
+      score: (sum / clienteReviews.length).toFixed(1),
+      count: clienteReviews.length,
+    };
   }, [clienteReviews]);
 
   const clientName = titleCaseName(
@@ -709,7 +1287,9 @@ function JobFlowContent() {
       "Cliente",
   );
 
-  const workerInfo = acceptedWorkerId ? workersInfo[acceptedWorkerId] || {} : {};
+  const workerInfo = acceptedWorkerId
+    ? workersInfo[acceptedWorkerId] || {}
+    : {};
   const workerName = titleCaseName(
     acceptedPostulante?.nombre ||
       `${workerInfo.first_name || ""} ${workerInfo.last_name || ""}`.trim() ||
@@ -721,7 +1301,8 @@ function JobFlowContent() {
   const reviewSubmitted = useMemo(() => {
     if (!acceptedPostulante || !user?.uid) return false;
     if (esPropietario) return !!acceptedPostulante?.reviews?.clientToWorker;
-    if (user.uid === acceptedWorkerId) return !!acceptedPostulante?.reviews?.workerToClient;
+    if (user.uid === acceptedWorkerId)
+      return !!acceptedPostulante?.reviews?.workerToClient;
     return false;
   }, [acceptedPostulante, user?.uid, esPropietario, acceptedWorkerId]);
 
@@ -732,10 +1313,16 @@ function JobFlowContent() {
         if (id !== workerId) return p;
         return typeof p === "object"
           ? { ...p, estado: "pago", aceptadoEn: new Date().toISOString() }
-          : { workerId: p, estado: "pago", aceptadoEn: new Date().toISOString() };
+          : {
+              workerId: p,
+              estado: "pago",
+              aceptadoEn: new Date().toISOString(),
+            };
       });
 
-      await updateDoc(doc(db, "solicitudes", jobId), { postulantes: nuevosPostulantes });
+      await updateDoc(doc(db, "solicitudes", jobId), {
+        postulantes: nuevosPostulantes,
+      });
       showToast("Trabajador aceptado.");
       setSelectedWorkerId(null);
     } catch {
@@ -764,7 +1351,9 @@ function JobFlowContent() {
           };
         });
 
-        await updateDoc(doc(db, "solicitudes", jobId), { postulantes: nuevosPostulantes });
+        await updateDoc(doc(db, "solicitudes", jobId), {
+          postulantes: nuevosPostulantes,
+        });
         showToast("Pago retenido en escrow.");
       } catch {
         showToast("Error al procesar el pago.", "error");
@@ -812,12 +1401,16 @@ function JobFlowContent() {
         ...(typeof p === "object" ? p : { workerId: p }),
         reviews: {
           ...(typeof p === "object" ? p.reviews || {} : {}),
-          ...(isClientReview ? { clientToWorker: true } : { workerToClient: true }),
+          ...(isClientReview
+            ? { clientToWorker: true }
+            : { workerToClient: true }),
         },
       };
     });
 
-    await updateDoc(doc(db, "solicitudes", jobId), { postulantes: nuevosPostulantes });
+    await updateDoc(doc(db, "solicitudes", jobId), {
+      postulantes: nuevosPostulantes,
+    });
     showToast("Reseña publicada.");
   };
 
@@ -831,14 +1424,22 @@ function JobFlowContent() {
         pagoLiberado: true,
       };
     });
-    await updateDoc(doc(db, "solicitudes", jobId), { postulantes: nuevosPostulantes });
+    await updateDoc(doc(db, "solicitudes", jobId), {
+      postulantes: nuevosPostulantes,
+    });
     showToast("Pago liberado al freelancer.");
   };
 
   const handlePostular = async () => {
-    if (!user?.uid) return showToast("Debes iniciar sesión para postular.", "error");
-    if (!esTrabajador) return showToast("Solo cuentas de Trabajador pueden postular a un trabajo.", "error");
-    if (esPropietario) return showToast("No puedes postular a tu propia solicitud.", "error");
+    if (!user?.uid)
+      return showToast("Debes iniciar sesión para postular.", "error");
+    if (!esTrabajador)
+      return showToast(
+        "Solo cuentas de Trabajador pueden postular a un trabajo.",
+        "error",
+      );
+    if (esPropietario)
+      return showToast("No puedes postular a tu propia solicitud.", "error");
     if (yaPostulo) return;
 
     setApplying(true);
@@ -846,7 +1447,11 @@ function JobFlowContent() {
       await updateDoc(doc(db, "solicitudes", jobId), {
         postulantes: arrayUnion({
           workerId: user.uid,
-          nombre: titleCaseName(`${user.first_name || ""} ${user.last_name || ""}`.trim() || user.email || "Trabajador"),
+          nombre: titleCaseName(
+            `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+              user.email ||
+              "Trabajador",
+          ),
           estado: "postulado",
           fecha: new Date().toISOString(),
         }),
@@ -861,7 +1466,10 @@ function JobFlowContent() {
 
   if (jobLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center transition-colors duration-300" style={{ background: background[theme] }}>
+      <div
+        className="min-h-screen flex items-center justify-center transition-colors duration-300"
+        style={{ background: background[theme] }}
+      >
         <div className="w-8 h-8 border-2 border-[#6c63ff] border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -869,7 +1477,10 @@ function JobFlowContent() {
 
   if (!job) {
     return (
-      <div className="min-h-screen flex items-center justify-center font-black uppercase tracking-widest text-sm transition-colors duration-300" style={{ background: background[theme], color: mutedText }}>
+      <div
+        className="min-h-screen flex items-center justify-center font-black uppercase tracking-widest text-sm transition-colors duration-300"
+        style={{ background: background[theme], color: mutedText }}
+      >
         Trabajo no encontrado
       </div>
     );
@@ -887,20 +1498,44 @@ function JobFlowContent() {
   } = job;
 
   const creadoEnDate = toSafeDate(creadoEn);
-  const tiempoRelativo = creadoEnDate ? formatDistanceToNow(creadoEnDate, { addSuffix: true, locale: es }) : "hace un momento";
-  const showProjectFlow = ["pago", "en_proceso", "finalizado"].includes(estadoProyecto) && (esPropietario || user?.uid === acceptedWorkerId);
+  const tiempoRelativo = creadoEnDate
+    ? formatDistanceToNow(creadoEnDate, { addSuffix: true, locale: es })
+    : "hace un momento";
+  const showProjectFlow =
+    ["pago", "en_proceso", "finalizado"].includes(estadoProyecto) &&
+    (esPropietario || user?.uid === acceptedWorkerId);
 
   return (
-    <div className="w-full min-h-screen font-sans selection:bg-[#6c63ff]/30 transition-colors duration-300" style={{ background: background[theme], color: textColor[theme] }}>
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+    <div
+      className="w-full min-h-screen font-sans selection:bg-[#6c63ff]/30 transition-colors duration-300"
+      style={{ background: background[theme], color: textColor[theme] }}
+    >
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
 
       <main className="max-w-6xl mx-auto px-6 pt-28 pb-20">
         <Stepper currentIndex={currentStepIndex} theme={theme} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 rounded-[2.5rem] p-10 border shadow-2xl space-y-8 transition-colors duration-300" style={{ backgroundColor: cardBg, borderColor: cardBorder }}>
+          <div
+            className="lg:col-span-2 rounded-[2.5rem] p-10 border shadow-2xl space-y-8 transition-colors duration-300"
+            style={{ backgroundColor: cardBg, borderColor: cardBorder }}
+          >
             {showProjectFlow && estadoProyecto === "pago" && esPropietario ? (
-              <PaymentPanel job={job} workerName={workerName} workerPhoto={workerInfo.photoURL} onPay={handlePay} processing={paymentProcessing} processed={paymentProcessed} theme={theme} />
+              <PaymentPanel
+                job={job}
+                workerName={workerName}
+                workerPhoto={workerInfo.photoURL}
+                onPay={handlePay}
+                processing={paymentProcessing}
+                processed={paymentProcessed}
+                theme={theme}
+              />
             ) : showProjectFlow && estadoProyecto === "en_proceso" ? (
               <ProcessPanel
                 job={job}
@@ -925,64 +1560,187 @@ function JobFlowContent() {
             ) : (
               <>
                 <div className="flex flex-wrap gap-3">
-                  {urgente && <span className={`border text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full ${theme === "dark" ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-red-50 text-red-600 border-red-200"}`}>Urgente</span>}
-                  {modalidad && <span className={`border text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full ${theme === "dark" ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-blue-50 text-blue-600 border-blue-200"}`}>{modalidad}</span>}
+                  {urgente && (
+                    <span
+                      className={`border text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full ${theme === "dark" ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-red-50 text-red-600 border-red-200"}`}
+                    >
+                      Urgente
+                    </span>
+                  )}
+                  {modalidad && (
+                    <span
+                      className={`border text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full ${theme === "dark" ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-blue-50 text-blue-600 border-blue-200"}`}
+                    >
+                      {modalidad}
+                    </span>
+                  )}
                 </div>
 
                 <div>
-                  <h1 className="text-3xl font-black tracking-tight mb-2" style={{ color: textColor[theme] }}>{titulo}</h1>
-                  <p className={`text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${mutedText}`}>
-                    <Icons.MapPin /> {distrito || "Ubicación no especificada"} · {tiempoRelativo}
+                  <h1
+                    className="text-3xl font-black tracking-tight mb-2"
+                    style={{ color: textColor[theme] }}
+                  >
+                    {titulo}
+                  </h1>
+                  <p
+                    className={`text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${mutedText}`}
+                  >
+                    <Icons.MapPin /> {distrito || "Ubicación no especificada"} ·{" "}
+                    {tiempoRelativo}
                   </p>
                 </div>
 
-                {descripcion && <p className={`leading-relaxed ${theme === "dark" ? "text-slate-400" : "text-slate-600"}`}>{descripcion}</p>}
+                {descripcion && (
+                  <p
+                    className={`leading-relaxed ${theme === "dark" ? "text-slate-400" : "text-slate-600"}`}
+                  >
+                    {descripcion}
+                  </p>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="border rounded-2xl p-6 transition-colors" style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}>
-                    <p className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}><Icons.DollarSign /> Precio</p>
-                    <p className={`text-lg font-black ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}>{precio || "A convenir"}</p>
+                  <div
+                    className="border rounded-2xl p-6 transition-colors"
+                    style={{
+                      backgroundColor: innerCardBg,
+                      borderColor: cardBorder,
+                    }}
+                  >
+                    <p
+                      className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}
+                    >
+                      <Icons.DollarSign /> Precio
+                    </p>
+                    <p
+                      className={`text-lg font-black ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}
+                    >
+                      {precio || "A convenir"}
+                    </p>
                   </div>
-                  <div className="border rounded-2xl p-6 transition-colors" style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}>
-                    <p className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-2 ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}><Icons.Clock /> Plazo</p>
-                    <p className={`text-lg font-black ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}>{job.plazo || "No especificado"}</p>
+                  <div
+                    className="border rounded-2xl p-6 transition-colors"
+                    style={{
+                      backgroundColor: innerCardBg,
+                      borderColor: cardBorder,
+                    }}
+                  >
+                    <p
+                      className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-2 ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}
+                    >
+                      <Icons.Clock /> Plazo
+                    </p>
+                    <p
+                      className={`text-lg font-black ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}
+                    >
+                      {job.plazo || "No especificado"}
+                    </p>
                   </div>
-                  <div className="border rounded-2xl p-6 transition-colors" style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}>
-                    <p className="text-[#6c63ff] text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-2"><Icons.Users /> Postulantes</p>
-                    <p className={`text-lg font-black ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}>{postulantes.length} {postulantes.length === 1 ? "propuesta" : "propuestas"}</p>
+                  <div
+                    className="border rounded-2xl p-6 transition-colors"
+                    style={{
+                      backgroundColor: innerCardBg,
+                      borderColor: cardBorder,
+                    }}
+                  >
+                    <p className="text-[#6c63ff] text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-2">
+                      <Icons.Users /> Postulantes
+                    </p>
+                    <p
+                      className={`text-lg font-black ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}
+                    >
+                      {postulantes.length}{" "}
+                      {postulantes.length === 1 ? "propuesta" : "propuestas"}
+                    </p>
                   </div>
                 </div>
 
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-3">
-                    {tags.map((tag) => <span key={tag} className={`border text-xs font-bold px-4 py-2 rounded-xl transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-slate-300" : "bg-black/5 border-[#e4e4e7] text-slate-600"}`}>{tag}</span>)}
+                    {tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className={`border text-xs font-bold px-4 py-2 rounded-xl transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-slate-300" : "bg-black/5 border-[#e4e4e7] text-slate-600"}`}
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 )}
 
                 {esPropietario ? (
                   <div className="space-y-4">
-                    <h3 className={`text-[10px] font-black uppercase tracking-[0.3em] ${mutedText}`}>Postulantes ({postulantes.length})</h3>
+                    <h3
+                      className={`text-[10px] font-black uppercase tracking-[0.3em] ${mutedText}`}
+                    >
+                      Postulantes ({postulantes.length})
+                    </h3>
                     {postulantes.length === 0 ? (
-                      <div className={`border rounded-2xl p-8 text-center text-[10px] font-black uppercase tracking-widest transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-slate-600" : "bg-transparent border-[#e4e4e7] text-slate-400"}`}>Aún no hay postulantes</div>
+                      <div
+                        className={`border rounded-2xl p-8 text-center text-[10px] font-black uppercase tracking-widest transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-slate-600" : "bg-transparent border-[#e4e4e7] text-slate-400"}`}
+                      >
+                        Aún no hay postulantes
+                      </div>
                     ) : (
                       postulantes.map((p, i) => {
                         const workerId = getPostulanteId(p);
                         const info = workersInfo[workerId] || {};
-                        const nombrePostulante = titleCaseName((typeof p === "object" && p.nombre) || `${info.first_name || ""} ${info.last_name || ""}`.trim() || info.email || "Trabajador");
-                        const aceptado = typeof p === "object" && ["pago", "en_proceso", "finalizado"].includes(p.estado);
+                        const nombrePostulante = titleCaseName(
+                          (typeof p === "object" && p.nombre) ||
+                            `${info.first_name || ""} ${info.last_name || ""}`.trim() ||
+                            info.email ||
+                            "Trabajador",
+                        );
+                        const aceptado =
+                          typeof p === "object" &&
+                          ["pago", "en_proceso", "finalizado"].includes(
+                            p.estado,
+                          );
 
                         return (
-                          <div key={workerId || i} className="border rounded-2xl p-5 flex items-center justify-between gap-4 flex-wrap transition-colors" style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}>
+                          <div
+                            key={workerId || i}
+                            className="border rounded-2xl p-5 flex items-center justify-between gap-4 flex-wrap transition-colors"
+                            style={{
+                              backgroundColor: innerCardBg,
+                              borderColor: cardBorder,
+                            }}
+                          >
                             <div className="flex items-center gap-4">
-                              <Avatar name={nombrePostulante} photoURL={info.photoURL} size="w-10 h-10" rounded="rounded-xl" />
+                              <Avatar
+                                name={nombrePostulante}
+                                photoURL={info.photoURL}
+                                size="w-10 h-10"
+                                rounded="rounded-xl"
+                              />
                               <div>
-                                <p className={`font-bold text-sm ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}>{nombrePostulante}</p>
-                                <p className={`text-[10px] uppercase font-black tracking-widest ${aceptado ? (theme === "dark" ? "text-emerald-400" : "text-emerald-600") : mutedText}`}>{aceptado ? "Aceptado" : "Postulado"}</p>
+                                <p
+                                  className={`font-bold text-sm ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}
+                                >
+                                  {nombrePostulante}
+                                </p>
+                                <p
+                                  className={`text-[10px] uppercase font-black tracking-widest ${aceptado ? (theme === "dark" ? "text-emerald-400" : "text-emerald-600") : mutedText}`}
+                                >
+                                  {aceptado ? "Aceptado" : "Postulado"}
+                                </p>
                               </div>
                             </div>
                             <div className="flex gap-2 shrink-0">
-                              <button onClick={() => setSelectedWorkerId(workerId)} className={`border px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${theme === "dark" ? "bg-white/5 border-white/10 text-white hover:bg-white/10" : "bg-white border-[#e4e4e7] text-[#18181b] hover:bg-[#f4f4f5]"}`}>Ver Perfil</button>
-                              {!aceptado && <button onClick={() => handleAceptar(workerId)} className={`border px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${theme === "dark" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500 hover:text-white" : "bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-500 hover:text-white"}`}>Aceptar</button>}
+                              <button
+                                onClick={() => setSelectedWorkerId(workerId)}
+                                className={`border px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${theme === "dark" ? "bg-white/5 border-white/10 text-white hover:bg-white/10" : "bg-white border-[#e4e4e7] text-[#18181b] hover:bg-[#f4f4f5]"}`}
+                              >
+                                Ver Perfil
+                              </button>
+                              {!aceptado && (
+                                <button
+                                  onClick={() => handleAceptar(workerId)}
+                                  className={`border px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${theme === "dark" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500 hover:text-white" : "bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-500 hover:text-white"}`}
+                                >
+                                  Aceptar
+                                </button>
+                              )}
                             </div>
                           </div>
                         );
@@ -990,13 +1748,26 @@ function JobFlowContent() {
                     )}
                   </div>
                 ) : !esTrabajador ? (
-                  <div className={`border rounded-2xl p-5 text-center text-[10px] font-black uppercase tracking-widest transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-slate-500" : "bg-transparent border-[#e4e4e7] text-slate-400"}`}>Solo cuentas de Trabajador pueden postular</div>
+                  <div
+                    className={`border rounded-2xl p-5 text-center text-[10px] font-black uppercase tracking-widest transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-slate-500" : "bg-transparent border-[#e4e4e7] text-slate-400"}`}
+                  >
+                    Solo cuentas de Trabajador pueden postular
+                  </div>
                 ) : yaPostulo ? (
-                  <div className={`border rounded-2xl p-5 text-center text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-colors ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-emerald-50 border-emerald-200 text-emerald-600"}`}>
-                    <Icons.CheckSmall /> {STEPS[currentStepIndex].label === "Postulación" ? "Postulación enviada · esperando respuesta del cliente" : `Estado actual: ${STEPS[currentStepIndex].label}`}
+                  <div
+                    className={`border rounded-2xl p-5 text-center text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-colors ${theme === "dark" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-emerald-50 border-emerald-200 text-emerald-600"}`}
+                  >
+                    <Icons.CheckSmall />{" "}
+                    {STEPS[currentStepIndex].label === "Postulación"
+                      ? "Postulación enviada · esperando respuesta del cliente"
+                      : `Estado actual: ${STEPS[currentStepIndex].label}`}
                   </div>
                 ) : (
-                  <button onClick={handlePostular} disabled={applying} className="w-full bg-linear-to-r from-[#6c63ff] to-[#4b45b2] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-xl shadow-[#6c63ff]/20 hover:scale-[1.01] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+                  <button
+                    onClick={handlePostular}
+                    disabled={applying}
+                    className="w-full bg-linear-to-r from-[#6c63ff] to-[#4b45b2] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-xl shadow-[#6c63ff]/20 hover:scale-[1.01] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
                     {applying ? "Enviando..." : "Postular ahora"}
                   </button>
                 )}
@@ -1005,33 +1776,79 @@ function JobFlowContent() {
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-[2.5rem] p-8 border transition-colors duration-300" style={{ backgroundColor: cardBg, borderColor: cardBorder }}>
-              <h3 className={`text-[10px] font-black uppercase tracking-[0.3em] mb-6 ${mutedText}`}>Cliente</h3>
+            <div
+              className="rounded-[2.5rem] p-8 border transition-colors duration-300"
+              style={{ backgroundColor: cardBg, borderColor: cardBorder }}
+            >
+              <h3
+                className={`text-[10px] font-black uppercase tracking-[0.3em] mb-6 ${mutedText}`}
+              >
+                Cliente
+              </h3>
               <div className="flex items-center gap-4 mb-6">
                 <Avatar name={clientName} photoURL={clientInfo?.photoURL} />
                 <div>
-                  <p className={`font-black ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}>{clientName}</p>
+                  <p
+                    className={`font-black ${theme === "dark" ? "text-white" : "text-[#18181b]"}`}
+                  >
+                    {clientName}
+                  </p>
                   {clienteReputacion ? (
-                    <p className={`text-xs font-bold flex items-center gap-1 ${mutedText}`}>
-                      <span className="text-amber-400">★ {clienteReputacion.score}</span> · {clienteReputacion.count} {clienteReputacion.count === 1 ? "reseña" : "reseñas"}
+                    <p
+                      className={`text-xs font-bold flex items-center gap-1 ${mutedText}`}
+                    >
+                      <span className="text-amber-400">
+                        ★ {clienteReputacion.score}
+                      </span>{" "}
+                      · {clienteReputacion.count}{" "}
+                      {clienteReputacion.count === 1 ? "reseña" : "reseñas"}
                     </p>
                   ) : (
-                    <p className={`text-xs font-bold ${mutedText}`}>{distrito || "Perú"}</p>
+                    <p className={`text-xs font-bold ${mutedText}`}>
+                      {distrito || "Perú"}
+                    </p>
                   )}
                 </div>
               </div>
-              <div className={`space-y-3 text-xs font-bold ${theme === "dark" ? "text-slate-400" : "text-slate-500"}`}>
-                {["Identidad verificada", "Pago protegido por Izipay", "Historial de pagos perfecto"].map((item) => (
-                  <div key={item} className={`flex items-center gap-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}><Icons.CheckSmall /> <span className={mutedText}>{item}</span></div>
+              <div
+                className={`space-y-3 text-xs font-bold ${theme === "dark" ? "text-slate-400" : "text-slate-500"}`}
+              >
+                {[
+                  "Identidad verificada",
+                  "Pago protegido por Izipay",
+                  "Historial de pagos perfecto",
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className={`flex items-center gap-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}
+                  >
+                    <Icons.CheckSmall />{" "}
+                    <span className={mutedText}>{item}</span>
+                  </div>
                 ))}
               </div>
             </div>
 
-            <div className="rounded-[2.5rem] p-8 border transition-colors duration-300" style={{ backgroundColor: cardBg, borderColor: cardBorder }}>
-              <h3 className={`text-[10px] font-black uppercase tracking-[0.3em] mb-6 flex items-center gap-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}><Icons.Shield /> Protección Nexora</h3>
-              <div className={`space-y-4 text-xs font-bold ${theme === "dark" ? "text-slate-400" : "text-slate-500"}`}>
-                {["Pago retenido hasta completar", "Disputa mediada por Nexora", "Reembolso si no hay entrega"].map((t) => (
-                  <div key={t} className="flex items-center gap-2"><Icons.ChevronRight /> {t}</div>
+            <div
+              className="rounded-[2.5rem] p-8 border transition-colors duration-300"
+              style={{ backgroundColor: cardBg, borderColor: cardBorder }}
+            >
+              <h3
+                className={`text-[10px] font-black uppercase tracking-[0.3em] mb-6 flex items-center gap-2 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}
+              >
+                <Icons.Shield /> Protección Nexora
+              </h3>
+              <div
+                className={`space-y-4 text-xs font-bold ${theme === "dark" ? "text-slate-400" : "text-slate-500"}`}
+              >
+                {[
+                  "Pago retenido hasta completar",
+                  "Disputa mediada por Nexora",
+                  "Reembolso si no hay entrega",
+                ].map((t) => (
+                  <div key={t} className="flex items-center gap-2">
+                    <Icons.ChevronRight /> {t}
+                  </div>
                 ))}
               </div>
             </div>
@@ -1045,8 +1862,13 @@ function JobFlowContent() {
           onClose={() => setSelectedWorkerId(null)}
           onAceptar={() => handleAceptar(selectedWorkerId)}
           yaAceptado={(() => {
-            const p = postulantes.find((p) => getPostulanteId(p) === selectedWorkerId);
-            return typeof p === "object" && ["pago", "en_proceso", "finalizado"].includes(p.estado);
+            const p = postulantes.find(
+              (p) => getPostulanteId(p) === selectedWorkerId,
+            );
+            return (
+              typeof p === "object" &&
+              ["pago", "en_proceso", "finalizado"].includes(p.estado)
+            );
           })()}
           theme={theme}
         />
