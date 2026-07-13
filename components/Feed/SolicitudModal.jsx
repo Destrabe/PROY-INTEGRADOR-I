@@ -259,11 +259,11 @@ export default function SolicitudModal({
         </button>
 
         {tieneImagenes ? (
-          <div className="relative h-64 overflow-hidden bg-[#0A0A0F]">
+          <div className="relative h-80 overflow-hidden bg-[#0A0A0F]">
             <img
               src={imagenes[imgIdx]}
               alt={`Imagen ${imgIdx + 1}`}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover object-center"
             />
 
             {imagenes.length > 1 && (
