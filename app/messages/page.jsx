@@ -559,7 +559,7 @@ function MensajesContent() {
 
 export default function MessagesPageWrapper() {
   return (
-    <Suspense fallback={<div>Cargando...</div>}>
+    <Suspense>
       <MensajesContent />
     </Suspense>
   );
