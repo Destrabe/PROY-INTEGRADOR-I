@@ -19,34 +19,33 @@ import { db } from "@/firebase/db";
 
 const COL = "solicitudes";
 const solicitudesRef = () => collection(db, COL);
-const solicitudDoc  = (id) => doc(db, COL, id);
+const solicitudDoc = (id) => doc(db, COL, id);
 
 export const crearSolicitud = async (data, userId) => {
   try {
     if (!userId) throw new Error("Usuario no autenticado");
- 
+
     const payload = {
-  titulo:      data.titulo?.trim()      ?? "",
-  descripcion: data.descripcion?.trim() ?? "",
-  tags:        Array.isArray(data.tags) ? data.tags : [],
-  precio:      data.precio?.trim()      ?? "A coordinar",
-  distrito:    data.distrito            ?? "",
-  urgente:     Boolean(data.urgente),
-  modalidad:   data.modalidad           ?? "Presencial",
-  urgencia:    data.urgencia            ?? "acordar",
-  nombre:      data.nombre?.trim()      ?? "Usuario",
-  iniciales:   data.iniciales?.trim()   ?? "U",
-  imageUrls:   Array.isArray(data.imageUrls) ? data.imageUrls : [],
-  userId,
-  postulantes:            [],
-  //postulacionesBloqueadas: false,
-  trabajadorId:           null,
-  trabajadorNombre:       null,
-  estado: "activa",        
-  creadoEn:  serverTimestamp(),
-  updatedAt: serverTimestamp(),
-};
- 
+      titulo: data.titulo?.trim() ?? "",
+      descripcion: data.descripcion?.trim() ?? "",
+      tags: Array.isArray(data.tags) ? data.tags : [],
+      precio: data.precio?.trim() ?? "A coordinar",
+      distrito: data.distrito ?? "",
+      urgente: Boolean(data.urgente),
+      modalidad: data.modalidad ?? "Presencial",
+      urgencia: data.urgencia ?? "acordar",
+      nombre: data.nombre?.trim() ?? "Usuario",
+      iniciales: data.iniciales?.trim() ?? "U",
+      imageUrls: Array.isArray(data.imageUrls) ? data.imageUrls : [],
+      fechaRequerida: data.fechaRequerida ?? "",
+      horaRequerida: data.horaRequerida ?? "No especificada",
+      coordenadas: data.coordenadas ?? null,
+      userId,
+      postulantes: [],
+      creadoEn: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
     const ref = await addDoc(solicitudesRef(), payload);
     return { success: true, id: ref.id };
   } catch (error) {
@@ -54,7 +53,7 @@ export const crearSolicitud = async (data, userId) => {
     return { success: false, error };
   }
 };
- 
+
 export const obtenerSolicitud = async (solicitudId) => {
   try {
     const snap = await getDoc(solicitudDoc(solicitudId));
@@ -72,13 +71,13 @@ export const obtenerSolicitud = async (solicitudId) => {
     return { success: false, error };
   }
 };
- 
+
 export const obtenerSolicitudesDeUsuario = async (userId) => {
   try {
     const q = query(
       solicitudesRef(),
       where("userId", "==", userId),
-      orderBy("creadoEn", "desc")
+      orderBy("creadoEn", "desc"),
     );
     const snap = await getDocs(q);
     const data = snap.docs.map((d) => ({
@@ -92,13 +91,13 @@ export const obtenerSolicitudesDeUsuario = async (userId) => {
     return { success: false, error };
   }
 };
- 
+
 export const obtenerMisPostulaciones = async (userId) => {
   try {
     const q = query(
       solicitudesRef(),
       where("postulantes", "array-contains", userId),
-      orderBy("creadoEn", "desc")
+      orderBy("creadoEn", "desc"),
     );
     const snap = await getDocs(q);
     const data = snap.docs.map((d) => ({
@@ -112,13 +111,13 @@ export const obtenerMisPostulaciones = async (userId) => {
     return { success: false, error };
   }
 };
- 
+
 export const obtenerSolicitudesRecientes = async (cantidad = 20) => {
   try {
     const q = query(
       solicitudesRef(),
       orderBy("creadoEn", "desc"),
-      limit(cantidad)
+      limit(cantidad),
     );
     const snap = await getDocs(q);
     const data = snap.docs.map((d) => ({
@@ -132,12 +131,12 @@ export const obtenerSolicitudesRecientes = async (cantidad = 20) => {
     return { success: false, error };
   }
 };
- 
+
 export const actualizarSolicitud = async (solicitudId, campos) => {
   try {
     // Nunca permitir sobreescribir campos de sistema desde el cliente
     const { userId, postulantes, creadoEn, ...camposPermitidos } = campos;
- 
+
     await updateDoc(solicitudDoc(solicitudId), {
       ...camposPermitidos,
       updatedAt: serverTimestamp(),
@@ -148,7 +147,7 @@ export const actualizarSolicitud = async (solicitudId, campos) => {
     return { success: false, error };
   }
 };
- 
+
 export const postularse = async (solicitudId, userId) => {
   try {
     if (!userId) throw new Error("Usuario no autenticado");
@@ -162,7 +161,7 @@ export const postularse = async (solicitudId, userId) => {
     return { success: false, error };
   }
 };
- 
+
 export const cancelarPostulacion = async (solicitudId, userId) => {
   try {
     if (!userId) throw new Error("Usuario no autenticado");
@@ -176,18 +175,22 @@ export const cancelarPostulacion = async (solicitudId, userId) => {
     return { success: false, error };
   }
 };
- 
-export const togglePostulacion = async (solicitudId, postulantesActuales, userId) => {
+
+export const togglePostulacion = async (
+  solicitudId,
+  postulantesActuales,
+  userId,
+) => {
   try {
     if (!userId) throw new Error("Usuario no autenticado");
- 
+
     const yaPostulado = postulantesActuales.includes(userId);
- 
+
     await updateDoc(solicitudDoc(solicitudId), {
       postulantes: yaPostulado ? arrayRemove(userId) : arrayUnion(userId),
       updatedAt: serverTimestamp(),
     });
- 
+
     return { success: true, accion: yaPostulado ? "cancelado" : "postulado" };
   } catch (error) {
     console.error("[togglePostulacion]", error);
@@ -201,28 +204,6 @@ export const eliminarSolicitud = async (solicitudId) => {
     return { success: true };
   } catch (error) {
     console.error("[eliminarSolicitud]", error);
-    return { success: false, error };
-  }
-};
-
-export const completarSolicitud = async (solicitudId, userId) => {
-  try {
-    const solicitudRef = doc(db, COL, solicitudId);
-    const solicitudSnap = await getDoc(solicitudRef);
-    if (!solicitudSnap.exists()) throw new Error("Solicitud no existe");
-    const data = solicitudSnap.data();
-    if (data.userId !== userId) throw new Error("Solo el cliente puede completar la solicitud");
-    if (data.estado !== "en_progreso") throw new Error("La solicitud no está en progreso");
-
-    await updateDoc(solicitudRef, {
-      estado: "completada",
-      completadoEn: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    });
-
-    return { success: true };
-  } catch (error) {
-    console.error("[completarSolicitud]", error);
     return { success: false, error };
   }
 };

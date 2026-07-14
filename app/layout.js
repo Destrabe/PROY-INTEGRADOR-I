@@ -1,4 +1,3 @@
-import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 import { DM_Sans, Syne } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
@@ -22,7 +21,9 @@ const syne = Syne({
 
 export const metadata = {
   title: "Nexora",
-  description: "Plataforma de microservicios",
+  description:
+    "Plataforma web basada en microservicios para la gestión eficiente de usuarios y operaciones digitales.",
+  keywords: ["Nexora", "microservicios", "next.js"],
 };
 
 export const viewport = {
@@ -32,22 +33,14 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es" suppressHydrationWarning>
-      <body
-        className={`${dm_sans.variable} ${syne.variable} overflow-x-hidden`}
-        style={{
-          background: "var(--bg-main)",
-          color: "var(--text-main)",
-        }}
-      >
-        <ThemeProvider>
-          <AuthProvider>
-            <Header />
-            {children}
-            <Analytics />
-            <SpeedInsights />
-          </AuthProvider>
-        </ThemeProvider>
+    <html lang="es">
+      <body className={`${dm_sans.variable} ${syne.variable}`}>
+        <AuthProvider>
+          <Header />
+          {children}
+          <Analytics />
+          <SpeedInsights />
+        </AuthProvider>
       </body>
     </html>
   );
