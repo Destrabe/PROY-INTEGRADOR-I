@@ -219,7 +219,7 @@ function Toast({ message, type, onClose }) {
 
   return (
     <div
-      className={`fixed bottom-8 right-8 ${styles} border p-5 rounded-2xl flex items-center gap-4 z-[200] animate-in fade-in slide-in-from-bottom-4 duration-300 shadow-2xl backdrop-blur-md`}
+      className={`fixed bottom-8 right-8 ${styles} border p-5 rounded-2xl flex items-center gap-4 z-200 animate-in fade-in slide-in-from-bottom-4 duration-300 shadow-2xl backdrop-blur-md`}
     >
       <div className="w-2 h-2 rounded-full bg-current animate-pulse"></div>
       <p className="text-sm font-black uppercase tracking-widest">{message}</p>
@@ -258,10 +258,10 @@ function SolicitudModal({ solicitud, onClose, onApprove, onReject, users }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-6 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
       <div className="bg-[#111118] border border-white/10 w-full max-w-5xl max-h-[95vh] rounded-[3rem] overflow-hidden flex flex-col shadow-2xl animate-in zoom-in-95 duration-300">
         {/* Header Modal */}
-        <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+        <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/2">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-[#6c63ff] flex items-center justify-center font-black text-white uppercase overflow-hidden">
               {userRequest?.photoURL ? (
@@ -322,7 +322,7 @@ function SolicitudModal({ solicitud, onClose, onApprove, onReject, users }) {
                     <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2">
                       Descripción
                     </p>
-                    <p className="text-slate-300 text-sm leading-relaxed bg-white/[0.02] p-4 rounded-xl border border-white/[0.03]">
+                    <p className="text-slate-300 text-sm leading-relaxed bg-white/2 p-4 rounded-xl border border-white/3">
                       "{solicitud.descripcion}"
                     </p>
                   </div>
@@ -435,7 +435,7 @@ function SolicitudModal({ solicitud, onClose, onApprove, onReject, users }) {
         </div>
 
         {/* Footer Modal */}
-        <div className="p-8 border-t border-white/5 bg-white/[0.02] flex gap-4">
+        <div className="p-8 border-t border-white/5 bg-white/2 flex gap-4">
           <button
             onClick={() => {
               onApprove(solicitud);
@@ -730,7 +730,7 @@ export default function AdminPage() {
                     .map((s) => (
                       <div
                         key={s.id}
-                        className="p-10 flex flex-col md:flex-row md:items-center justify-between hover:bg-white/[0.01] transition-all gap-4 group/item"
+                        className="p-10 flex flex-col md:flex-row md:items-center justify-between hover:bg-white/1 transition-all gap-4 group/item"
                       >
                         <div
                           className="flex items-center gap-6 cursor-pointer"
@@ -810,7 +810,7 @@ export default function AdminPage() {
                     {filteredUsers.map((u) => (
                       <tr
                         key={u.id}
-                        className="hover:bg-white/[0.01] transition-colors group"
+                        className="hover:bg-white/1 transition-colors group"
                       >
                         <td className="px-10 py-8">
                           <div className="flex items-center gap-5">
@@ -903,7 +903,7 @@ export default function AdminPage() {
                           <Icons.Check />
                         )}
                       </div>
-                      <p className="text-xs font-bold text-slate-300 leading-relaxed break-words">
+                      <p className="text-xs font-bold text-slate-300 leading-relaxed wrap-break-word">
                         {act.mensaje}
                       </p>
                       <p className="text-[9px] text-slate-600 mt-1 font-black uppercase tracking-widest">
