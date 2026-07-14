@@ -7,7 +7,7 @@ import { es } from "date-fns/locale";
 import { useAuth } from "@/components/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { db } from "@/firebase/client";
-import { useThemeStore } from "@/store/themeStore"; // <-- Importamos tu store
+import { useThemeStore } from "@/store/themeStore";
 import {
   doc,
   onSnapshot,
@@ -971,11 +971,13 @@ function FinishedPanel({
 
 function WorkerProfileModal({
   workerId,
+  jobId,
   onClose,
   onAceptar,
   yaAceptado,
   theme,
 }) {
+  const router = useRouter();
   const [data, setData] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [portfolio, setPortfolio] = useState([]);
@@ -1132,10 +1134,12 @@ function WorkerProfileModal({
         {data && (
           <div className="p-8 border-t flex gap-4" style={{ borderColor }}>
             <button
-              onClick={onClose}
+              onClick={() =>
+                router.push(`/messages?workerId=${workerId}&jobId=${jobId}`)
+              }
               className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] border transition-colors ${theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-black/5 border-[#e4e4e7] text-[#18181b]"}`}
             >
-              Cerrar
+              Iniciar conversación
             </button>
             {!yaAceptado && (
               <button
@@ -1158,7 +1162,6 @@ function JobFlowContent() {
   const searchParams = useSearchParams();
   const jobId = searchParams.get("jobId");
 
-  // Traemos los colores globales del tema
   const theme = useThemeStore((state) => state.theme);
   const background = useThemeStore((state) => state.background);
   const textColor = useThemeStore((state) => state.textColor);
@@ -1859,6 +1862,7 @@ function JobFlowContent() {
       {selectedWorkerId && (
         <WorkerProfileModal
           workerId={selectedWorkerId}
+          jobId={jobId}
           onClose={() => setSelectedWorkerId(null)}
           onAceptar={() => handleAceptar(selectedWorkerId)}
           yaAceptado={(() => {

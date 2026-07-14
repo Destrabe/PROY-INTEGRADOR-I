@@ -1,9 +1,12 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import FirebaseAuthWatcher from "../authWatcher";
 import { useThemeStore } from "@/store/themeStore";
 import { useAuth } from "@/components/AuthContext";
+import { useSearchParams, useRouter } from "next/navigation";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase/client";
 
 const obtenerIniciales = (nombre) => {
   if (!nombre) return null;
@@ -15,27 +18,128 @@ const obtenerIniciales = (nombre) => {
 
 export default function MensajesPage() {
   const { user } = useAuth();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const workerId = searchParams.get("workerId");
+  const jobId = searchParams.get("jobId");
   const [conversaciones, setConversaciones] = useState([]);
   const [seleccionado, setSeleccionado] = useState(null);
   const [mensaje, setMensaje] = useState("");
   const [mostrarChat, setMostrarChat] = useState(false);
   const [socket, setSocket] = useState(null);
   const [cargando, setCargando] = useState(true);
+  const [usuariosOnline, setUsuariosOnline] = useState([]);
 
   const theme = useThemeStore((state) => state.theme);
   const background = useThemeStore((state) => state.background);
   const textColor = useThemeStore((state) => state.textColor);
 
-  // Definición de bordes condicionales dinámicos
   const borderColor = theme === "dark" ? "border-[#2A2A38]" : "border-gray-200";
   const itemHoverBg =
     theme === "dark" ? "hover:bg-[#111118]" : "hover:bg-gray-100";
   const itemActiveBg = theme === "dark" ? "bg-[#111118]" : "bg-gray-50";
   const inputBg = theme === "dark" ? "bg-[#111118]" : "bg-white";
 
+  const obtenerDatosOtroUsuario = (conv) => {
+    if (conv.id === "nexora-bienvenida") {
+      return { nombre: conv.nombre, iniciales: conv.iniciales };
+    }
+    if (conv.participants && user?.uid) {
+      const otroUid = conv.id.split("_").find((id) => id !== user.uid);
+      if (otroUid && conv.participants[otroUid]) {
+        return conv.participants[otroUid];
+      }
+    }
+    return {
+      nombre: conv.nombre || "Usuario",
+      iniciales: conv.iniciales || "??",
+    };
+  };
+
+  useEffect(() => {
+    const inicializarChatNuevo = async () => {
+      if (workerId && user && !cargando) {
+        const chatId = [user.uid, workerId].sort().join("_");
+        const chatExistente = conversaciones.find((c) => c.id === chatId);
+
+        if (chatExistente) {
+          setSeleccionado(chatExistente);
+          setMostrarChat(true);
+        } else {
+          const miNombre =
+            user.displayName ||
+            `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+            "Usuario";
+          const misIniciales = obtenerIniciales(miNombre);
+          let nombreDestino = "Usuario";
+          let inicialesDestino = "??";
+          try {
+            const userSnap = await getDoc(doc(db, "users", workerId));
+            if (userSnap.exists()) {
+              const uData = userSnap.data();
+              nombreDestino =
+                uData.displayName ||
+                `${uData.first_name || ""} ${uData.last_name || ""}`.trim() ||
+                "Usuario";
+              inicialesDestino = obtenerIniciales(nombreDestino);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+
+          let tituloTrabajo = "Proyecto Nexora";
+          let precioTrabajo = "A convenir";
+          if (jobId) {
+            try {
+              const jobSnap = await getDoc(doc(db, "solicitudes", jobId));
+              if (jobSnap.exists()) {
+                const jData = jobSnap.data();
+                tituloTrabajo = jData.titulo || tituloTrabajo;
+                if (jData.precio) {
+                  const precioLimpio = String(jData.precio)
+                    .replace(/s\/\s*/i, "")
+                    .trim();
+                  precioTrabajo = `S/ ${precioLimpio}`;
+                }
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          }
+
+          setSeleccionado({
+            id: chatId,
+            jobId: jobId,
+            jobTitle: tituloTrabajo,
+            jobPrice: precioTrabajo,
+            participants: {
+              [user.uid]: { nombre: miNombre, iniciales: misIniciales },
+              [workerId]: {
+                nombre: nombreDestino,
+                iniciales: inicialesDestino,
+              },
+            },
+            mensajes: [],
+            online: false,
+            preview: "",
+            hora: "",
+            noLeido: false,
+          });
+          setMostrarChat(true);
+        }
+      }
+    };
+
+    inicializarChatNuevo();
+  }, [workerId, jobId, conversaciones, user, cargando]);
+
   useEffect(() => {
     const nuevoSocket = io("http://localhost:3001");
     setSocket(nuevoSocket);
+
+    nuevoSocket.on("usuariosOnline", (listaConectados) => {
+      setUsuariosOnline(listaConectados);
+    });
 
     nuevoSocket.on("cargarHistorial", (historialFirebase) => {
       const horaActual = new Date().toLocaleTimeString([], {
@@ -73,7 +177,9 @@ export default function MensajesPage() {
       }
 
       setConversaciones(historialFinal);
-      setSeleccionado(historialFinal[0]);
+      if (!workerId) {
+        setSeleccionado(historialFinal[0]);
+      }
       setCargando(false);
     });
 
@@ -99,7 +205,13 @@ export default function MensajesPage() {
     return () => {
       nuevoSocket.disconnect();
     };
-  }, []);
+  }, [workerId]);
+
+  useEffect(() => {
+    if (socket && user?.uid) {
+      socket.emit("registerUser", user.uid);
+    }
+  }, [socket, user?.uid]);
 
   const enviarMensaje = () => {
     if (mensaje.trim() && socket && seleccionado && user) {
@@ -133,7 +245,11 @@ export default function MensajesPage() {
       setConversaciones((prev) => {
         const nuevas = [...prev];
         const idx = nuevas.findIndex((c) => c.id === seleccionado.id);
-        nuevas[idx] = conversacionActualizada;
+        if (idx !== -1) {
+          nuevas[idx] = conversacionActualizada;
+        } else {
+          nuevas.unshift(conversacionActualizada);
+        }
         return nuevas;
       });
       socket.emit("actualizarConversacion", conversacionActualizada);
@@ -158,7 +274,6 @@ export default function MensajesPage() {
         style={{ backgroundColor: background[theme], color: textColor[theme] }}
         className="fixed top-22.5 inset-x-0 bottom-0 flex font-sans overflow-hidden transition-colors duration-200"
       >
-        {/* Lista izquierda */}
         <div
           className={`${mostrarChat ? "hidden" : "flex"} md:flex w-full md:w-80 border-r ${borderColor} flex-col`}
         >
@@ -170,61 +285,74 @@ export default function MensajesPage() {
               placeholder="Buscar conversación..."
             />
           </div>
+
           <div className="overflow-y-auto flex-1">
             {conversaciones.length === 0 ? (
               <div className="p-5 text-sm text-[#606078] text-center">
                 Bandeja de entrada vacía
               </div>
             ) : (
-              conversaciones.map((conv) => (
-                <div
-                  key={conv.id}
-                  onClick={() => {
-                    setSeleccionado(conv);
-                    setMostrarChat(true);
-                  }}
-                  className={`flex items-center gap-3 px-5 py-4 cursor-pointer border-b ${
-                    theme === "dark" ? "border-[#1a1a24]" : "border-gray-100"
-                  } transition-all ${
-                    seleccionado?.id === conv.id
-                      ? `${itemActiveBg} border-l-4 border-l-[#6C63FF]`
-                      : itemHoverBg
-                  }`}
-                >
-                  <div className="relative w-10 h-10 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-xs font-bold shrink-0 font-syne">
-                    {conv.iniciales}
-                    {conv.online && (
-                      <span
-                        className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 ${
-                          theme === "dark" ? "border-[#0A0A0F]" : "border-white"
-                        }`}
-                      ></span>
-                    )}
-                  </div>
+              conversaciones.map((conv) => {
+                const datosOtro = obtenerDatosOtroUsuario(conv);
+                const otroUid = conv.id
+                  .split("_")
+                  .find((id) => id !== user?.uid);
+                const isOnline =
+                  conv.id === "nexora-bienvenida"
+                    ? true
+                    : usuariosOnline.includes(otroUid);
 
-                  <div className="flex-1 overflow-hidden">
-                    <div
-                      className={`text-sm font-semibold ${theme === "dark" ? "text-[#F0F0F8]" : "text-gray-800"}`}
-                    >
-                      {conv.nombre}
+                return (
+                  <div
+                    key={conv.id}
+                    onClick={() => {
+                      setSeleccionado(conv);
+                      setMostrarChat(true);
+                    }}
+                    className={`flex items-center gap-3 px-5 py-4 cursor-pointer border-b ${
+                      theme === "dark" ? "border-[#1a1a24]" : "border-gray-100"
+                    } transition-all ${
+                      seleccionado?.id === conv.id
+                        ? `${itemActiveBg} border-l-4 border-l-[#6C63FF]`
+                        : itemHoverBg
+                    }`}
+                  >
+                    <div className="relative w-10 h-10 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-xs font-bold shrink-0 font-syne">
+                      {datosOtro.iniciales}
+                      {isOnline && (
+                        <span
+                          className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 ${
+                            theme === "dark"
+                              ? "border-[#0A0A0F]"
+                              : "border-white"
+                          }`}
+                        ></span>
+                      )}
                     </div>
-                    <div className="text-xs text-[#606078] truncate">
-                      {conv.preview}
+
+                    <div className="flex-1 overflow-hidden">
+                      <div
+                        className={`text-sm font-semibold ${theme === "dark" ? "text-[#F0F0F8]" : "text-gray-800"}`}
+                      >
+                        {datosOtro.nombre}
+                      </div>
+                      <div className="text-xs text-[#606078] truncate">
+                        {conv.preview}
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <div className="text-xs text-[#606078]">{conv.hora}</div>
+                      {conv.noLeido && (
+                        <span className="w-2 h-2 rounded-full bg-[#6C63FF]"></span>
+                      )}
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <div className="text-xs text-[#606078]">{conv.hora}</div>
-                    {conv.noLeido && (
-                      <span className="w-2 h-2 rounded-full bg-[#6C63FF]"></span>
-                    )}
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
 
-        {/* Chat derecho */}
         <div
           className={`${mostrarChat ? "flex" : "hidden"} md:flex flex-1 flex-col`}
         >
@@ -233,8 +361,7 @@ export default function MensajesPage() {
               Selecciona o inicia una conversación para empezar
             </div>
           ) : (
-            <>
-              {/* Header chat */}
+            <React.Fragment>
               <div
                 className={`flex items-center gap-3 px-6 py-4 border-b ${borderColor}`}
               >
@@ -257,39 +384,61 @@ export default function MensajesPage() {
                   </svg>
                 </button>
 
-                <div className="relative w-10 h-10 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-xs font-bold shrink-0 font-syne">
-                  {seleccionado.iniciales}
-                  {seleccionado.online && (
-                    <span
-                      className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 ${
-                        theme === "dark" ? "border-[#0A0A0F]" : "border-white"
-                      }`}
-                    ></span>
-                  )}
-                </div>
-                <div className="flex-1">
-                  <div
-                    className={`text-sm font-semibold ${theme === "dark" ? "text-[#F0F0F8]" : "text-gray-800"}`}
-                  >
-                    {seleccionado.nombre}
-                  </div>
-                  <div className="text-xs text-green-400">
-                    {seleccionado.online ? "En línea ahora" : "Desconectado"}
-                  </div>
-                </div>
+                {(() => {
+                  const datosSeleccionado =
+                    obtenerDatosOtroUsuario(seleccionado);
+                  const otroUid = seleccionado.id
+                    .split("_")
+                    .find((id) => id !== user?.uid);
+                  const isOnline =
+                    seleccionado.id === "nexora-bienvenida"
+                      ? true
+                      : usuariosOnline.includes(otroUid);
+
+                  return (
+                    <React.Fragment>
+                      <div className="relative w-10 h-10 rounded-full bg-[#6c63ff22] flex items-center justify-center text-[#8B85FF] text-xs font-bold shrink-0 font-syne">
+                        {datosSeleccionado.iniciales}
+                        {isOnline && (
+                          <span
+                            className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 ${
+                              theme === "dark"
+                                ? "border-[#0A0A0F]"
+                                : "border-white"
+                            }`}
+                          ></span>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div
+                          className={`text-sm font-semibold ${theme === "dark" ? "text-[#F0F0F8]" : "text-gray-800"}`}
+                        >
+                          {datosSeleccionado.nombre}
+                        </div>
+                        <div
+                          className={`text-xs ${isOnline ? "text-green-400" : "text-[#606078]"}`}
+                        >
+                          {isOnline ? "En línea ahora" : "Desconectado"}
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  );
+                })()}
+
                 <div className="flex gap-2">
-                  <button
-                    className={`px-3 py-1.5 rounded-lg border ${borderColor} text-sm ${theme === "dark" ? "text-[#F0F0F8]" : "text-gray-700"} bg-transparent cursor-pointer ${theme === "dark" ? "hover:bg-[#2A2A38]" : "hover:bg-gray-100"} transition-all`}
-                  >
-                    Ver perfil
-                  </button>
-                  <button className="px-3 py-1.5 rounded-lg bg-[#22c55e18] text-[#22C55E] text-sm cursor-pointer hover:bg-green-600 hover:text-white transition-all">
-                    ✓ Contratar
-                  </button>
+                  {seleccionado.jobId && (
+                    <button
+                      onClick={() =>
+                        router.push(`/job-flow?jobId=${seleccionado.jobId}`)
+                      }
+                      className="px-3 py-1.5 rounded-lg bg-[#22c55e18] text-[#22C55E] text-sm cursor-pointer hover:bg-green-600 hover:text-white transition-all"
+                    >
+                      ✓ Contratar
+                    </button>
+                  )}
                 </div>
               </div>
 
-              {/* Banner */}
               <div
                 className={`px-6 py-2.5 border-b ${borderColor} text-sm ${
                   theme === "dark"
@@ -303,20 +452,18 @@ export default function MensajesPage() {
                     <strong className="text-[#6C63FF]">Nexora</strong>
                   </span>
                 ) : (
-                  <>
+                  <React.Fragment>
                     Trabajo:{" "}
                     <strong className="text-[#6C63FF]">
-                      Técnico para reparar laptop con pantalla rota
+                      {seleccionado.jobTitle || "Proyecto"}
                     </strong>{" "}
-                    · S/ 80–150
-                  </>
+                    · {seleccionado.jobPrice || "A convenir"}
+                  </React.Fragment>
                 )}
               </div>
 
-              {/* Mensajes */}
               <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-4">
                 {seleccionado.mensajes.map((msg, i) => {
-                  // Comparación estricta de la ID del mensaje con la ID del usuario en sesión
                   const soyYo = msg.senderId === user?.uid;
 
                   return (
@@ -359,7 +506,6 @@ export default function MensajesPage() {
                 })}
               </div>
 
-              {/* Input */}
               <div className={`flex gap-3 px-6 py-4 border-t ${borderColor}`}>
                 <textarea
                   style={{ backgroundColor: inputBg, color: textColor[theme] }}
@@ -381,7 +527,7 @@ export default function MensajesPage() {
                   ➤
                 </button>
               </div>
-            </>
+            </React.Fragment>
           )}
         </div>
       </div>
