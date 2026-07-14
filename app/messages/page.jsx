@@ -455,7 +455,7 @@ function MensajesContent() {
                       }}
                       className="px-3 py-1.5 rounded-lg bg-[#22c55e18] text-[#22C55E] text-sm cursor-pointer hover:bg-green-600 hover:text-white transition-all font-black uppercase tracking-widest"
                     >
-                      ✓ Contratar
+                      Ver postulacion
                     </button>
                   )}
                 </div>
