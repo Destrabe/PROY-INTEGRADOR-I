@@ -153,7 +153,7 @@ function MensajesContent() {
   }, [workerId, conversaciones, user?.uid]);
 
   useEffect(() => {
-    const nuevoSocket = io("http://localhost:3001");
+    const nuevoSocket = io("https://nexora-backend-ija7.onrender.com");
     setSocket(nuevoSocket);
 
     nuevoSocket.on("usuariosOnline", (listaConectados) => {
