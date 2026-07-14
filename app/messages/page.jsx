@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { io } from "socket.io-client";
 import FirebaseAuthWatcher from "../authWatcher";
 import { useThemeStore } from "@/store/themeStore";
@@ -16,7 +16,7 @@ const obtenerIniciales = (nombre) => {
   return iniciales || null;
 };
 
-export default function MensajesPage() {
+function MensajesContent() {
   const { user } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -132,6 +132,25 @@ export default function MensajesPage() {
 
     inicializarChatNuevo();
   }, [workerId, jobId, conversaciones, user, cargando]);
+
+  useEffect(() => {
+    if (workerId && conversaciones.length > 0) {
+      const existente = conversaciones.find((c) => c.id.includes(workerId));
+      if (existente) {
+        setSeleccionado(existente);
+        setMostrarChat(true);
+      } else {
+        setSeleccionado({
+          id: `chat_${user?.uid}_${workerId}`,
+          nombre: "Nuevo chat",
+          iniciales: "??",
+          mensajes: [],
+          online: true,
+        });
+        setMostrarChat(true);
+      }
+    }
+  }, [workerId, conversaciones, user?.uid]);
 
   useEffect(() => {
     const nuevoSocket = io("http://localhost:3001");
@@ -426,12 +445,15 @@ export default function MensajesPage() {
                 })()}
 
                 <div className="flex gap-2">
-                  {seleccionado.jobId && (
+                  {seleccionado.id !== "nexora-bienvenida" && (
                     <button
-                      onClick={() =>
-                        router.push(`/job-flow?jobId=${seleccionado.jobId}`)
-                      }
-                      className="px-3 py-1.5 rounded-lg bg-[#22c55e18] text-[#22C55E] text-sm cursor-pointer hover:bg-green-600 hover:text-white transition-all"
+                      onClick={() => {
+                        const targetJobId = seleccionado.jobId || jobId;
+                        if (targetJobId) {
+                          router.push(`/job-flow?jobId=${targetJobId}`);
+                        }
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-[#22c55e18] text-[#22C55E] text-sm cursor-pointer hover:bg-green-600 hover:text-white transition-all font-black uppercase tracking-widest"
                     >
                       ✓ Contratar
                     </button>
@@ -532,5 +554,13 @@ export default function MensajesPage() {
         </div>
       </div>
     </FirebaseAuthWatcher>
+  );
+}
+
+export default function MessagesPageWrapper() {
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <MensajesContent />
+    </Suspense>
   );
 }
