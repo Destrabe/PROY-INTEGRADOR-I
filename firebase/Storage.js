@@ -1,4 +1,3 @@
-//No Funcional - no implementado
 import {
   getStorage,
   ref,
@@ -93,7 +92,7 @@ export const eliminarImagenPorUrl = async (url) => {
     await deleteObject(storageRef);
     return { success: true };
   } catch (error) {
-    // Si el archivo ya no existe, no es un error crítico
+    // Si el archivo ya no existe
     if (error.code === "storage/object-not-found") {
       return { success: true };
     }

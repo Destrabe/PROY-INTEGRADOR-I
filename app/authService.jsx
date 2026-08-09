@@ -1,113 +1,92 @@
-import {
+/*import {
+
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   FacebookAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-
-import {
-  doc,
-  setDoc,
-  getDoc,
-} from "firebase/firestore";
-
+import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/db";
 import { auth } from "@/firebase/auth";
 
 export const loginUser = async (email, password) => {
-  try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-    return userCredential.user;
-  } catch (error) {
-    throw error;
-  }
+  const userCredential = await signInWithEmailAndPassword(auth, email, password);
+  return userCredential.user;
 };
 
-export const registerUser = async (
-  email,
-  password,
-  firstName,
-  lastName,
-  rol
-) => {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+export const registerUser = async (email, password, firstName, lastName, rol) => {
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const uid = userCredential.user.uid;
+  const iniciales = `${firstName[0] ?? ""}${lastName[0] ?? ""}`.toUpperCase();
 
-    const uid = userCredential.user.uid;
-
-    await setDoc(doc(db, "users", uid), {
-      uid,
-      first_name: firstName,
-      last_name: lastName,
-      email,
-      rol,
-      createdAt: new Date(),
-    });
-
-    return { success: true };
-  } catch (error) {
-    return { success: false, error };
-  }
+  await setDoc(doc(db, "users", uid), {
+    userId: uid,
+    email,
+    first_name: firstName.trim(),
+    last_name: lastName.trim(),
+    iniciales,
+    rol,
+    avatarUrl: null,
+    bio: "",
+    disponible: false,
+    verificado: false,
+    valoracionPromedio: 0,
+    totalReseñas: 0,
+    totalTrabajos: 0,
+    porcentajeExito: 0,
+    creadoEn: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+  return { success: true };
 };
 
 const googleProvider = new GoogleAuthProvider();
-const facebookProvider  = new FacebookAuthProvider();
+const facebookProvider = new FacebookAuthProvider();
 
 export const loginWithGoogle = async () => {
-  try {
-    const result = await signInWithPopup(auth, googleProvider);
-
-    const user = result.user;
-
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
-
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        uid: user.uid,
-        first_name: user.displayName?.split(" ")[0] || "",
-        last_name:
-          user.displayName?.split(" ").slice(1).join(" ") || "",
-        email: user.email,
-        rol: "cliente",
-        createdAt: new Date(),
-      });
-    }
-
-    return user;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const loginWithFacebook = async () => {
-  const result = await signInWithPopup(auth, facebookProvider);
-
+  const result = await signInWithPopup(auth, googleProvider);
   const user = result.user;
-
   const userRef = doc(db, "users", user.uid);
   const userSnap = await getDoc(userRef);
-
   if (!userSnap.exists()) {
     await setDoc(userRef, {
-      uid: user.uid,
+      userId: user.uid,
       first_name: user.displayName?.split(" ")[0] || "",
       last_name: user.displayName?.split(" ").slice(1).join(" ") || "",
       email: user.email,
       rol: "cliente",
-      createdAt: new Date(),
+      creadoEn: serverTimestamp(),
     });
   }
-
   return user;
 };
+
+export const loginWithFacebook = async () => {
+  const result = await signInWithPopup(auth, facebookProvider);
+  const user = result.user;
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+  if (!userSnap.exists()) {
+    await setDoc(userRef, {
+      userId: user.uid,
+      first_name: user.displayName?.split(" ")[0] || "",
+      last_name: user.displayName?.split(" ").slice(1).join(" ") || "",
+      email: user.email,
+      rol: "cliente",
+      creadoEn: serverTimestamp(),
+    });
+  }
+  return user;
+};
+
+export const loginWithFacebook = async () => {
+  const provider = new FacebookAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    return result.user;
+  } catch (error) {
+    console.error("Error en Facebook Auth:", error);
+    throw error;
+  }
+};*/
